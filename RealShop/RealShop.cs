@@ -7,10 +7,15 @@ namespace RealShop
 {
     public class RealParts : MelonMod
     {
+
+        private Config _config;
+
         [Obsolete]
         public override void OnApplicationStart()
         {
             MelonLogger.Msg("initializing...");
+            _config = new Config();
+            _config.Reload();
         }
 
         public override void OnUpdate()
@@ -28,7 +33,7 @@ namespace RealShop
                         GameObject ShowroomCarObj = ShowroomCarItem21Shop.gameObject;
                         var carName = ShowroomCarItem21Shop.Find("CarName").GetComponent<Text>();
                         var carYear = Helpers.GetYearFromString(carName.text);
-                        if (carYear < 2000)
+                        if (carYear < _config.RemoveCarsOlderThanYear)
                         {
                             ShowroomCarObj.SetActive(false);
                             MelonLogger.Msg($"Car year {carYear}");
