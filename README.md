@@ -2,6 +2,9 @@
 
 This mod is created to prevent the possibility of buying body parts for cars older than 2000 in the store. To obtain the necessary parts for the car you are working on, you will have to search for all the body elements in a junkyard, barns, or auctions. This mod makes the game a little more challenging and interesting. In future versions of the mod, various engines and parts for old cars will also be removed from the store.
 
+## Features include:
+
+You will need to search for the necessary parts for old cars and restore them; it is no longer possible to buy new parts for retro or old cars.
 
 ## How install: 
 1. Download realshop.dll
