@@ -10,10 +10,10 @@ This mod is created to prevent the possibility of buying body parts for cars old
 
 ## Before
 <p align="center">
-  <img src="/assets/before.png" alt="before">
+  <img src="/Assets/before.png" alt="before">
 </p>
 
 ## After
 <p align="center">
-  <img src="/assets/after.png" alt="before">
+  <img src="/Assets/after.png" alt="before">
 </p>
