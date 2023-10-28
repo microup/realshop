@@ -7,3 +7,13 @@ This mod is created to prevent the possibility of buying body parts for cars old
 1. Download realshop.dll
 2. Download and install [MelonLoader](https://melonwiki.xyz/#/?id=requirements) ----> **!!!!   Only 0.5.7 VERSION**
 3. Copy the dll file to the **"Car Mechanic Simulator 2021\Mods"**
+
+## Before
+<p align="center">
+  <img src="/assets/before.png" alt="before">
+</p>
+
+## After
+<p align="center">
+  <img src="/assets/after.png" alt="before">
+</p>
