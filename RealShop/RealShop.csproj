@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="Inspect.cs" />
     <Compile Include="RealShop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
