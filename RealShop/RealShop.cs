@@ -10,11 +10,6 @@ using CMS.UI.Logic;
 using System;
 using CMS.Difficulty;
 
-
-// TODO:
-// сделать что бы все предметы могли ремонтироваться
-// сделать что с первого уровня доступны все станки для ремонта
-// посещение свалки с перого уровня и бесплатно
 namespace RealShop
 {
     public class RealParts : MelonMod
@@ -196,12 +191,6 @@ namespace RealShop
 
         private void CheckAndDisableBrandsFromShop(GameObject shopMenu)
         {
-
-/*            var mainLableText = shopMenu.transform.Find("MainLabel").GetComponent<Text>();
-            if (mainLableText != null) {
-                MelonLogger.Msg($"main label");
-            }*/
-
             var items = shopMenu.transform.Find("Items");
             if (items != null)
             {
@@ -224,11 +213,6 @@ namespace RealShop
                             GameObject ShowroomCarObj = part.gameObject;
                             ShowroomCarObj.SetActive(false);
                         }
-
-                        //if (Input.GetKeyDown(_config.PrintStack))
-                       // {
-                        //MelonLogger.Msg($"id {i} texture {imageName}");
-                       // }
                     }
                 }
             }
