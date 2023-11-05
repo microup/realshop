@@ -33,6 +33,18 @@ namespace RealShop
             return false;
         }
 
+        public static bool IsCarExist(string checkCar)
+        {
+            foreach (string car in Config.CarNames)
+            {
+                if (checkCar.Equals(car, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool CheckForSubstrings(string input, string[] targets)
         {
             return targets.Any(target => input.Contains(target));

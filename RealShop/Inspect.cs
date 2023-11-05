@@ -15,7 +15,7 @@ namespace RealShop
             {
                 Transform currentChild = parent.transform.GetChild(i);
                 var currentChildType = currentChild.gameObject.GetType();
-                MelonLogger.Msg($"Child {i}: {currentChild.gameObject.name} - {currentChildType.ToString()}");
+                MelonLogger.Msg($"Child {i}: {currentChild.gameObject.name} - {currentChildType}");
             }
         }
 
@@ -29,7 +29,7 @@ namespace RealShop
             {
                 Transform currentChild = obj.GetChild(i);
                 var currentChildType = currentChild.gameObject.GetType();
-                MelonLogger.Msg($"Child {i}: {currentChild.gameObject.name} - {currentChildType.ToString()}");
+                MelonLogger.Msg($"Child {i}: {currentChild.gameObject.name} - {currentChildType}");
             }
         }
 
