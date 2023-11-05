@@ -40,4 +40,9 @@ In the plans, I will remove engines, tires, and other items for old and retro ca
   <img src="/Assets/after.png" alt="before">
 </p>
 
+## Install melon
+<p align="center">
+  <img src="/Assets/melon.png" alt="melon">
+</p>
+
 [nexusmods.com](https://www.nexusmods.com/carmechanicsimulator2021/mods/164)

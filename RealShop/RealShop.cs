@@ -32,7 +32,7 @@ namespace RealShop
 
         public override void OnUpdate()
         {
-            if  (Input.GetKeyDown(_config.IsEnableSwitchMode))
+            if  (Input.GetKeyDown(_config.IsKeyBindEnableSwitchMode))
             {
                 if (_modIsEnable)
                 {
@@ -44,7 +44,7 @@ namespace RealShop
                 }
             }
 
-            if (Input.GetKeyDown(_config.Repair))
+            if (Input.GetKeyDown(_config.IsKeyBindRepair))
             {
                 RepairItems(Config.TargetRepairParts, Config.RepairCost);
             }
@@ -165,10 +165,15 @@ namespace RealShop
         private void CheckAndDisableOldCarFromShop(GameObject shopCarWindow)
         {
 
+            var mainLableText = shopCarWindow.transform.Find("MainLabel").GetComponent<Text>();
+            if (mainLableText != null)
+            {
+                //MelonLogger.Msg($"main label {mainLableText.text} name {mainLableText.name} tostr {mainLableText.ToString()}");
+            }
+
             var itemsCars = shopCarWindow.transform.Find("Items");
             if (itemsCars != null)
             {
-
                 for (int i = 0; i < itemsCars.childCount; i++)
                 {
                     Transform ShowroomCarItem21Shop = itemsCars.GetChild(i);
@@ -180,7 +185,7 @@ namespace RealShop
                         GameObject ShowroomCarObj = ShowroomCarItem21Shop.gameObject;
                         ShowroomCarObj.SetActive(false);
 
-                        if (_config.IsShowDebugInfo)
+                        if (_config.IsKeyBindShowDebugInfo)
                         {
                             MelonLogger.Msg($"car year {carYear}");
                         }
@@ -269,13 +274,13 @@ namespace RealShop
 
         private void SetAllRepairs(Il2CppSystem.Collections.Generic.List<PartProperty> items)
         {
-            MelonLogger.Msg($"start set repair groups {items.Count}");
+            MelonLogger.Msg($"begin set repair groups {items.Count}");
             foreach (var item in items)
             {
-                if (!Helpers.IsBrandExist(item.Brand))
-                {
-                    item.RepairGroup = 6;
-                }
+                //if (!Helpers.IsBrandExist(item.Brand))
+                //{
+                item.RepairGroup = 6;
+                //}
             }
 
             MelonLogger.Msg($"finished repair groups");
