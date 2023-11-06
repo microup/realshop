@@ -23,7 +23,7 @@ namespace RealShop
 
         public static bool IsBrandExist(string brand)
         {
-            foreach (string name in Config.Brands)
+            foreach (string name in Config.ListActiveBrands)
             {
                 if (brand.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
