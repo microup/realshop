@@ -58,8 +58,6 @@ namespace RealShop
                 GlobalPref();
             }
 
-            //LockedShopMenu();
-
             RemoveBlocks();
 
             GameObject engineRoom = GameObject.Find("EngineRoom");
@@ -222,7 +220,7 @@ namespace RealShop
                     if (partText != null)
                     {
                         var itemText = partText.GetComponent<Text>();
-/*                        MelonLogger.Msg($"ITEM TEXT {itemText.text}");*/
+                        /* MelonLogger.Msg($"ITEM TEXT {itemText.text}");*/
                         if (Helpers.CheckForSubstrings(itemText.text, Config.OldEngine))
                         {
                             GameObject ShowroomCarObj = part.gameObject;
@@ -245,51 +243,6 @@ namespace RealShop
                         }
                     }
                 }
-            }
-        }
-
-        private void LockedShopMenu()
-        {
-            GameObject shopAvatarCarBody2 = GameObject.Find("ShopAvatar (2)");
-            if (shopAvatarCarBody2 != null)
-            {
-                var sacb = shopAvatarCarBody2.transform.Find("Locked");
-                if (sacb != null)
-                {
-                    var gameobj = sacb.gameObject;
-                    gameobj?.SetActive(true);
-/*                    var collider = sacb.GetComponent<Collider>();
-                    collider.enabled = false;*/
-                }
-                //shopAvatarCarBody2.active = false;
-            }
-
-            GameObject shopAvatarCarBody6 = GameObject.Find("ShopAvatar (6)");
-            if (shopAvatarCarBody6 != null)
-            {
-                var sacb = shopAvatarCarBody6.transform.Find("Locked");
-                if (sacb != null)
-                {
-                    var gameobj = sacb.gameObject;
-                    gameobj?.SetActive(true);
-/*                    var collider = sacb.GetComponent<Collider>();
-                    collider.enabled = false;*/
-                }
-                //shopAvatarCarBody6.active = false;
-            }
-
-            GameObject shopAvatarCarBody10 = GameObject.Find("ShopAvatar (10)");
-            if (shopAvatarCarBody10 != null)
-            {
-                var sacb = shopAvatarCarBody10.transform.Find("Locked");
-                if (sacb != null)
-                {
-                    var gameobj = sacb.gameObject;
-                    gameobj?.SetActive(true);
-/*                    var collider = sacb.GetComponent<Collider>();
-                    collider.enabled = false;*/
-                }
-                //shopAvatarCarBody10.active = false;
             }
         }
 
