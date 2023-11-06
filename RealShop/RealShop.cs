@@ -74,6 +74,24 @@ namespace RealShop
 
             }
 
+            GameObject mapDestShop = GameObject.Find("MapDestinationButton (6)");
+            if (mapDestShop != null && !_config.IsEnableShop)
+            {
+                mapDestShop?.SetActive(false);
+            }
+
+            GameObject auctionsButton = GameObject.Find("AuctionsButton");
+            if (auctionsButton != null && !_config.IsEnableAdditionalAuction)
+            {
+                auctionsButton?.SetActive(false);
+            }
+
+            GameObject shopParts = GameObject.Find("ShopAvatar (2)");
+            if (shopParts != null && !_config.IsEnableShopCarParts)
+            {
+                shopParts?.SetActive(false);
+            }
+
             GameObject shopCarWindow = GameObject.Find("ShopCarWindow");
             if (shopCarWindow != null)
             {

@@ -44,6 +44,9 @@ namespace RealShop
         private readonly MelonPreferences_Entry<KeyCode> _printStackBindKey;
         private readonly MelonPreferences_Entry<uint> _removeCarsOlderThanYear;
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
+        private readonly MelonPreferences_Entry<bool> _isEnableShop;
+        private readonly MelonPreferences_Entry<bool> _isEnableAdditionalAuction;
+        private readonly MelonPreferences_Entry<bool> _isEnableShopCarParts;
         private readonly MelonPreferences_Entry<string[]> _carNames;
         private readonly MelonPreferences_Entry<string[]> _activeBrands;
         private readonly MelonPreferences_Entry<string[]> _whiteCarParts;
@@ -57,11 +60,18 @@ namespace RealShop
         public string[] WhiteCarParts => _whiteCarParts.Value;
         public bool IsEnableBrandFilter => _isEnableBrandFilter.Value;
 
+        public bool IsEnableShop => _isEnableShop.Value;
+        public bool IsEnableAdditionalAuction => _isEnableAdditionalAuction.Value;
+        public bool IsEnableShopCarParts => _isEnableShopCarParts.Value;
+
         public Config()
         {
             _config = MelonPreferences.CreateCategory(ConfigCategoryName);
             _config.SetFilePath("Mods/RealShop.cfg");
             _isKeyBindEnableSwitchMode = _config.CreateEntry(nameof(IsKeyBindEnableSwitchMode), KeyCode.F9);
+            _isEnableShop = _config.CreateEntry(nameof(IsEnableShop), false);
+            _isEnableAdditionalAuction = _config.CreateEntry(nameof(IsEnableAdditionalAuction), false);
+            _isEnableShopCarParts = _config.CreateEntry(nameof(IsEnableShopCarParts), false);
 
             _carSection = MelonPreferences.CreateCategory(ConfigCarSection);
             _carSection.SetFilePath("Mods/RealShop.cfg");
