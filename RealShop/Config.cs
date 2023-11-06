@@ -14,20 +14,23 @@ namespace RealShop
 
         public static string[] Brands = { "trando", "voiz", "fierte", "shushutri", "bardogh" };
 
+        public static string[] OldEngine = { "(I3)", "(I6 B)", "(V8)", "(V8 OHV)" };
+
         public static string[] TargetRepairParts = { "mirror", "window", "seat", "taillight", "pasek", "lancuch",
             "srodkowy", "katalizator", "koncowy", "rura", "slizg", "filtr", "inverter", "wheel", "turbo", "kable", "challenger",
             "washer", "reservoir", "srodkowy", "bak", "rolka", "walka", "pasek", "poczatkowy", "charging", "cewka", "tlumik", "wzdluzny"};
 
         public static string[] CarNames = { 
-            "Aston Martin DBS", "AstonMartinDBX", "AstonMartinVantage", "Atom330", "AtomRenton", "autotuttolavetino",
-            "BoltMosquitoMK5", "BoltMosquitoMK6", "BoltReptiliaR6", "BoltThornGrandMojave", "CastorAvalanche",
-            "DodgeChallengerSrtHellcatWideboy", "DodgeChallengerSrtHellcat", "DodgeViperGts", "EchosCobra", 
-            "EchosImperator", "ElentiIza", "EmdenLotz", "FMWROADSTER",
-            "FordMustang", "GriffinTypo", "HammerdalStraleS", "HinataMoonMk2", "JaguarF-Type",
-            "LacroixFret", "LandRoverDefender90", "LandRoverDiscovery", "LandRoverRangeRoverEVOQUE", "LandRoverRangeRoverSportSvr", "MayenM3", "MayenT8",
-            "mercedes-benzslsamg", "mioveniurs", "nissan370znismo", "nissangt-r(r35)", "olsengrandclub", "OlsenGtr", "PaganiHuayraTempesta",
-            "paganihuayra", "paganizondarevolucion", "porche911carrera4s991", "rinobianco", "royaletown", "royalecrown", "PaganiHuayraTempesta",
-            "SakuraYaro", "SalemEarthquakeRex", "SalemEarthquake", "SalemGw500", "SalemSpectre"
+            "Aston Martin DBS", "Aston Martin DBX", "Aston Martin Vantage", "Atom 330", "Atom Renton", "Autotutto Lavetino",
+            "Bolt Mosquito MK5", "Bolt Mosquito MK6", "Bolt Reptilia R6", "Bolthorn Grand Mojave", "Castor Avalanche",
+            "Dodge Challenger SRT Hellcat Widebody", "Dodge Challenger SRT Hellcat", "Dodge Viper GTS", "Echos Cobra", 
+            "Echos Imperator", "Elenti Izi", "Emden Lotz", "FMW Roadster", "Ford F350 Super Duty", "Ford Mustang",
+            "Griffin Tyro", "Hammerdal Strale S", "Hinata Moon MK2", "Jaguar F-Type", "Lacroix Fret",
+            "Land Rover Defender 90", "Land Rover Discovery", "Land Rover Range Rover Evoque", "Land Rover Range Rover Sport SVR",
+            "Mayen M3", "Mayen T8", "Mercedes-Benz SLS AMG", "Mioveni Urs", "Nissan 370z Nismo", "Nissan GT-R (R35)",
+            "Olsen Grand Club", "Olsen GTR", "Pagani Huayra Tempesta", "Pagani Huayra", "Pagani Zonda Revolucion",
+            "Porsche 911 Carrera 4S (991)", "Rino Bianco", "Rino Piccolo", "Royale Town", "Royale Crown", "Pagani Huayra Tempesta",
+            "Sakura Yaro", "Salem Earthquake Rex", "Salem Earthquake", "Salem GW500", "Salem Spectre"
         };
 
         public static int[] RepairCost = {150, 250, 400};
@@ -50,6 +53,7 @@ namespace RealShop
         private readonly MelonPreferences_Entry<string[]> _carNames;
         private readonly MelonPreferences_Entry<string[]> _brandsEntry;
         private readonly MelonPreferences_Entry<string[]> _repairParts;
+        private readonly MelonPreferences_Entry<string[]> _oldEngine;
         private readonly MelonPreferences_Entry<int[]> _repairCost;
 
         public KeyCode IsKeyBindEnableSwitchMode => _isKeyBindEnableSwitchMode.Value;
@@ -61,6 +65,7 @@ namespace RealShop
         public string[] RepairParts => _repairParts.Value;
         public string[] ListCarNames => _carNames.Value;
         public int[] ListRepairCost => _repairCost.Value;
+        public string[] ListOldEngine => _oldEngine.Value;
         public bool IsEnableBrandFilter => _isEnableBrandFilter.Value;
 
         public Config()
@@ -75,6 +80,7 @@ namespace RealShop
             _removeCarsOlderThanYear = _carSection.CreateEntry(nameof(RemoveCarsOlderThanYear), RemoveCarsOlderYear);
             _isEnableBrandFilter = _carSection.CreateEntry(nameof(IsEnableBrandFilter), true);
             _brandsEntry = _carSection.CreateEntry(nameof(PartBrands), Brands);
+            _oldEngine = _carSection.CreateEntry(nameof(ListOldEngine), OldEngine);
 
             _repair = MelonPreferences.CreateCategory(ConfigRepairSection);
             _repair.SetFilePath("Mods/RealShop.cfg");
