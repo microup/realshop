@@ -1,29 +1,28 @@
 # RealShop
 
-This mod is created to prevent the possibility of buying body parts for cars older than 2005 in the store. To obtain the necessary parts for the car you are working on, you will have to search for all the body elements in a junkyard, barns, or auctions. This mod makes the game a little more challenging and interesting. Also I hope that it will slightly change the gaming experience, making it a bit more challenging and engaging. I hope you will like it.
+This mod enhances the gameplay experience by introducing restrictions on purchasing body parts for cars older than 2005 from the store. Instead, players are encouraged to search for the required parts in junkyards, barns, or auctions. This adds a new level of challenge and interest to the game, making it more engaging.
 
-## Features include:
+**IMPORTANT AND RECOMMENDED!** It is recommended to use this mod only after unlocking the entire branch for repairing parts and purchasing the necessary machines for repairing body and other parts.
 
-**IMPORTANT AND RECOMMENDED! This mod should be used only when you have unlocked the entire branch for repairing parts and have purchased the necessary machines for repairing body and other parts.
+##Key Features:
 
-Features include:
+1. Junkyards, barns, and auctions now play a significant role in the game.
+2. All body and interior parts can be repaired.
+3. Configuration file allows for customization, including:
+		- Changing the year for cars that will not appear in the shop (add name to config section).
+		- Customizing the key binding to enable or disable the mod.
+		- Adding or removing specific brands from the list that won't appear in the shop.
+		- Maintaining a list of old engines and parts that are no longer sold in the store, such as "(I3)", "(I6 B)", "(V8)", "(V8 OHV)".
+		- Whitelist addition: If a desired item is not available or not displayed in the store, it can be added to the configuration file whitelist for visibility.
 
-- You will need to search for the necessary parts for old cars and restore them; it is no longer possible to buy new parts for retro or old cars.
-- Now junkyards, barns, and auctions take on a different meaning.
-- Now all body and interior parts can be repaired.
-- Now you can repair generic parts from all non-default manufacturers.
-- Added a configuration file where you can:
-           - Change the year for cars that will not appear in the shop.
-           - Change the binding key to enable or disable the mod.
-           - Add or remove specific brands from the list that won't appear in the shop.
-           - A list has been added for old engines and parts that are no longer sold in the store: "(I3)", "(I6 B)", "(V8)", "(V8 OHV)".
+Now the following items are available for expansion: "I4 DT224", "I4 204PT", "V8 392 Hemi", "V10 OHV MT8", "V10 OHV", "V12 AM11", "B6 MA", "B6 M64", "eDen-1H", "Proton e-R", and more.
 
+It's important to note that many parts in the shop will be unavailable, making regular visits to junkyards necessary. Non-default items can't be found in the shop, but can be discovered in barns, auctions, or junkyards and then repaired. Make sure to replace the old configuration file with the new one.
 
-Important! Many parts in the shop will be unavailable. Now, junkyard visits have become a necessity. Non-default items won't be found in the shop, but you can find them in the barn, at auctions, or in the junkyard, and then repair them.
-
-Realism is getting closer, enjoy! :-)
+With this mod, realism is brought closer to the game. Enjoy the enhanced experience!
 
 ## How install:
+
 1. Download realshop.dll
 2. Download and install [MelonLoader](https://melonwiki.xyz/#/?id=requirements) ----> **!!!!   Only 0.5.7 VERSION**
 3. Always delete old files to this mod "Car Mechanic Simulator 2021\Mods"

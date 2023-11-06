@@ -37,16 +37,11 @@ namespace RealShop
                 if (_modIsEnable)
                 {
                     _modIsEnable = false;
-                    UIManager.Get().ShowPopup("[RealShop]","has been stoped.", PopupType.GameMode);
                 } else {
                     _modIsEnable = true;
-                    UIManager.Get().ShowPopup("[RealShop]", "has been enabled.", PopupType.GameMode);
                 }
-            }
-
-            if (Input.GetKeyDown(_config.IsKeyBindRepair))
-            {
-                RepairItems(Config.TargetRepairParts, Config.RepairCost);
+                UIManager.Get().ShowPopup("[RealShop]", $"the mod has been {_modIsEnable}.", PopupType.Normal);
+                MelonLogger.Msg($"the mod has been {_modIsEnable}");
             }
 
             if (!_modIsEnable) {
@@ -103,74 +98,6 @@ namespace RealShop
             }
         }
 
-        private void RepairItems(string[] repairParts, int[] repairCost)
-        {
-            Inventory inventory = Singleton<Inventory>.Instance;
-            var cItems = inventory.GetItems();
-            foreach (var baseItem in cItems)
-            {
-                if (baseItem.Condition == 1.0f)
-                {
-                    continue;
-                }
-
-                if (Helpers.CheckForSubstrings(baseItem.ID, repairParts))
-                {
-                    var money = GlobalData.PlayerMoney;
-                    var currentCond = baseItem.Condition;
-
-                    if (currentCond < 0.15f && money < repairCost[2])
-                    {
-                        UIManager.Get().ShowPopup(Config.ModName, "insufficient funds", PopupType.Normal);
-
-                        return;
-                    }
-
-                    if (currentCond < 0.4f && money < repairCost[1])
-                    {
-                        UIManager.Get().ShowPopup(Config.ModName, "insufficient funds", PopupType.Normal);
-
-                        return;
-                    }
-
-                    if (currentCond < 0.7f && money < repairCost[0])
-                    {
-                        UIManager.Get().ShowPopup(Config.ModName, "insufficient funds", PopupType.Normal);
-
-                        return;
-                    }
-
-                    float finallyPrice = 0;
-
-                    switch (currentCond)
-                    {
-                        case var cond when cond < 0.15f:
-                            finallyPrice = repairCost[2] + (currentCond * repairCost[2]);
-                            GlobalData.AddPlayerMoney(-(int)finallyPrice);
-                            break;
-
-                        case var cond when cond < 0.4f:
-                            finallyPrice = repairCost[1] + (currentCond * repairCost[1]);
-                            GlobalData.AddPlayerMoney(-(int)finallyPrice);
-                            break;
-
-                        case var cond when cond < 0.7f:
-                            finallyPrice = repairCost[0] + (currentCond * repairCost[0]);
-                            GlobalData.AddPlayerMoney(-(int)finallyPrice);
-                            break;
-                    }
-
-                    baseItem.Condition = 1.0f;
-                    baseItem.Dent = 1.0f;
-
-                    UIManager.Get().ShowPopup(Config.ModName, $"item was repair! cost: {finallyPrice}", PopupType.Normal);
-                } else
-                {
-                    MelonLogger.Msg($"{Helpers.ToPrettyString(baseItem)}");
-                }
-            }
-        }
-
         private void CheckAndDisableOldCarFromShop(GameObject shopCarWindow)
         {
 
@@ -193,11 +120,7 @@ namespace RealShop
                     {
                         GameObject ShowroomCarObj = ShowroomCarItem21Shop.gameObject;
                         ShowroomCarObj.SetActive(false);
-
-                        if (_config.IsKeyBindShowDebugInfo)
-                        {
-                            MelonLogger.Msg($"car year {carYear}");
-                        }
+                        //MelonLogger.Msg($"car year {carYear}");
                     }
                 }
             }
@@ -221,6 +144,12 @@ namespace RealShop
                     {
                         var itemText = partText.GetComponent<Text>();
                         /* MelonLogger.Msg($"ITEM TEXT {itemText.text}");*/
+
+                        if (Helpers.CheckForSubstrings(itemText.text, Config.ListWhiteCarParts))
+                        {
+                            continue;
+                        }
+
                         if (Helpers.CheckForSubstrings(itemText.text, Config.OldEngine))
                         {
                             GameObject ShowroomCarObj = part.gameObject;
