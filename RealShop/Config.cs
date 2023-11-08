@@ -1,9 +1,4 @@
 using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace RealShop
@@ -12,11 +7,18 @@ namespace RealShop
     {
         public const string ModName = "RealShop";
 
-        public static string[] ListActiveBrands = { "trando", "voiz", "fierte", "shushutri", "bardogh" };
+        public static string[] ListActiveBrands = { "trando", "voiz", "fierte", "shushutri", "bardogh", "atom" };
 
-        public static string[] ListWhiteCarParts = { "I4 DT224", "I4 204PT", "V8 392 Hemi", "V10 OHV MT8", "V10 OHV", "V12 AM11", "B6 MA", "B6 M64", "eDen-1H", "Proton e-R", };
+        public static string[] ListWhiteCarParts = { 
+            "I4 DT224", "I4 204PT", "V8 392 Hemi", "V10 OHV MT8", "V10 OHV", "V12 AM11", "B6 MA", "B6 M64", "eDen-1H",
+            "Proton e-R", "Proton e-R","I4 DOHC BFM", "I4 SOHC ABT", "V6 DOHC VQ37VHR", "V8 M177 DBX",
+            "DBS", "DBX", "Avalanche", "991", "GTR", "330", "F350", "Hellcat", "Crown", "Discovery", "EarthQuake",
+            "Earthquake Rex", "Evoque", "Grand Club", "GW500", "Imperator", "M3", "Mojave", "Moon", "Mosquito", "Piccolo",
+            "SVR", "Town", "Tyro", "Urs"
+        };
 
-        public static string[] OldEngine = { "(I3)", "(R6)", "(I6 B)", "(V8)", "(V8 OHV)" }; 
+        public static string[] OldEngine = { "(I3)", "(R6)", "(I6 B)", "(V8)", "(V8 OHV)", "(V12)", "(V12 HE)" };
+        // "(V6 DOHC CHG)", "(I4 DOHC K-Series)", "(V6 TWR JWT)
 
         public static string[] CarNames = { 
             "Aston Martin DBS", "Aston Martin DBX", "Aston Martin Vantage", "Atom 330", "Atom Renton", "Autotutto Lavetino",
@@ -27,7 +29,7 @@ namespace RealShop
             "Land Rover Defender 90", "Land Rover Discovery", "Land Rover Range Rover Evoque", "Land Rover Range Rover Sport SVR",
             "Mayen M3", "Mayen T8", "Mercedes-Benz SLS AMG", "Mioveni Urs", "Nissan 370z Nismo", "Nissan GT-R (R35)",
             "Olsen Grand Club", "Olsen GTR", "Pagani Huayra Tempesta", "Pagani Huayra", "Pagani Zonda Revolucion",
-            "Porsche 911 Carrera 4S (991)", "Rino Bianco", "Rino Piccolo", "Royale Town", "Royale Crown", "Pagani Huayra Tempesta",
+            "Porsche 911 Carrera 4S (991)", "Rino Bianco", "Rino Piccolo", "Royale Town", "Royale Crown", 
             "Sakura Yaro", "Salem Earthquake Rex", "Salem Earthquake", "Salem GW500", "Salem Spectre"
         };
 

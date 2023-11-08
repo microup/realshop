@@ -1,14 +1,9 @@
 ﻿using MelonLoader;
-using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
-using OrbCreationExtensions;
-using System.Collections.Generic;
-using System.Linq;
-using CMS.UI.Windows;
-using CMS.UI.Logic;
 using System;
-using CMS.Difficulty;
+using Il2Cpp;
+using Il2CppCMS.UI.Logic;
 
 namespace RealShop
 {
@@ -40,7 +35,8 @@ namespace RealShop
                 } else {
                     _modIsEnable = true;
                 }
-                UIManager.Get().ShowPopup("[RealShop]", $"the mod has been {_modIsEnable}.", PopupType.Normal);
+                UIManager.Get().ShowPopup("[RealShop]", $"the mod has been status: {_modIsEnable}.", PopupType.Normal);
+
                 MelonLogger.Msg($"the mod has been {_modIsEnable}");
             }
 
@@ -84,12 +80,6 @@ namespace RealShop
             if (auctionsButton != null && !_config.IsEnableAdditionalAuction)
             {
                 auctionsButton?.SetActive(false);
-            }
-
-            GameObject shopParts = GameObject.Find("ShopAvatar (2)");
-            if (shopParts != null && !_config.IsEnableShopCarParts)
-            {
-                shopParts?.SetActive(false);
             }
 
             GameObject shopCarWindow = GameObject.Find("ShopCarWindow");
@@ -138,7 +128,6 @@ namespace RealShop
                     {
                         GameObject ShowroomCarObj = ShowroomCarItem21Shop.gameObject;
                         ShowroomCarObj.SetActive(false);
-                        //MelonLogger.Msg($"car year {carYear}");
                     }
                 }
             }
@@ -161,7 +150,8 @@ namespace RealShop
                     if (partText != null)
                     {
                         var itemText = partText.GetComponent<Text>();
-                        /* MelonLogger.Msg($"ITEM TEXT {itemText.text}");*/
+                        //string pt = $"{itemText.text.LocalizeItem()}";
+                        //MelonLogger.Msg($"PART TEXT {pt} || {Helpers.ExtractEnglishWords(pt)}");
 
                         if (Helpers.CheckForSubstrings(itemText.text, Config.ListWhiteCarParts))
                         {
@@ -182,8 +172,8 @@ namespace RealShop
                     {
                         var image = partBrand.GetComponent<Image>();
                         string imageName = image.sprite.name;
-
-                        if (!Helpers.IsBrandExist(imageName))
+                        //MelonLogger.Msg($"BRAND NAME {imageName}");
+                        if (!Helpers.CheckForSubstrings(imageName, Config.ListActiveBrands))
                         {
                             GameObject ShowroomCarObj = part.gameObject;
                             ShowroomCarObj.SetActive(false);
@@ -209,21 +199,17 @@ namespace RealShop
         {
             _runOnes = false;
 
+            MelonLogger.Msg($"GlobalData.Cost_TravelJunkyard = {GlobalData.Cost_TravelJunkyard} ");
+            MelonLogger.Msg($"GlobalData.JunkCondition = {GlobalData.JunkCondition} ");
+            MelonLogger.Msg($"GlobalData.GetCommissionForScene(Garage) = {GlobalData.GetCommissionForScene(SceneType.Garage)} ");
+            MelonLogger.Msg($"GlobalData.GetCommissionForScene(Auction) = {GlobalData.GetCommissionForScene(SceneType.Auction)} ");
+
             var itemsMain = Singleton<GameInventory>.Instance.GetItems(ShopType.Main);
             SetAllRepairs(itemsMain);
-
             var itemsBody = Singleton<GameInventory>.Instance.GetItems(ShopType.Body);
-            foreach (var item in itemsBody)
-            {
-                item.RepairGroup = 6;
-            }
-
+            SetAllRepairs(itemsBody);
             var itemsInterior = Singleton<GameInventory>.Instance.GetItems(ShopType.Interior);
-            foreach (var item in itemsInterior)
-            {
-                item.RepairGroup = 6;
-            }
-
+            SetAllRepairs(itemsInterior);
             var itemsTire = Singleton<GameInventory>.Instance.GetItems(ShopType.Tire);
             SetAllRepairs(itemsTire);
             var itemsLicensePlate = Singleton<GameInventory>.Instance.GetItems(ShopType.LicensePlate);
@@ -247,10 +233,7 @@ namespace RealShop
             MelonLogger.Msg($"begin set repair groups {items.Count}");
             foreach (var item in items)
             {
-                //if (!Helpers.IsBrandExist(item.Brand))
-                //{
                 item.RepairGroup = 6;
-                //}
             }
 
             MelonLogger.Msg($"finished repair groups");
@@ -262,8 +245,6 @@ namespace RealShop
             if (sceneName == "garage" && buildIndex == 10)
             {
                 _runOnes = true;
-
-                MelonLogger.Msg($"GlobalData.Cost_TravelJunkyard = {GlobalData.Cost_TravelJunkyard} ");
             }
         }
 
