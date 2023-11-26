@@ -1,4 +1,4 @@
-using MelonLoader;
+﻿using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -205,7 +205,7 @@ namespace RealShop
 
         private void GlobalPref()
         {
-             var itemsMain = Singleton<GameInventory>.Instance.GetItems(ShopType.Main);
+            var itemsMain = Singleton<GameInventory>.Instance.GetItems(ShopType.Main);
             SetAllRepairs(itemsMain);
             var itemsBody = Singleton<GameInventory>.Instance.GetItems(ShopType.Body);
             SetAllRepairs(itemsBody);
@@ -232,7 +232,8 @@ namespace RealShop
         private void SetAllRepairs(Il2CppSystem.Collections.Generic.List<PartProperty> items)
         {
 
-            //MelonLogger.Msg($"TMP, ID, IsBody, Brand, CarID, LocalizedName, PartGroup, Price, RepairGroup, ShopGroup, ShopName, BrakesValue");
+            // MelonLogger.Msg($"TMP, ID, IsBody, Brand, CarID, LocalizedName, PartGroup, Price, RepairGroup, ShopGroup, ShopName, BrakesValue");
+
             foreach (var item in items)
             {
                 /* MelonLogger.Msg($",{item.ID}, {item.IsBody}, {item.Brand}, {item.CarID}, " +
@@ -247,11 +248,11 @@ namespace RealShop
 
                 item.RepairGroup = 6;
 
-                if (item.ShopName == "BodyShop" || item.ShopName == "RimsShop" || item.ShopName == "InteriorShop" || 
-                    item.ShopName == "TuningShop" || item.ShopName == "BodyTuningShop" || item.ShopName == "MainShop" || 
+                if (item.ShopName == "BodyShop" || item.ShopName == "RimsShop" || item.ShopName == "InteriorShop" ||
+                    item.ShopName == "TuningShop" || item.ShopName == "BodyTuningShop" || item.ShopName == "MainShop" ||
                     item.ShopName == "GearboxShop" || item.ShopName == "TireShop")
                 {
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1950_1959) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1950_1959)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1950_1959))
                     {
                         item.Price = item.Price * 30;
@@ -262,7 +263,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1960_1969) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1960_1969)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1960_1969))
                     {
                         item.Price = item.Price * 24;
@@ -274,7 +275,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1970_1979) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1970_1979)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1970_1979))
                     {
                         item.Price = item.Price * 20;
@@ -285,7 +286,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1980_1990) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1980_1990)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1980_1990))
                     {
                         item.Price = item.Price * 17;
@@ -296,7 +297,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1991_2000) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1991_2000)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1991_2000))
                     {
                         item.Price = item.Price * 14;
@@ -307,7 +308,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts2001_2005) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts2001_2005)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts2001_2005))
                     {
                         item.Price = item.Price * 10;
@@ -318,7 +319,7 @@ namespace RealShop
                         continue;
                     }
 
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.SportGT) 
+                    if (Helpers.CheckForSubstrings(item.CarID, Config.SportGT)
                         || Helpers.CheckForSubstrings(item.ID, Config.SportGT))
                     {
                         item.Price = item.Price * 22;
@@ -366,6 +367,32 @@ namespace RealShop
 
             if (buildIndex == 10 && !_isRunOnce)
             {
+
+/*                var profileIndex = Singleton<GameManager>.Instance.ProfileManager.GetSelectedProfile();
+                var playerLevel = Singleton<GameManager>.Instance.ProfileManager.GetProfileLevel(profileIndex);
+                var profileName = Singleton<GameManager>.Instance.ProfileManager.GetProfileName(profileIndex);
+
+                MelonLogger.Msg($"player level: {playerLevel} level {GlobalData.PlayerLevel} name: {profileName}");
+                if (playerLevel < 11)
+                {
+                    var difficulty = Singleton<GameManager>.Instance.ProfileManager.GetSelectedProfileDifficulty();
+
+                    if (difficulty == DifficultyLevel.Normal)
+                    {
+                        GlobalData.AddPlayerExp(7250);
+                    }
+
+                    if (difficulty == DifficultyLevel.Expert)
+                    {
+                        GlobalData.AddPlayerExp(3600);
+                    }
+
+                    GlobalData.AddPlayerMoney(5000);
+
+                    Singleton<GameManager>.Instance.GameDataManager.Save(profileIndex);
+                    //Singleton<GameManager>.Instance.GameDataManager.
+                }*/
+
                 GlobalPref();
 
                 _isRunOnce = true;
