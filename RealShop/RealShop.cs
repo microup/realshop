@@ -1,17 +1,9 @@
-﻿using CMS.UI.Logic;
+using CMS.UI.Logic;
 using Harmony;
 using MelonLoader;
 using System;
-using UnhollowerBaseLib;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using CMS.UI.Logic;
-using Harmony;
-using UnhollowerRuntimeLib;
-using HarmonyLib;
-using Il2CppSystem.Reflection;
-using CMS.Difficulty;
 
 namespace RealShop
 {
