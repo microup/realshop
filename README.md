@@ -17,6 +17,7 @@ This mod was created with the aim of adding more realism to the game. In real li
 - Whitelist addition: If a desired item is not available or not displayed in the store, it can be added to the configuration file whitelist for visibility.
 ﻿﻿- You can enable or disable visiting the store. You can also enable or disable the auction where higher-quality cars were sold
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
+- Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
 
 ## Last update v 0.3.
 
