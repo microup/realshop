@@ -1,4 +1,8 @@
-﻿using MelonLoader;
+﻿using CMS.UI.Logic;
+using Harmony;
+using MelonLoader;
+using System;
+using UnhollowerBaseLib;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -7,12 +11,12 @@ using Harmony;
 using UnhollowerRuntimeLib;
 using HarmonyLib;
 using Il2CppSystem.Reflection;
+using CMS.Difficulty;
 
 namespace RealShop
 {
     public class RealParts : MelonMod
     {
-
         private Config _config;
         private bool _modIsEnable = true;
         private bool _isRunOnce = false;
@@ -105,10 +109,9 @@ namespace RealShop
                 if (mainLabel != null)
                 {
                     var labelText = mainLabel.GetComponent<Text>();
-                    // MelonLogger.Msg($"ITEM TEXT {labelText.text}");
                     if (!Helpers.CheckForSubstrings(labelText.text, Config.CarNames))
                     {
-                        CheckAndDisableItemsFromShop(shopMenu);
+                        CheckAndDisableICarsFromShop(shopMenu);
                     }
                 }
             }
@@ -116,12 +119,6 @@ namespace RealShop
 
         private void CheckAndDisableOldCarFromShop(GameObject shopCarWindow)
         {
-
-            var mainLableText = shopCarWindow.transform.Find("MainLabel").GetComponent<Text>();
-            if (mainLableText != null)
-            {
-                //MelonLogger.Msg($"main label {mainLableText.text} name {mainLableText.name} tostr {mainLableText.ToString()}");
-            }
 
             var itemsCars = shopCarWindow.transform.Find("Items");
             if (itemsCars != null)
@@ -141,7 +138,7 @@ namespace RealShop
             }
         }
 
-        private void CheckAndDisableItemsFromShop(GameObject shopMenu)
+        private void CheckAndDisableICarsFromShop(GameObject shopMenu)
         {
             var items = shopMenu.transform.Find("Items");
             if (items != null)
@@ -158,8 +155,6 @@ namespace RealShop
                     if (partText != null)
                     {
                         var itemText = partText.GetComponent<Text>();
-                        //string pt = $"{itemText.text.LocalizeItem()}";
-                        //MelonLogger.Msg($"PART TEXT {pt} || {Helpers.ExtractEnglishWords(pt)}");
 
                         if (Helpers.CheckForSubstrings(itemText.text, Config.ListWhiteCarParts))
                         {
@@ -174,19 +169,6 @@ namespace RealShop
                             continue;
                         }
                     }
-
-/*                    var partBrand = part.Find("Brand");
-                    if (partBrand != null)
-                    {
-                        var image = partBrand.GetComponent<Image>();
-                        string imageName = image.sprite.name;
-                        //MelonLogger.Msg($"BRAND NAME {imageName}");
-                        if (!Helpers.CheckForSubstrings(imageName, Config.ListActiveBrands))
-                        {
-                            GameObject ShowroomCarObj = part.gameObject;
-                            ShowroomCarObj.SetActive(false);
-                        }
-                    }*/
                 }
             }
         }
@@ -203,49 +185,37 @@ namespace RealShop
             _blocker_Repair_Parts_3?.SetActive(false);
         }
 
-        private void GlobalPref()
+        private void GlobalInits()
         {
             var itemsMain = Singleton<GameInventory>.Instance.GetItems(ShopType.Main);
-            SetAllRepairs(itemsMain);
+            InitAllItems(itemsMain);
             var itemsBody = Singleton<GameInventory>.Instance.GetItems(ShopType.Body);
-            SetAllRepairs(itemsBody);
+            InitAllItems(itemsBody);
             var itemsInterior = Singleton<GameInventory>.Instance.GetItems(ShopType.Interior);
-            SetAllRepairs(itemsInterior);
+            InitAllItems(itemsInterior);
             var itemsTire = Singleton<GameInventory>.Instance.GetItems(ShopType.Tire);
-            SetAllRepairs(itemsTire);
+            InitAllItems(itemsTire);
             var itemsLicensePlate = Singleton<GameInventory>.Instance.GetItems(ShopType.LicensePlate);
-            SetAllRepairs(itemsLicensePlate);
+            InitAllItems(itemsLicensePlate);
             var itemsTuning = Singleton<GameInventory>.Instance.GetItems(ShopType.Tuning);
-            SetAllRepairs(itemsTuning);
+            InitAllItems(itemsTuning);
             var itemsBodyTuning = Singleton<GameInventory>.Instance.GetItems(ShopType.BodyTuning);
-            SetAllRepairs(itemsBodyTuning);
+            InitAllItems(itemsBodyTuning);
             var itemsRims = Singleton<GameInventory>.Instance.GetItems(ShopType.Rims);
-            SetAllRepairs(itemsRims);
+            InitAllItems(itemsRims);
             var itemsGearbox = Singleton<GameInventory>.Instance.GetItems(ShopType.Gearbox);
-            SetAllRepairs(itemsGearbox);
+            InitAllItems(itemsGearbox);
             var itemsElectronics = Singleton<GameInventory>.Instance.GetItems(ShopType.Electronics);
-            SetAllRepairs(itemsElectronics);
+            InitAllItems(itemsElectronics);
             var itemsAddons = Singleton<GameInventory>.Instance.GetItems(ShopType.Addons);
-            SetAllRepairs(itemsAddons);
+            InitAllItems(itemsAddons);
         }
 
-        private void SetAllRepairs(Il2CppSystem.Collections.Generic.List<PartProperty> items)
+        private void InitAllItems(Il2CppSystem.Collections.Generic.List<PartProperty> items)
         {
-
-            // MelonLogger.Msg($"TMP, ID, IsBody, Brand, CarID, LocalizedName, PartGroup, Price, RepairGroup, ShopGroup, ShopName, BrakesValue");
 
             foreach (var item in items)
             {
-                /* MelonLogger.Msg($",{item.ID}, {item.IsBody}, {item.Brand}, {item.CarID}, " +
-                    $"{item.LocalizedName}, {item.PartGroup}, " +
-                    $"{item.Price}, {item.RepairGroup}, {item.ShopGroup}, " +
-                    $"{item.ShopName}, {item.BrakesValue}");*/
-                /*
-                MelonLogger.Msg($"(Item) ID: {item.ID}, IsBody: {item.IsBody}, Brand: {item.Brand}, " +
-                    $"CarID: {item.CarID}, LocalizedName: {item.LocalizedName}, PartGroup: {item.PartGroup}, " +
-                    $"Price: {item.Price}, RepairGroup: {item.RepairGroup}, ShopGroup: {item.ShopGroup}, " +
-                    $"ShopName: {item.ShopName}, BrakesValue: {item.BrakesValue}");*/
-
                 item.RepairGroup = 6;
 
                 if (item.ShopName == "BodyShop" || item.ShopName == "RimsShop" || item.ShopName == "InteriorShop" ||
@@ -255,7 +225,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1950_1959)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1950_1959))
                     {
-                        item.Price = item.Price * 30;
+                        item.Price = item.Price * _config.PriceParts1950_1959;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -266,7 +236,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1960_1969)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1960_1969))
                     {
-                        item.Price = item.Price * 24;
+                        item.Price = item.Price * _config.PriceParts1960_1969;
 
 
                         item.ShopGroup = "Noinshop";
@@ -278,7 +248,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1970_1979)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1970_1979))
                     {
-                        item.Price = item.Price * 20;
+                        item.Price = item.Price * _config.PriceParts1970_1979;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -289,7 +259,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1980_1990)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1980_1990))
                     {
-                        item.Price = item.Price * 17;
+                        item.Price = item.Price * _config.PriceParts1980_1990;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -300,7 +270,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1991_2000)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1991_2000))
                     {
-                        item.Price = item.Price * 14;
+                        item.Price = item.Price * _config.PriceParts1991_2000;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -311,7 +281,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts2001_2005)
                         || Helpers.CheckForSubstrings(item.ID, Config.RetroParts2001_2005))
                     {
-                        item.Price = item.Price * 10;
+                        item.Price = item.Price * _config.PriceParts2001_2005;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -322,7 +292,7 @@ namespace RealShop
                     if (Helpers.CheckForSubstrings(item.CarID, Config.SportGT)
                         || Helpers.CheckForSubstrings(item.ID, Config.SportGT))
                     {
-                        item.Price = item.Price * 22;
+                        item.Price = item.Price * _config.PricePartsSportGT;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -332,7 +302,7 @@ namespace RealShop
 
                     if (Helpers.CheckForSubstrings(item.CarID, Config.SpecialRetro) || Helpers.CheckForSubstrings(item.ID, Config.SpecialRetro))
                     {
-                        item.Price = item.Price * 50;
+                        item.Price = item.Price * _config.PricePartsSpecialRetro;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -347,7 +317,7 @@ namespace RealShop
                     item.ShopGroup = "Noinshop";
                     item.ShopName = "none";
 
-                    item.Price = item.Price * 5;
+                    item.Price = item.Price * _config.PricePartsOther;
                 }
 
             }
@@ -355,45 +325,23 @@ namespace RealShop
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
+            GameSettings.CanShowPopups = true;
+
+            var gameSettingData = GameSettings.GameSettingsData;
+            gameSettingData.Init();
+            gameSettingData.TravelHaveCost = false;
+
+
             if (buildIndex == 1)
             {
-                MelonLogger.Msg($"GlobalData.Cost_TravelJunkyard = {GlobalData.Cost_TravelJunkyard} ");
-                MelonLogger.Msg($"GlobalData.JunkCondition = {GlobalData.JunkCondition} ");
-                MelonLogger.Msg($"GlobalData.GetCommissionForScene(Garage) = {GlobalData.GetCommissionForScene(SceneType.Garage)} ");
-                MelonLogger.Msg($"GlobalData.GetCommissionForScene(Auction) = {GlobalData.GetCommissionForScene(SceneType.Auction)} ");
-                MelonLogger.Msg($"GlobalData.GetCommissionForScene(Barn) = {GlobalData.GetCommissionForScene(SceneType.Barn)} ");
-                MelonLogger.Msg($"GlobalData.GetCommissionForScene(Junkyard) = {GlobalData.GetCommissionForScene(SceneType.Junkyard)} ");
+                var buildVersion = GameSettings.BuildVersion;
+
+                MelonLogger.Msg($"GameSettings.BuildVersion = {buildVersion} ");
             }
 
             if (buildIndex == 10 && !_isRunOnce)
             {
-
-/*                var profileIndex = Singleton<GameManager>.Instance.ProfileManager.GetSelectedProfile();
-                var playerLevel = Singleton<GameManager>.Instance.ProfileManager.GetProfileLevel(profileIndex);
-                var profileName = Singleton<GameManager>.Instance.ProfileManager.GetProfileName(profileIndex);
-
-                MelonLogger.Msg($"player level: {playerLevel} level {GlobalData.PlayerLevel} name: {profileName}");
-                if (playerLevel < 11)
-                {
-                    var difficulty = Singleton<GameManager>.Instance.ProfileManager.GetSelectedProfileDifficulty();
-
-                    if (difficulty == DifficultyLevel.Normal)
-                    {
-                        GlobalData.AddPlayerExp(7250);
-                    }
-
-                    if (difficulty == DifficultyLevel.Expert)
-                    {
-                        GlobalData.AddPlayerExp(3600);
-                    }
-
-                    GlobalData.AddPlayerMoney(5000);
-
-                    Singleton<GameManager>.Instance.GameDataManager.Save(profileIndex);
-                    //Singleton<GameManager>.Instance.GameDataManager.
-                }*/
-
-                GlobalPref();
+                GlobalInits();
 
                 _isRunOnce = true;
             }

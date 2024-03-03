@@ -1,9 +1,8 @@
-using CMS.UI.Logic.Paging;
+// ƒобавить список н ремонтируемых запчастей
+
+
 using MelonLoader;
-using System.Net.NetworkInformation;
 using UnityEngine;
-using VehiclePhysics;
-using static System.Net.WebRequestMethods;
 
 namespace RealShop
 {
@@ -11,7 +10,9 @@ namespace RealShop
     {
         public const string ModName = "RealShop";
 
-        public static string[] ListWhiteCarParts = { 
+        public static string[] ListCarPartsCantBeRepair = { };
+
+        public static string[] ListWhiteCarParts = {
             "I4 DT224", "I4 204PT", "V8 AJ133", "V8 392 Hemi", "V10 OHV MT8", "V10 OHV", "V12 AM11", "B6 MA", "B6 M64", "eDen-1H",
             "Proton e-R", "Proton e-R","I4 DOHC BFM", "I4 SOHC ABT", "V6 DOHC VQ37VHR", "V6 VQ37VHR", "V8 M177 DBX", "V8 J",
             "V6 AJD", "Zonda", "V12 M120", "V12 M158", "CGM", "DBS", "DBX", "Avalanche", "991", "GTR", "330",
@@ -20,7 +21,7 @@ namespace RealShop
             "SVR", "Town", "Tyro", "Urs",
         };
 
-        public static string[] RetroParts = {};
+        public static string[] RetroParts = { };
 
         public static string[] RetroParts1950_1959 = {
             // DELRAY CUSTOM (1957)
@@ -179,7 +180,7 @@ namespace RealShop
             // V8 OHV MAG || V8 OHV F // 
             // https://car-mechanic-simulator-2021.fandom.com/wiki/V8_OHV_MAG
             "v8_zz_blok", "v8_zz_filtr_dol", "v8_zz_filtr_gora", "v8_zz_filtr_srodek", "v8_zz_gaznik", "v8_zz_gearbox", "v8_zz_glowica", "v8_zz_kolektor_dolotowy",
-            "v8_zz_kolektor_wydechowy", "v8_zz_lancuch", "v8_zz_miska_olejowa", "v8_zz_oslona_rozrzadu", "v8_zz_pasek_1", "v8_zz_pokrywa_glowicy_1", 
+            "v8_zz_kolektor_wydechowy", "v8_zz_lancuch", "v8_zz_miska_olejowa", "v8_zz_oslona_rozrzadu", "v8_zz_pasek_1", "v8_zz_pokrywa_glowicy_1",
             "v8_zz_pokrywa_glowicy_2", "v8_zz_pompa_wody", "v8_zz_pompa_wspomagania", "v8_zz_popychacz", "v8_zz_raczka_1", "v8_zz_raczka_2",
             "v8_zz_walek_popychaczy", "v8_zz_walKorbowy", "w_v8_zz_poczatkowy", "t_v8_zz_gaznik", "t_v8_zz_pompa_wspomagania", "t_v8_zz_filtr_srodek",
             "t_v8_zz_glowica", "t_v8_zz_kable", "t_v8_zz_kolektor_wydechowy", "t_w_v8_zz_poczatkowy", "t_v8_zz_kolektor_dolotowy", "t_v8_zz_walek_popychaczy",
@@ -225,7 +226,7 @@ namespace RealShop
 
             // DOODGE CHALLENGER R/T (1970)
             "car_dodgechallenger", "w_koncowy_challenger", "seat_challenger", "seat_challenger_srt_hellcat",
-            "steering_wheel_challenger_srt_hellcat", "bench_challenger", "bench_challenger_srt_hellcat", 
+            "steering_wheel_challenger_srt_hellcat", "bench_challenger", "bench_challenger_srt_hellcat",
             "t_w_koncowy_challenger", "rim_challenger_hellcat_1", "rim_challenger_hellcat_2",
 
             // BOLT REPTILIA (1970)
@@ -249,7 +250,7 @@ namespace RealShop
 
             // CHRYSLER CORDOBA (1978)
             "car_chryslercordoba", "w_v8_360_poczatkowy_chryslercordoba_1", "w_v8_360_poczatkowy_chryslercordoba_2", "w_v8_360_koncowy_chryslercordoba",
-            "seat_chrysler_cordoba", "steering_wheel_chrysler_cordoba", "bench_chrysler_cordoba", "t_w_v8_360_koncowy_chryslercordoba", 
+            "seat_chrysler_cordoba", "steering_wheel_chrysler_cordoba", "bench_chrysler_cordoba", "t_w_v8_360_koncowy_chryslercordoba",
             "t_w_v8_360_poczatkowy_chryslercordoba_1", "t_w_v8_360_poczatkowy_chryslercordoba_2", "rim_cordoba",
 
             // ENGINE to CHRYSLER CORDOBA (1978) --> V8 LA 360
@@ -361,7 +362,7 @@ namespace RealShop
 
             // Mercedes-Benz W126 560SEC and  Engine (V8 M117)
             // https://car-mechanic-simulator-2021.fandom.com/wiki/V8_M117
-            "car_mercedes560sec-bumper_rear", "car_mercedes560sec-bumper_front", "car_mercedes560sec-trunk", "car_mercedes560sec-fender_front_left", 
+            "car_mercedes560sec-bumper_rear", "car_mercedes560sec-bumper_front", "car_mercedes560sec-trunk", "car_mercedes560sec-fender_front_left",
             "car_mercedes560sec-door_front_right", "car_mercedes560sec-taillight_left", "car_mercedes560sec-door_front_left", "car_mercedes560sec-hood",
             "car_mercedes560sec-headlight_right", "car_mercedes560sec-fender_front_right", "car_mercedes560sec-taillight_right", "car_mercedes560sec-headlight_left",
             "car_mercedes560sec-window_front", "car_mercedes560sec-window_back", "car_mercedes560sec-window_body_left_1", "car_mercedes560sec-window_body_right_1",
@@ -430,7 +431,7 @@ namespace RealShop
             "t_r6_m30_kolektor_dolotowy", "t_r6_m30_kolektor_wydechowy_1", "t_r6_m30_kolektor_wydechowy_2", "t_r6_m30_kopulkaRozdzielacza", "t_r6_m30_przepustnica",
             "t_r6_m30_rozdzielaczZaplonu_1", "t_r6_m30_walek_rozrzadu", "t_r6_m30_listwa_wtryskowa", "t_w_r6_m30_poczatkowy_bmw635csi", "t_w_r6_m30_koncowy_bmw635csi",
             "t_w_r6_m30_srodkowy_bmw635csi","t_r6_m30_gearbox", "r6_m30_kable", "r6_m30_kopulkaRozdzielacza", "r6_m30_rozdzielaczZaplonu_1",
-        
+
         };
 
         public static string[] RetroParts1991_2000 = {
@@ -464,7 +465,7 @@ namespace RealShop
 
             // JAGUAR XJS (1991) || ENGINE (V12 HE)
             "v12_xjs_blok", "v12_xjs_gearbox", "v12_xjs_glowica_1", "v12_xjs_glowica_2", "v12_xjs_kolektor_dolotowy_1", "v12_xjs_kolektor_dolotowy_2",
-            "v12_xjs_kolektor_wydechowy_1", "v12_xjs_kolektor_wydechowy_2", "v12_xjs_lancuch", "v12_xjs_listwa_wtryskowa", "v12_xjs_miska_olejowa", 
+            "v12_xjs_kolektor_wydechowy_1", "v12_xjs_kolektor_wydechowy_2", "v12_xjs_lancuch", "v12_xjs_listwa_wtryskowa", "v12_xjs_miska_olejowa",
             "v12_xjs_nakladka_glowica_1", "v12_xjs_nakladka_glowica_2","v12_xjs_oslona_rozrzadu","v12_xjs_pasek_1","v12_xjs_pasek_2",
             "v12_xjs_pokrywa_glowicy_1","v12_xjs_pokyrwa_glowicy_2","v12_xjs_pompa_wody","v12_xjs_walek_rozrzadu","v12_xjs_walKorbowy",
             "v12_xjs_nakladka_glowicy_1","v12_xjs_obudowa_filtra_dol","v12_xjs_obudowa_filtra_gora","v12_xjs_obudowa_filtra_srodek","t_v12_xjs_kopulkaRozdzielacza",
@@ -534,24 +535,24 @@ namespace RealShop
             "steering_wheel_500e", "bench_500e", "rim_mercedes_benz_500e",
             
             // SEAT and etc BELT
-            "seat_atlanta", "seat_cuda", "seat_gullwing", "seat_sec",  "seat_bandit", "seat_typhoon", "seat_reptiliar2", 
-            "seat_rollett", "seat_tbx", "seat_charger", "seat_challenger", "seat_elise", 
-            "seat_mach", "seat_carreragt", "seat_964", "seat_991", 
+            "seat_atlanta", "seat_cuda", "seat_gullwing", "seat_sec",  "seat_bandit", "seat_typhoon", "seat_reptiliar2",
+            "seat_rollett", "seat_tbx", "seat_charger", "seat_challenger", "seat_elise",
+            "seat_mach", "seat_carreragt", "seat_964", "seat_991",
             "seat_500e", "seat_chrysler_cordoba", "seat_300c", "seat_gw500", "seat_highroad",
             "seat_hornet", "seat_mk7", "seat_mosquito", "seat_mosquito2016", "seat_overking", "seat_renton", "seat_supernova", "seat_vallsen", "seat_wildcat",
-            "seat_zephyr", "seat_240z", "seat_etype", "seat_xj220", "seat_xjs", 
+            "seat_zephyr", "seat_240z", "seat_etype", "seat_xj220", "seat_xjs",
             "seat_db5", "seat_1_leather5", "seat_2_leather5", "seat_3_leather5", "seat_3_leather1", "seat_3_leather2", "seat_3_leather3", "seat_3_leather5", "seat_3_leather4",
             "seat_4_leather5", "seat_5_leather5", "seat_6_leather5", "seat_7_leather5", "seat_8_leather5", "seat_9_leather5", "seat_10_leather5", "seat_11_leather5",
             "seat_1_leather6", "seat_2_leather6", "seat_3_leather6", "seat_4_leather6", "seat_5_leather6", "seat_6_leather6", "seat_7_leather6", "seat_8_leather6",
             "seat_9_leather6", "seat_10_leather6", "seat_11_leather6", "seat_gw500_2", "seat_highroad2", "seat_hornet2", "seat_mk7_2", "seat_mosquito2","seat_mosquito2016_2",
             "seat_overking2", "seat_supernova2", "seat_vallsen2", "seat_wildcat2", "seat_zephyr2", "seat_typhoon2", "seat_gw500_3", "seat_highroad3", "seat_hornet3",
             "seat_mk7_3", "seat_mosquito3", "seat_mosquito2016_3", "seat_overking3", "seat_supernova3", "seat_wildcat3", "seat_zephyr3", "seat_typhoon3",
-            "bench_custom", "bench_custom_leather1", "bench_custom_leather2", "bench_magnum", "bench_magnum_leather1", "bench_magnum_leather2", 
+            "bench_custom", "bench_custom_leather1", "bench_custom_leather2", "bench_magnum", "bench_magnum_leather1", "bench_magnum_leather2",
             "bench_moon", "bench_moon_leather1", "bench_moon_leather2", "bench_sec", "bench_katsumoto", "bench_katsumoto_leather1", "bench_katsumoto_leather2",
-            "bench_kieran", "bench_kieran_leather1", "bench_kieran_leather2", "bench_flamo", "bench_flamo_leather1", "bench_flamo_leather2", 
-            "bench_fastback", "bench_fastback_leather1", "bench_fastback_leather2", "bench_cuda", 
+            "bench_kieran", "bench_kieran_leather1", "bench_kieran_leather2", "bench_flamo", "bench_flamo_leather1", "bench_flamo_leather2",
+            "bench_fastback", "bench_fastback_leather1", "bench_fastback_leather2", "bench_cuda",
             "bench_hellcat", "bench_hellcat_leather1", "bench_hellcat_leather2", "bench_bowen1",
-            "bench_bowen2", "bench_cape1", "bench_cape2", "bench_chapman1", "bench_chapman2", "bench_bandit", "bench_rollett", "bench_tbx", 
+            "bench_bowen2", "bench_cape1", "bench_cape2", "bench_chapman1", "bench_chapman2", "bench_bandit", "bench_rollett", "bench_tbx",
             "bench_roadrunner1", "bench_roadrunner2", "bench_charger", "bench_challenger",
             "bench_991", "bench_lx550", "bench_500e", "bench_chrysler_cordoba",
             "bench_300c", "bench_baronne1", "bench_baronne2", "bench_goldtrail1", "bench_goldtrail2", "bench_highroad", "bench_hornet",
@@ -576,7 +577,7 @@ namespace RealShop
             // https://car-mechanic-simulator-2021.fandom.com/wiki/I6_DOHC_BU2
             "r6_2jz_blok", "r6_2jz_kolektor_dolotowy", "r6_2jz_kolektor_wydechowy_1", "r6_2jz_kolektor_wydechowy_2", "r6_2jz_przepustnica",
             "w_r6_2jz_wydech_poczatkowy", "w_r6_2jz_wydech_poczatkowy_h1", "t_r6_2jz_kolektor_wydechowy_1", "t_r6_2jz_kolektor_wydechowy_2", "t_r6_2jz_przepustnica",
-            "t_w_r6_2jz_wydech_poczatkowy_h1", "t_w_r6_2jz_wydech_poczatkowy", "t_r6_2jz_kolektor_dolotowy", 
+            "t_w_r6_2jz_wydech_poczatkowy_h1", "t_w_r6_2jz_wydech_poczatkowy", "t_r6_2jz_kolektor_dolotowy",
         };
 
         public static string[] RetroParts2001_2005 = {
@@ -626,7 +627,7 @@ namespace RealShop
             // Engine V6 DOHC AKZ || (V6 B) 2003 ?  // (V6 DOHC CHG) 2007 ?
             // https://car-mechanic-simulator-2021.fandom.com/wiki/V6_DOHC_AKZ
             // The V6 DOHC AKZ and V6 DOHC CHG are identical using the same parts and generating the same power, the only difference being the transmission used.
-            "v6_30_blok", "v6_30_gearbox_2", "v6_30_gearbox", "v6_30_glowica_1", "v6_30_glowica_2", "v6_30_glowica_raczka", "v6_30_kolektor_dolotowy", 
+            "v6_30_blok", "v6_30_gearbox_2", "v6_30_gearbox", "v6_30_glowica_1", "v6_30_glowica_2", "v6_30_glowica_raczka", "v6_30_kolektor_dolotowy",
             "v6_30_kolektor_dolotowy_dolny", "v6_30_kolektor_wydechowy", "v6_30_listwa_wtryskowa", "v6_30_miska_olejowa", "v6_30_oslona_rozrzadu_1",
             "v6_30_oslona_rozrzadu_2", "v6_30_oslona_rozrzadu_3", "v6_30_pasek_1", "v6_30_pasek_2", "v6_30_pokrywa_glowicy_1", "v6_30_pokrywa_glowicy_2",
             "v6_30_pokrywa_glowicy_3", "v6_30_pompaWspomagania", "v6_30_pompa_wody", "v6_30_przepustnica", "v6_30_raczka_1", "v6_30_rolkaWalka",
@@ -726,7 +727,7 @@ namespace RealShop
             "car_mercedes300slgullwing-window_door_front_right", "car_mercedes300slgullwing-mirror_left",
 
             // Aston martin DB5 (1963)         
-            "car_astonmartindb5", "w_r6_tm_koncowy_1_astonmartindb5", "w_r6_tm_koncowy_2_astonmartindb5", "w_r6_tm_poczatkowy_1_astonmartindb5", 
+            "car_astonmartindb5", "w_r6_tm_koncowy_1_astonmartindb5", "w_r6_tm_koncowy_2_astonmartindb5", "w_r6_tm_poczatkowy_1_astonmartindb5",
             "w_r6_tm_poczatkowy_2_astonmartindb5", "w_r6_tm_srodkowy_1_astonmartindb5", "w_r6_tm_srodkowy_2_astonmartindb5", "seat_db5",
             "steering_wheel_db5", "bench_db5", "t_w_r6_tm_koncowy_1_astonmartindb5", "t_w_r6_tm_koncowy_2_astonmartindb5", "t_w_r6_tm_poczatkowy_1_astonmartindb5",
             "t_w_r6_tm_poczatkowy_2_astonmartindb5", "t_w_r6_tm_srodkowy_1_astonmartindb5", "t_w_r6_tm_srodkowy_2_astonmartindb5", "rim_db5",
@@ -741,7 +742,7 @@ namespace RealShop
             "car_dctyphoon", "seat_typhoon", "seat_typhoon2", "seat_typhoon3", "steering_wheel_typhoon", "rim_typhoon",
 
             // FORD GT40 (1965) || V8 Ford Small Block 289 M
-            "car_fordgt40", "seat_fordgt40", "steering_wheel_fordgt40", "rim_fordgt40", 
+            "car_fordgt40", "seat_fordgt40", "steering_wheel_fordgt40", "rim_fordgt40",
             "w_koncowy_gt40", "car_fordgt40-headlight_left", "car_fordgt40-headlight_right", "car_fordgt40-door_front_left",
             "car_fordgt40-door_front_right",  "car_fordgt40-taillight_right", "car_fordgt40-taillight_left", "car_fordgt40-clamshell_front",
             "car_fordgt40-clamshell_rear", "car_fordgt40-window_front", "car_fordgt40-window_trunk", "car_fordgt40-window_door_front_left",
@@ -765,7 +766,7 @@ namespace RealShop
             "rim_xj220_back",
 
             // LOTUS ESPRIT S1 (1975)  || I4 DOHC Lotus 907
-            "car_lotusesprits1", "w_r4_old_koncowy_esprit", "w_r4_old_poczatkowy_esprit", "seat_esprit", "steering_wheel_esprit", "t_w_r4_old_koncowy_esprit", 
+            "car_lotusesprits1", "w_r4_old_koncowy_esprit", "w_r4_old_poczatkowy_esprit", "seat_esprit", "steering_wheel_esprit", "t_w_r4_old_koncowy_esprit",
             "t_w_r4_old_poczatkowy_esprit", "rim_esprit", "seat_esprit", "car_lotusesprits1-bumper_front", "car_lotusesprits1-bumper_rear", "car_lotusesprits1-door_front_left",
             "car_lotusesprits1-door_front_right", "car_lotusesprits1-clamshell_front", "car_lotusesprits1-engine_cover", "car_lotusesprits1-headlight_left",
             "car_lotusesprits1-headlight_right", "car_lotusesprits1-hood", "car_lotusesprits1-taillight_left", "car_lotusesprits1-taillight_right",
@@ -786,20 +787,30 @@ namespace RealShop
             "steering_wheel10", "steering_wheel11", "steering_wheel12", "steering_wheel13", "steering_wheel14", "steering_wheel15", "steering_wheel16", "steering_wheel17",
         };
 
-        public static string[] CarNames = { 
+        public static string[] CarNames = {
             "Aston Martin DBS", "Aston Martin DBX", "Aston Martin Vantage", "Atom 330", "Atom Renton", "Autotutto Lavetino",
             "Bolt Mosquito MK5", "Bolt Mosquito MK6", "Bolt Reptilia R6", "Bolthorn Grand Mojave", "Castor Avalanche",
-            "Dodge Challenger SRT Hellcat Widebody", "Dodge Challenger SRT Hellcat", "Dodge Viper GTS", "Echos Cobra", 
+            "Dodge Challenger SRT Hellcat Widebody", "Dodge Challenger SRT Hellcat", "Dodge Viper GTS", "Echos Cobra",
             "Echos Imperator", "Elenti Izi", "Emden Lotz", "FMW Roadster", "Ford F350 Super Duty", "Ford Mustang",
             "Griffin Tyro", "Hammerdal Strale S", "Hinata Moon MK2", "Jaguar F-Type", "Lacroix Fret",
             "Land Rover Defender 90", "Land Rover Discovery", "Land Rover Range Rover Evoque", "Land Rover Range Rover Sport SVR",
             "Mayen M3", "Mayen T8", "Mercedes-Benz SLS AMG", "Mioveni Urs", "Nissan 370z Nismo", "Nissan GT-R (R35)",
             "Olsen Grand Club", "Olsen GTR", "Pagani Huayra Tempesta", "Pagani Huayra", "Pagani Zonda Revolucion",
-            "Porsche 911 Carrera 4S (991)", "Rino Bianco", "Rino Piccolo", "Royale Town", "Royale Crown", 
+            "Porsche 911 Carrera 4S (991)", "Rino Bianco", "Rino Piccolo", "Royale Town", "Royale Crown",
             "Sakura Yaro", "Salem Earthquake Rex", "Salem Earthquake", "Salem GW500", "Salem Spectre"
         };
 
         private const uint RemoveCarsOlderYear = 2005;
+
+        public const int ValuePriceParts1950_1959 = 30;
+        public const int ValuePriceParts1960_1969 = 24;
+        public const int ValuePriceParts1970_1979 = 20;
+        public const int ValuePriceParts1980_1990 = 17;
+        public const int ValuePriceParts1991_2000 = 14;
+        public const int ValuePriceParts2001_2005 = 10;
+        public const int ValuePriceSportGT = 22;
+        public const int ValuePriceSpecialRetro = 50;
+        public const int ValuePriceOther = 5;
 
         private const string ConfigCategoryName = "MainSection";
         private const string ConfigCarSection = "CarSection";
@@ -807,18 +818,32 @@ namespace RealShop
         private const string ConfigCategory = "Category";
 
         private readonly MelonPreferences_Category _config;
-        private readonly MelonPreferences_Category _repair;
-        private readonly MelonPreferences_Category _carSection;
-        private readonly MelonPreferences_Category _category;
+        private readonly MelonPreferences_Category _cfgSectionRepair;
+        private readonly MelonPreferences_Category _cfgSectionCars;
+        private readonly MelonPreferences_Category _cfgSectionParts;
         private readonly MelonPreferences_Entry<KeyCode> _isKeyBindEnableSwitchMode;
-        private readonly MelonPreferences_Entry<KeyCode> _printStackBindKey;
+        
         private readonly MelonPreferences_Entry<uint> _removeCarsOlderThanYear;
+
+        public readonly MelonPreferences_Entry<int> _priceParts1950_1959;
+        public readonly MelonPreferences_Entry<int> _priceParts1960_1969;
+        public readonly MelonPreferences_Entry<int> _priceParts1970_1979;
+        public readonly MelonPreferences_Entry<int> _priceParts1980_1990;
+        public readonly MelonPreferences_Entry<int> _priceParts1991_2000;
+        public readonly MelonPreferences_Entry<int> _priceParts2001_2005;
+        public readonly MelonPreferences_Entry<int> _pricePartsGT;
+        public readonly MelonPreferences_Entry<int> _pricePartsSpecialRetro;
+        public readonly MelonPreferences_Entry<int> _pricePartsOther;
+
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
         private readonly MelonPreferences_Entry<bool> _isEnableShop;
         private readonly MelonPreferences_Entry<bool> _isEnableAdditionalAuction;
         private readonly MelonPreferences_Entry<bool> _isEnableShopCarParts;
+
         private readonly MelonPreferences_Entry<string[]> _carNames;
         private readonly MelonPreferences_Entry<string[]> _whiteCarParts;
+
+        private readonly MelonPreferences_Entry<string[]> _carPartsCantBeRepair;
 
         private readonly MelonPreferences_Entry<string[]> _retroParts;
 
@@ -833,6 +858,19 @@ namespace RealShop
 
         public KeyCode IsKeyBindEnableSwitchMode => _isKeyBindEnableSwitchMode.Value;
         public uint RemoveCarsOlderThanYear => _removeCarsOlderThanYear.Value;
+
+
+        public int PriceParts1950_1959 => _priceParts1950_1959.Value;
+        public int PriceParts1960_1969 => _priceParts1960_1969.Value;
+        public int PriceParts1970_1979 => _priceParts1970_1979.Value;
+        public int PriceParts1980_1990 => _priceParts1980_1990.Value;
+        public int PriceParts1991_2000 => _priceParts1991_2000.Value;
+        public int PriceParts2001_2005 => _priceParts2001_2005.Value;
+        public int PricePartsSportGT => _pricePartsGT.Value;
+        public int PricePartsSpecialRetro => _pricePartsSpecialRetro.Value;
+        public int PricePartsOther => _pricePartsOther.Value;
+
+
         public string[] ListCarNames => _carNames.Value;
         public string[] ListRetroParts => _retroParts.Value;
         public string[] WhiteCarParts => _whiteCarParts.Value;
@@ -841,6 +879,8 @@ namespace RealShop
         public bool IsEnableShop => _isEnableShop.Value;
         public bool IsEnableAdditionalAuction => _isEnableAdditionalAuction.Value;
         public bool IsEnableShopCarParts => _isEnableShopCarParts.Value;
+
+        public string[] LstCarPartsCantBeRepair => _carPartsCantBeRepair.Value;
 
         public string[] ListRetroParts1950_1959 => _retroParts1950_1959.Value;
         public string[] ListRetroParts1960_1969 => _retroParts1960_1969.Value;
@@ -860,29 +900,41 @@ namespace RealShop
             _isEnableAdditionalAuction = _config.CreateEntry(nameof(IsEnableAdditionalAuction), false);
             _isEnableShopCarParts = _config.CreateEntry(nameof(IsEnableShopCarParts), false);
 
-            _carSection = MelonPreferences.CreateCategory(ConfigCarSection);
-            _carSection.SetFilePath("Mods/RealShop.cfg");
-            _removeCarsOlderThanYear = _carSection.CreateEntry(nameof(RemoveCarsOlderThanYear), RemoveCarsOlderYear);
-            _whiteCarParts = _carSection.CreateEntry(nameof(WhiteCarParts), ListWhiteCarParts);
-            _isEnableBrandFilter = _carSection.CreateEntry(nameof(IsEnableBrandFilter), true);
-            _retroParts = _carSection.CreateEntry(nameof(ListRetroParts), RetroParts);
+            _cfgSectionCars = MelonPreferences.CreateCategory(ConfigCarSection);
+            _cfgSectionCars.SetFilePath("Mods/RealShop.cfg");
+            
+            _removeCarsOlderThanYear = _cfgSectionCars.CreateEntry(nameof(RemoveCarsOlderThanYear), RemoveCarsOlderYear);
 
-            _repair = MelonPreferences.CreateCategory(ConfigRepairSection);
-            _repair.SetFilePath("Mods/RealShop.cfg");
-            _carNames = _repair.CreateEntry(nameof(ListCarNames), CarNames);
+            _priceParts1950_1959 = _cfgSectionCars.CreateEntry(nameof(PriceParts1950_1959), ValuePriceParts1950_1959);
+            _priceParts1960_1969 = _cfgSectionCars.CreateEntry(nameof(PriceParts1960_1969), ValuePriceParts1960_1969);
+            _priceParts1970_1979 = _cfgSectionCars.CreateEntry(nameof(PriceParts1970_1979), ValuePriceParts1970_1979);
+            _priceParts1980_1990 = _cfgSectionCars.CreateEntry(nameof(PriceParts1980_1990), ValuePriceParts1980_1990);
+            _priceParts1991_2000 = _cfgSectionCars.CreateEntry(nameof(PriceParts1991_2000), ValuePriceParts1991_2000);
+            _priceParts2001_2005 = _cfgSectionCars.CreateEntry(nameof(PriceParts2001_2005), ValuePriceParts2001_2005);
+            _pricePartsGT = _cfgSectionCars.CreateEntry(nameof(PricePartsSportGT), ValuePriceSportGT);
+            _pricePartsSpecialRetro = _cfgSectionCars.CreateEntry(nameof(PricePartsSpecialRetro), ValuePriceSpecialRetro);
+            _pricePartsOther = _cfgSectionCars.CreateEntry(nameof(PricePartsOther), ValuePriceOther);
 
-            _category = MelonPreferences.CreateCategory(ConfigCategory);
-            _category.SetFilePath("Mods/RealShop.cfg");
+            _whiteCarParts = _cfgSectionCars.CreateEntry(nameof(WhiteCarParts), ListWhiteCarParts);
+            _isEnableBrandFilter = _cfgSectionCars.CreateEntry(nameof(IsEnableBrandFilter), true);
+            _retroParts = _cfgSectionCars.CreateEntry(nameof(ListRetroParts), RetroParts);
 
-            _retroParts1950_1959 = _category.CreateEntry(nameof(ListRetroParts1950_1959), RetroParts1950_1959);
-            _retroParts1960_1969 = _category.CreateEntry(nameof(ListRetroParts1960_1969), RetroParts1960_1969);
-            _retroParts1970_1979 = _category.CreateEntry(nameof(ListRetroParts1970_1979), RetroParts1970_1979);
-            _retroParts1980_1990 = _category.CreateEntry(nameof(ListRetroParts1980_1990), RetroParts1980_1990);
-            _retroParts1991_2000 = _category.CreateEntry(nameof(ListRetroParts1991_2000), RetroParts1991_2000);
-            _retroParts2001_2005 = _category.CreateEntry(nameof(ListRetroParts2001_2005), RetroParts2001_2005);
+            _cfgSectionRepair = MelonPreferences.CreateCategory(ConfigRepairSection);
+            _cfgSectionRepair.SetFilePath("Mods/RealShop.cfg");
+            _carPartsCantBeRepair = _cfgSectionRepair.CreateEntry(nameof(ListCarPartsCantBeRepair), ListCarPartsCantBeRepair);
+            _carNames = _cfgSectionRepair.CreateEntry(nameof(ListCarNames), CarNames);
 
-            _sportGT = _category.CreateEntry(nameof(ListSportGT), SportGT);
-            _specialRetro = _category.CreateEntry(nameof(ListSpecialRetro), SpecialRetro);
+            _cfgSectionParts = MelonPreferences.CreateCategory(ConfigCategory);
+            _cfgSectionParts.SetFilePath("Mods/RealShop.cfg");
+            _retroParts1950_1959 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts1950_1959), RetroParts1950_1959);
+            _retroParts1960_1969 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts1960_1969), RetroParts1960_1969);
+            _retroParts1970_1979 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts1970_1979), RetroParts1970_1979);
+            _retroParts1980_1990 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts1980_1990), RetroParts1980_1990);
+            _retroParts1991_2000 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts1991_2000), RetroParts1991_2000);
+            _retroParts2001_2005 = _cfgSectionParts.CreateEntry(nameof(ListRetroParts2001_2005), RetroParts2001_2005);
+
+            _sportGT = _cfgSectionParts.CreateEntry(nameof(ListSportGT), SportGT);
+            _specialRetro = _cfgSectionParts.CreateEntry(nameof(ListSpecialRetro), SpecialRetro);
         }
 
         public void Reload()
@@ -891,41 +943,3 @@ namespace RealShop
         }
     }
 }
-
-// ENGINE (I3)  2012 ????
-// https://car-mechanic-simulator-2021.fandom.com/wiki/I3_DOHC
-// The I3 DOHC is based on the Ford Fox 1.0 L of the EcoBoost family, this engine was introduced in 2012.
-//"i3_blok", "i3_gearbox", "i3_glowica", "i3_glowica_2", "i3_glowica_wkladka", "i3_kolektor_dolotowy", "i3_kolektor_wydechowy", "i3_listwa_wtryskowa",
-//"i3_miska_olejowa", "i3_oslona_rozrzadu", "i3_pasek1", "i3_pasek2", "i3_pokrywa_glowicy", "i3_przepustnica", "i3_rolkaWalka", "i3_termostat",
-//"i3_turbo", "i3_walek_rozrzadu", "i3_walKorbowy", "w_i3_poczatkowy_2", "w_i3_poczatkowy", "i3_filtr_oleju", "t_i3_glowica", "t_i3_glowica_2",
-//"t_i3_listwa_wtryskowa", "t_i3_przepustnica", "t_i3_turbo", "t_i3_walek_rozrzadu", "t_w_i3_poczatkowy", "t_i3_kolektor_dolotowy",
-//"t_i3_kolektor_wydechowy", "t_w_i3_poczatkowy_2", "t_i3_gearbox",
-
-
-// Engine (V8) - это базова€ часть дл€ других движ
-// V8 DOHC AXK https://car-mechanic-simulator-2021.fandom.com/wiki/V8_DOHC_AXK
-// V8 DOHC 4x4 https://car-mechanic-simulator-2021.fandom.com/wiki/V8_DOHC_4x4
-// V8 DOHC Supercharged https://car-mechanic-simulator-2021.fandom.com/wiki/V8_DOHC_Supercharged
-// V8 DOHC CGM  (V8 DOHC CGM) https://car-mechanic-simulator-2021.fandom.com/wiki/V8_DOHC_CGM (2014)
-// V8 OHV CGM-SC M1DV8 OHV CGM-SC M1D https://car-mechanic-simulator-2021.fandom.com/wiki/V8_OHV_CGM-SC_M1D (2020)
-// V8 OHV CGM M1D  https://car-mechanic-simulator-2021.fandom.com/wiki/V8_OHV_CGM_M1D  
-// "pompa_wspomagania", "v8_blok", "v8_filtr_oleju", "v8_gearbox", "v8_glowica", "v8_kolektor", "v8_kolektor_wydechowy", "v8_kolo_pasowe_walu", "v8_miska_olejowa",
-// "v8_pasek1",  "v8_pasek2b", "v8_pasek3", "v8_pokrywa_glowicy1", "v8_pokrywa_glowicy2", "v8_pokrywa_swiec", "v8_pompa_wody", "v8_przepustnica", "v8_przepustnica_2",
-// "v8_rozrzad_oslona", "v8_walek_rozrzadu", "w_v8_koncowy", "w_v8_poczatkowy", "w_v8_poczatkowy_h1", "w_v8_poczatkowy_h2", "w_v8_poczatkowy_h3",
-// "walKorbowy_1", "w_v8_poczatkowy_2", "v8_pokrywa_glowicy1B", "v8_pokrywa_glowicy2B", "v8_supercharger_pasek2b", "v8_supercharger_kolektor_dolotowy",
-// "v8_supercharger", "w_v8_koncowy2", "t_w_v8_poczatkowy", "t_w_v8_poczatkowy_2", "t_v8_walek_rozrzadu", "t_pompa_wspomagania", "t_v8_przepustnica",
-// "t_v8_kable_stary", "t_v8_glowica", "t_v8_kolektor_wydechowy", "t_w_v8_koncowy", "t_w_v8_koncowy2", "t_v8_przepustnica_2","t_w_v8_poczatkowy_h3",
-// "t_w_v8_poczatkowy_h1", "t_w_v8_poczatkowy_h2", "t_v8_supercharger_kolektor_dolotowy", "t_v8_supercharger", "t_v8_kolektor",
-// "t_v8_gearbox", "v8_kable_stary", "v8_rozrusznik_1",
-
-// Engine  (V6 VQ37VHR) || 2008 - 2021 ?
-// https://car-mechanic-simulator-2021.fandom.com/wiki/V6_DOHC_NSN
-// The V6 DOHC NSN is based off the real life Nissan VQ37VHR 3.7L engine produced during 2008 to 2021.
-// "v6_37n_blok", "v6_37n_dzwignia_zaworu_3", "v6_37n_dzwignia_zaworu_2", "v6_37n_gearbox", "v6_37n_glowica_1", "v6_37n_glowica_2", "v6_37n_glowica_wkladka",
-// "v6_37n_kolektor_dolotowy", "v6_37n_kolektor_dolotowy_dolny", "v6_37n_kolektor_wydechowy", "v6_37n_lancuch_1", "v6_37n_lancuch_2", "v6_37n_listwa_wtryskowa",
-// "v6_37n_miska_olejowa", "v6_37n_nakladka_glowica_2", "v6_37n_nakladka_glowica_1", "v6_37n_oslona_rozrzadu_1", "v6_37n_oslona_rozrzadu_2",
-// "v6_37n_oslona_rozrzadu_3", "v6_37n_oslona_rozrzadu_4", "v6_37n_pasek", "v6_37n_pokrywa_glowicy_1", "v6_37n_pokrywa_glowicy_2",
-// "v6_37n_pompa_wody", "v6_37n_przepustnica", "v6_37n_rolka_walka_1", "v6_37n_rolka_walka_2", "v6_37n_slizg_1", "v6_37n_slizg_2",
-// "v6_37n_walek_rozrzadu_1", "v6_37n_walek_rozrzadu_2", "v6_37n_walKorbowy", "v6_37n_pokrywa_silnika_1", "v6_37n_pokrywa_silnika_2",
-// "t_v6_37n_kolektor_wydechowy", "t_v6_37n_glowica_2", "t_v6_37n_listwa_wtryskowa", "t_v6_37n_przepustnica", "t_v6_37n_glowica_1", "t_v6_37n_kolektor_dolotowy",
-// "t_v6_37n_kolektor_dolotowy_dolny", "t_v6_37n_walek_rozrzadu_1", "t_v6_37n_walek_rozrzadu_2", "t_v6_37n_gearbox", 
