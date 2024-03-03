@@ -51,7 +51,7 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Car Mechanic Simulator 2021\MelonLoader\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Steam\steamapps\common\Car Mechanic Simulator 2021\MelonLoader\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,7 +96,6 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Inspect.cs" />
-    <Compile Include="Patcher.cs" />
     <Compile Include="RealShop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers.cs" />
