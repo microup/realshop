@@ -1,4 +1,6 @@
 using CMS.UI.Logic;
+using CMS.UI.Logic.Map;
+using CMS.Helpers;
 using Harmony;
 using MelonLoader;
 using System;
@@ -9,6 +11,8 @@ namespace RealShop
 {
     public class RealParts : MelonMod
     {
+        private const string JunkyardMapDestinationButtonName = "MapDestinationButton (5)";
+
         private Config _config;
         private bool _modIsEnable = true;
         private bool _isRunOnce = false;
@@ -53,6 +57,7 @@ namespace RealShop
             }
 
             RemoveBlocks();
+            UnlockJunkyardOnMap();
 
             GameObject engineRoom = GameObject.Find("EngineRoom");
             if (engineRoom != null)
@@ -175,6 +180,44 @@ namespace RealShop
 
             _blocker_Repair_Parts_3 = GameObject.Find("Blocker_Repair_Parts_3");
             _blocker_Repair_Parts_3?.SetActive(false);
+        }
+
+        private void UnlockJunkyardOnMap()
+        {
+            GameObject junkyardButton = GameObject.Find(JunkyardMapDestinationButtonName);
+            if (junkyardButton == null)
+            {
+                return;
+            }
+
+            junkyardButton.SetActive(true);
+
+            var button = junkyardButton.GetComponent<Button>();
+            if (button != null)
+            {
+                button.interactable = true;
+            }
+
+            DisableLockObjects(junkyardButton.transform);
+        }
+
+        private void DisableLockObjects(Transform parent)
+        {
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                string childName = child.gameObject.name;
+
+                if (childName.IndexOf("Lock", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    childName.IndexOf("Blocker", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    childName.IndexOf("Required", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    child.gameObject.SetActive(false);
+                    continue;
+                }
+
+                DisableLockObjects(child);
+            }
         }
 
         private void GlobalInits()
@@ -339,6 +382,45 @@ namespace RealShop
             }
         }
 
+    }
+
+    [HarmonyPatch(typeof(SceneHelper), "GetLevelForScene")]
+    internal static class UnlockJunkyardGetLevelForScenePatch
+    {
+        private static void Postfix(SceneType sceneType, ref int __result)
+        {
+            if (sceneType == SceneType.Junkyard)
+            {
+                __result = 1;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(SceneHelper), "CanGoToScene")]
+    internal static class UnlockJunkyardCanGoToScenePatch
+    {
+        private static void Postfix(SceneType sceneType, ref MapDestinationLockReason reason, int playerLevel, ref bool __result)
+        {
+            if (sceneType == SceneType.Junkyard)
+            {
+                reason = MapDestinationLockReason.None;
+                __result = true;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(SceneHelper), "CanDriveToDestination")]
+    internal static class UnlockJunkyardCanDriveToDestinationPatch
+    {
+        private static void Postfix(MapDestinationID destinationID, ref MapDriveButtonLockReason reason, ref int price, ref bool __result)
+        {
+            if (destinationID == MapDestinationID.Junkyard)
+            {
+                reason = MapDriveButtonLockReason.None;
+                price = 0;
+                __result = true;
+            }
+        }
     }
 
 }
