@@ -802,15 +802,15 @@ namespace RealShop
 
         private const uint RemoveCarsOlderYear = 2005;
 
-        public const int ValuePriceParts1950_1959 = 30;
-        public const int ValuePriceParts1960_1969 = 24;
-        public const int ValuePriceParts1970_1979 = 20;
-        public const int ValuePriceParts1980_1990 = 17;
-        public const int ValuePriceParts1991_2000 = 14;
-        public const int ValuePriceParts2001_2005 = 10;
-        public const int ValuePriceSportGT = 22;
-        public const int ValuePriceSpecialRetro = 50;
-        public const int ValuePriceOther = 5;
+        public const int ValuePriceParts1950_1959 = 8;
+        public const int ValuePriceParts1960_1969 = 7;
+        public const int ValuePriceParts1970_1979 = 6;
+        public const int ValuePriceParts1980_1990 = 4;
+        public const int ValuePriceParts1991_2000 = 3;
+        public const int ValuePriceParts2001_2005 = 2;
+        public const int ValuePriceSportGT = 6;
+        public const int ValuePriceSpecialRetro = 10;
+        public const int ValuePriceOther = 2;
 
         private const string ConfigCategoryName = "MainSection";
         private const string ConfigCarSection = "CarSection";
