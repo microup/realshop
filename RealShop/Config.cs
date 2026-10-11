@@ -24,6 +24,13 @@ namespace RealShop
         public static string[] RetroParts = { };
 
         public static string[] RetroParts1950_1959 = {
+            // Jeep Willys Military (1942) / Jeep Willys Civilian (1949)
+            "car_jeepwillysmilitary", "car_jeepwillyscivilian", "seat_willys", "bench_jeepwillys", "rim_willys",
+            // Engine I4 Willys L134
+            "i4_l134_blok", "i4_l134_filtr_gora", "i4_l134_filtr_srodek", "i4_l134_filtrOleju", "i4_l134_gearbox", "i4_l134_glowica", "i4_l134_kable", "i4_l134_kolektor_dolotowy", "i4_l134_kolektor_wydechowy", "i4_l134_kopulkaRozdzielacza_1", "i4_l134_miska_olejowa", "i4_l134_obudowa_filtra_dol", "i4_l134_obudowa_filtra_gora", "i4_l134_obudowa_filtraOleju", "i4_l134_oslona_rozrzadu", "i4_l134_pokrywa_obudowy_filtraOleju", "i4_l134_pompaWody", "i4_l134_walek", "i4_l134_walKorbowy_1", "t_i4_l134_filtr_srodek", "t_i4_l134_gearbox", "t_i4_l134_glowica", "t_i4_l134_kable", "t_i4_l134_kolektor_dolotowy", "t_i4_l134_kolektor_wydechowy", "t_i4_l134_kopulkaRozdzielacza_1", "t_i4_l134_walek", "t_w_i4_l134_poczatkowy", "w_i4_l134_poczatkowy",
+            // Bolt Appalachia (1950)
+            "car_boltappalachia",
+        
             // DELRAY CUSTOM (1957)
             "car_delraycustom", 
 
@@ -61,6 +68,9 @@ namespace RealShop
         };
 
         public static string[] RetroParts1960_1969 = {
+            // Dodge Charger R/T (1968)
+            "car_dodgecharger",
+        
             // Fairlady Z (S30) 1969
             "car_nissan240z-bumper_front", "car_nissan240z-bumper_rear", "car_nissan240z-door_front_left", "car_nissan240z-door_front_right", "car_nissan240z-fender_front_left",
             "car_nissan240z-fender_front_right", "car_nissan240z-headlight_left", "car_nissan240z-headlight_right", "car_nissan240z-hood", "car_nissan240z-taillight_left",
@@ -200,6 +210,9 @@ namespace RealShop
         };
 
         public static string[] RetroParts1970_1979 = {
+            // Liner Navigator (1978)
+            "car_linernavigator", "bench_linernavigator2", "steering_wheel_linernavigator",
+        
             // Smith&Parker Arizona Kid Supercharged ???
             // https://car-mechanic-simulator-2021.fandom.com/wiki/Smith%26Parker_Arizona_Kid_Supercharged
 
@@ -330,6 +343,15 @@ namespace RealShop
         };
 
         public static string[] RetroParts1980_1990 = {
+            // Sakura Osava (1980)
+            "car_sakuraosava", "steering_wheel_osava",
+            // Engine R4 (Sakura Osava)
+            "r4_3_blok", "r4_3_filtr_dol", "r4_3_filtr_gora", "r4_3_filtr_srodek", "r4_3_gearbox", "r4_3_glowica", "r4_3_glowica_wkladka", "r4_3_kable", "r4_3_kolektor_dolotowy", "r4_3_kolektor_wydechowy", "r4_3_kopulkaRozdzielacza", "r4_3_listwa_wtryskowa", "r4_3_miska_olejowa", "r4_3_oslona_rozrzadu_1", "r4_3_oslona_rozrzadu_2", "r4_3_oslona_rozrzadu_3", "r4_3_oslona_swiec", "r4_3_pasek_1", "r4_3_pasek_2", "r4_3_pasek_3", "r4_3_pokrywa_glowicy_1", "r4_3_pokrywa_glowicy_2", "r4_3_pompaWody", "r4_3_rozdzielaczZaplonu", "r4_3_walek_rozrzadu_1", "r4_3_walek_rozrzadu_2", "r4_3_walKorbowy", "r4_3_wentylator", "t_r4_3_filtr_srodek", "t_r4_3_gearbox", "t_r4_3_glowica", "t_r4_3_kable", "t_r4_3_kolektor_dolotowy", "t_r4_3_kolektor_wydechowy", "t_r4_3_kopulkaRozdzielacza", "t_r4_3_listwa_wtryskowa", "t_r4_3_rozdzielaczZaplonu", "t_r4_3_walek_rozrzadu_1", "t_r4_3_walek_rozrzadu_2",
+            // Emden Saxon (1988)
+            "car_emdensaxon", "seat_emden_saxon", "bench_emden_saxon", "steering_wheel_emden_saxon",
+            // Salem Earthquake Gen IX (1989)
+            "car_salemearthquakegenix", "steering_wheel_earthquakegenix",
+        
             // SMITH&PARKER ROADSTER (1980)
             "car_smithandparkerroadster", 
 
@@ -435,6 +457,19 @@ namespace RealShop
         };
 
         public static string[] RetroParts1991_2000 = {
+            // Morena Bizzarini (1991)
+            "car_morenabizzarini",
+            // Bolt Escapade Mk IV (1991)
+            "car_boltescapademkiv", "seat_boltescapademkiv", "bench_boltescapademkiv", "steering_wheel_boltescapademkiv",
+            // CAB Roamer (1993)
+            "car_cabroamer", "seat_CABRoamer", "bench_CABRoamer", "steering_wheel_cabroamer", "r4_gearbox_rwd", "t_r4_gearbox_rwd",
+            // Sakura Tiara (1995)
+            "car_sakuratiara", "steering_wheel_sakuratiara",
+            // Bolt Ranger (1995)
+            "car_boltranger",
+            // Salem Earthquake Gen X Rex (1999)
+            "car_salemearthquakegenxrex",
+        
             // YUNBAO YILONG (1992)
             "car_yunbaoyilong",
 
@@ -581,6 +616,13 @@ namespace RealShop
         };
 
         public static string[] RetroParts2001_2005 = {
+            // Olsen Pramie Club (2002)
+            "car_olsenpramieclub",
+            // Engine R4 Turbo (Olsen Pramie Club)
+            "r4_4_blok", "r4_4_dzwigniazaworu", "r4_4_gearbox", "r4_4_glowica", "r4_4_kolektor_dolotowy", "r4_4_kolektor_wydechowy", "r4_4_miska_olejowa", "r4_4_oslona_rozrzadu_1", "r4_4_oslona_rozrzadu_2", "r4_4_oslona_rozrzadu_3", "r4_4_pasek_1", "r4_4_pasek_2", "r4_4_pokrywa_glowicy", "r4_4_pompaWody", "r4_4_przepustnica", "r4_4_turbo", "r4_4_walek_rozrzadu", "r4_4_walKorbowy", "r4_4_wkladka", "t_r4_4_gearbox", "t_r4_4_glowica", "t_r4_4_kolektor_dolotowy", "t_r4_4_kolektor_wydechowy", "t_r4_4_przepustnica", "t_r4_4_turbo", "t_r4_4_walek_rozrzadu",
+            // Lacroix Marseille (2002)
+            "car_lacroixmarseille",
+        
             // CHRYSLER 300C SRT8
             "car_chrysler300csrt8", "w_v8_61hemi_poczatkowy_chrysler300c", "w_v8_61hemi_koncowy__chrysler300c", "seat_300c",
             "steering_wheel_300c", "bench_300c", "t_w_v8_61hemi_poczatkowy_chrysler300c", "t_w_v8_61hemi_koncowy__chrysler300c", "rim_300c",

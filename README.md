@@ -29,7 +29,16 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
 
-## Last update v 0.3.4
+## Last update v 0.3.5
+
+1. Extended the retro parts catalog with the newly installed DLC so that old cars are correctly removed from the shop and can only be found at junkyards, barns and auctions.
+2. Added 16 cars older than 2005 that were missing from the shop filter: Jeep Willys Military (1942), Jeep Willys Civilian (1949), Bolt Appalachia (1950), Dodge Charger R/T (1968), Liner Navigator (1978), Sakura Osava (1980), Emden Saxon (1988), Salem Earthquake Gen IX (1989), Morena Bizzarini (1991), Bolt Escapade Mk IV (1991), CAB Roamer (1993), Sakura Tiara (1995), Bolt Ranger (1995), Salem Earthquake Gen X Rex (1999), Olsen Pramie Club (2002), Lacroix Marseille (2002).
+3. Added the engine part families exclusive to these old cars (I4 Willys L134, R4 for Sakura Osava, R4 Turbo for Olsen Pramie Club) and the CAB Roamer RWD gearbox, so their engines are removed from the shop as well.
+4. Engine parts shared with cars from 2005 and newer were intentionally left in the shop to avoid breaking modern cars.
+
+Note: if you already have a config file, update the `ListRetroParts*` sections in `Mods/RealShop.cfg` (or delete the config so it regenerates with the new defaults).
+
+## Previous update v 0.3.4
 
 1. Junkyard and auction access are now available from level 1 and unlocked on the map.
 2. Junkyard and auction travel costs are intercepted so these trips do not charge credits.
