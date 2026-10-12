@@ -273,66 +273,10 @@ namespace RealShop
                     item.ShopName == "TuningShop" || item.ShopName == "BodyTuningShop" || item.ShopName == "MainShop" ||
                     item.ShopName == "GearboxShop" || item.ShopName == "TireShop")
                 {
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1950_1959)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1950_1959))
+                    int retroMultiplier = GetYearRetroMultiplier(item, (int)_config.RemoveCarsOlderThanYear);
+                    if (retroMultiplier != 0)
                     {
-                        item.Price = item.Price * _config.PriceParts1950_1959;
-
-                        item.ShopGroup = "Noinshop";
-                        item.ShopName = "none";
-
-                        continue;
-                    }
-
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1960_1969)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1960_1969))
-                    {
-                        item.Price = item.Price * _config.PriceParts1960_1969;
-
-
-                        item.ShopGroup = "Noinshop";
-                        item.ShopName = "none";
-
-                        continue;
-                    }
-
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1970_1979)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1970_1979))
-                    {
-                        item.Price = item.Price * _config.PriceParts1970_1979;
-
-                        item.ShopGroup = "Noinshop";
-                        item.ShopName = "none";
-
-                        continue;
-                    }
-
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1980_1990)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1980_1990))
-                    {
-                        item.Price = item.Price * _config.PriceParts1980_1990;
-
-                        item.ShopGroup = "Noinshop";
-                        item.ShopName = "none";
-
-                        continue;
-                    }
-
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts1991_2000)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts1991_2000))
-                    {
-                        item.Price = item.Price * _config.PriceParts1991_2000;
-
-                        item.ShopGroup = "Noinshop";
-                        item.ShopName = "none";
-
-                        continue;
-                    }
-
-                    if (Helpers.CheckForSubstrings(item.CarID, Config.RetroParts2001_2005)
-                        || Helpers.CheckForSubstrings(item.ID, Config.RetroParts2001_2005))
-                    {
-                        item.Price = item.Price * _config.PriceParts2001_2005;
+                        item.Price = item.Price * retroMultiplier;
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -372,6 +316,117 @@ namespace RealShop
                 }
 
             }
+        }
+
+        private struct RetroEntry
+        {
+            public int Year;
+            public string Token;
+        }
+
+        private System.Collections.Generic.List<RetroEntry> _retroEntries;
+        private string[] _retroSource;
+
+        private System.Collections.Generic.List<RetroEntry> GetRetroEntries()
+        {
+            var src = _config.ListRetroPartYears;
+            if (_retroEntries != null && ReferenceEquals(_retroSource, src))
+            {
+                return _retroEntries;
+            }
+
+            var list = new System.Collections.Generic.List<RetroEntry>();
+            if (src != null)
+            {
+                foreach (var s in src)
+                {
+                    if (string.IsNullOrEmpty(s))
+                    {
+                        continue;
+                    }
+
+                    int bar = s.IndexOf('|');
+                    if (bar <= 0)
+                    {
+                        continue;
+                    }
+
+                    if (!int.TryParse(s.Substring(0, bar), out int year))
+                    {
+                        continue;
+                    }
+
+                    string token = s.Substring(bar + 1);
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        continue;
+                    }
+
+                    list.Add(new RetroEntry { Year = year, Token = token });
+                }
+            }
+
+            _retroSource = src;
+            _retroEntries = list;
+            return list;
+        }
+
+        private int GetYearRetroMultiplier(PartProperty item, int threshold)
+        {
+            foreach (var e in GetRetroEntries())
+            {
+                if (e.Year >= threshold)
+                {
+                    continue;
+                }
+
+                if (ContainsToken(item.CarID, e.Token) || ContainsToken(item.ID, e.Token))
+                {
+                    return PriceForYear(e.Year);
+                }
+            }
+
+            if (CarData.TryGetBodyYear(item.ID, out int bodyYear) && bodyYear < threshold)
+            {
+                return PriceForYear(bodyYear);
+            }
+
+            return 0;
+        }
+
+        private static bool ContainsToken(string input, string token)
+        {
+            return !string.IsNullOrEmpty(input) && input.Contains(token);
+        }
+
+        private int PriceForYear(int year)
+        {
+            if (year < 1960)
+            {
+                return _config.PriceParts1950_1959;
+            }
+
+            if (year < 1970)
+            {
+                return _config.PriceParts1960_1969;
+            }
+
+            if (year < 1980)
+            {
+                return _config.PriceParts1970_1979;
+            }
+
+            if (year <= 1990)
+            {
+                return _config.PriceParts1980_1990;
+            }
+
+            if (year <= 2000)
+            {
+                return _config.PriceParts1991_2000;
+            }
+
+            return _config.PriceParts2001_2005;
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -802,7 +857,11 @@ namespace RealShop
             for (int i = __result.Count - 1; i >= 0; i--)
             {
                 CarsIdWithConfig car = __result[i];
-                int carYear = CarBundleLoaderExtension.GetCarYear(__instance, car.CarID, car.ConfigVersion);
+                int carYear;
+                if (!CarData.TryGetYearByCarId(car.CarID, out carYear))
+                {
+                    carYear = CarBundleLoaderExtension.GetCarYear(__instance, car.CarID, car.ConfigVersion);
+                }
 
                 if (carYear <= 0 || carYear >= maxYearExclusive)
                 {

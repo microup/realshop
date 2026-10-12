@@ -10,7 +10,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 ## Key Features:
 
 1. Junkyards, barns, and auctions now play a significant role in the game.
-2. A wide range of car parts for vehicles older than 2005 is currently disabled in the shopping catalog.
+2. Car parts for vehicles older than the configured cutoff (`RemoveCarsOlderThanYear`, default 2005) are disabled in the shopping catalog. The cutoff is a single switch: change it and the parts above/below it appear or disappear automatically. Body parts of every car older than the cutoff (base game and DLC) are detected and hidden automatically, without manual lists.
 3. Access to some auction features is restricted.
 4. Access to the car dealership is restricted.
 5. All body and interior parts can be repaired.
@@ -23,13 +23,32 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 12. Configuration file allows for customization, including:
 - Changing the year for cars that will not appear in the shop (add name to config section).
 - Customizing the key binding to enable or disable the mod.
-﻿﻿- Maintaining a list of old engines and parts that are no longer sold in the store, such as "(I3)", "(I6 B)", "(V8)", "(V8 OHV)".
+﻿﻿- A year dictionary `ListRetroPartYears` of `year|part_id` entries for engine, interior and wheel-rim parts that are no longer sold in the store. A part is hidden when its year is below `RemoveCarsOlderThanYear`; body parts do not need entries (they are detected from each car's own year).
 - Whitelist addition: If a desired item is not available or not displayed in the store, it can be added to the configuration file whitelist for visibility.
 ﻿﻿- You can enable or disable visiting the store. You can also enable or disable the auction where higher-quality cars were sold
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
 
-## Last update v 0.3.5
+## Last update v 0.3.7
+
+1. Reworked how retro parts are hidden so that `RemoveCarsOlderThanYear` is now a single, flexible switch: change it and the parts above/below the cutoff appear or disappear automatically, without editing the part lists again.
+2. The six year-based lists (`ListRetroParts1950_1959` … `ListRetroParts2001_2005`) are replaced by one year dictionary `ListRetroPartYears`, where every entry is `year|part_id`. A part is hidden only when its year is lower than `RemoveCarsOlderThanYear`, and the price multiplier is chosen from that same year.
+3. Body parts are no longer marked by hand. The mod now reads each car's year from its own `config.txt` (base game and DLC cars alike) and automatically hides the body parts of every car older than the cutoff, so newly added cars are covered without any manual marking.
+4. Engine, interior and wheel-rim parts stay in the year dictionary (the game does not expose a reliable part-to-engine mapping, so these remain explicit but are now year-tagged and threshold-driven). `ListSportGT` and `ListSpecialRetro` remain always-hidden lists.
+5. Junkyard car filtering is more robust: each junkyard car's year is now read from its own `config.txt` first (covering base game and all DLC), falling back to the game API only if that fails. An old car can no longer be dropped from the junkyard when the game API fails to resolve a year that is present in the config.
+
+Note: the config format changed. Delete `Mods/RealShop.cfg` so it regenerates with the new `ListRetroPartYears` section (the old `ListRetroParts*` sections are no longer used).
+
+## Previous update v 0.3.6
+
+1. Fixed a bug where parts shared between retro cars (older than 2005) and modern cars (2005 and newer) were hidden from the shop, which made some modern cars impossible to repair (for example, "Oil Filter I4 is not available" when repairing a Mini Cooper 2015).
+2. Audited every hidden part ID against all cars from 2005 and newer and removed the shared ones from the year-based lists. This includes the generic AQC I4 (R4) engine family and the V6 3.0 engine family together with their tuned (`t_`) and exhaust (`w_`, `t_w_`) variants, plus interior, seat, bench and steering-wheel parts and body parts that were hidden by mistake but belong to modern cars.
+3. Engine families that are exclusive to old cars (Willys L134, R4 for Sakura Osava, R4 Turbo for Olsen Pramie Club, R4 K-Series, R4 M31, SR20 and similar) stay hidden, so those retro cars still have to be restored from junkyards, barns and auctions.
+4. Some generic retro wheel rims that are also used by a few modern cars were intentionally left hidden: rims are cosmetic and do not block repairs, while hiding them keeps the retro look.
+
+Note: if you already have a config file, update the `ListRetroParts*` sections in `Mods/RealShop.cfg` (or delete the config so it regenerates with the new defaults).
+
+## Previous update v 0.3.5
 
 1. Extended the retro parts catalog with the newly installed DLC so that old cars are correctly removed from the shop and can only be found at junkyards, barns and auctions.
 2. Added 16 cars older than 2005 that were missing from the shop filter: Jeep Willys Military (1942), Jeep Willys Civilian (1949), Bolt Appalachia (1950), Dodge Charger R/T (1968), Liner Navigator (1978), Sakura Osava (1980), Emden Saxon (1988), Salem Earthquake Gen IX (1989), Morena Bizzarini (1991), Bolt Escapade Mk IV (1991), CAB Roamer (1993), Sakura Tiara (1995), Bolt Ranger (1995), Salem Earthquake Gen X Rex (1999), Olsen Pramie Club (2002), Lacroix Marseille (2002).
