@@ -28,7 +28,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 ﻿﻿- You can enable or disable visiting the store. You can also enable or disable the auction where higher-quality cars were sold
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
-- Optional economy realism toggles (all off by default): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by rarity), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` rarity multipliers.  
+- Economy realism toggles (on by default in v0.3.8): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by rarity), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` rarity multipliers.  
 
 ## Last update v 0.3.8
 
@@ -37,7 +37,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 3. Labor cost per repair: when `EnableLaborCost` is on, each successful repair also charges `LaborCostBase` scaled by the part's rarity, so a full rebuild of a 1950s engine costs real money even when the part came from the junkyard.
 4. Junkyard donor condition: when `EnableDonorCondition` is on, the parts carried by junkyard donor cars have their condition scaled by `DonorConditionScale` (default 0.6), so old donors yield worse parts. This is scoped to junkyard cars only.
 
-Note: the three new economy features (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`) are **off by default**, so existing saves are unaffected until you opt in. Because the game is built with IL2CPP, the sell-price, repair-charge and donor-condition hooks were confirmed by method signature only and should be verified in-game; the toggles let you test each one independently.
+Note: the three new economy features (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`) are **on by default** in v0.3.8 (with `SellRatio=0.35`, `LaborCostBase=100`, `DonorConditionScale=0.6`). Set any of them to `false` in the config to disable that feature independently. Because the game is built with IL2CPP, the sell-price, repair-charge and donor-condition hooks were confirmed by method signature only and should be verified in-game.
 
 ## Last update v 0.3.7
 

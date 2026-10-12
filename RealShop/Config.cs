@@ -1405,13 +1405,13 @@ namespace RealShop
         public const float ValuePriceRarityRare = 2.5f;
         public const float ValuePriceRarityUnique = 4.0f;
 
-        private const bool ValueEnableSellCap = false;
+        private const bool ValueEnableSellCap = true;
         public const float ValueSellRatio = 0.35f;
 
-        private const bool ValueEnableLaborCost = false;
-        public const int ValueLaborCostBase = 0;
+        private const bool ValueEnableLaborCost = true;
+        public const int ValueLaborCostBase = 100;
 
-        private const bool ValueEnableDonorCondition = false;
+        private const bool ValueEnableDonorCondition = true;
         public const float ValueDonorConditionScale = 0.6f;
 
         private const string ConfigCategoryName = "MainSection";
