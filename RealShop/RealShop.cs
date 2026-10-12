@@ -857,7 +857,11 @@ namespace RealShop
             for (int i = __result.Count - 1; i >= 0; i--)
             {
                 CarsIdWithConfig car = __result[i];
-                int carYear = CarBundleLoaderExtension.GetCarYear(__instance, car.CarID, car.ConfigVersion);
+                int carYear;
+                if (!CarData.TryGetYearByCarId(car.CarID, out carYear))
+                {
+                    carYear = CarBundleLoaderExtension.GetCarYear(__instance, car.CarID, car.ConfigVersion);
+                }
 
                 if (carYear <= 0 || carYear >= maxYearExclusive)
                 {

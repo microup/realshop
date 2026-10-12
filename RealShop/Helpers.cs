@@ -61,6 +61,43 @@ namespace RealShop
             return false;
         }
 
+        public static bool TryGetYearByCarId(string carId, out int year)
+        {
+            year = 0;
+            if (string.IsNullOrEmpty(carId))
+            {
+                return false;
+            }
+
+            EnsureLoaded();
+            if (_carYear == null || _carYear.Count == 0)
+            {
+                return false;
+            }
+
+            string id = carId.ToLowerInvariant();
+            if (id.StartsWith("car_"))
+            {
+                id = id.Substring(4);
+            }
+
+            if (_carYear.TryGetValue(id, out year))
+            {
+                return true;
+            }
+
+            foreach (var folder in _foldersByLengthDesc)
+            {
+                if (id == folder || id.StartsWith(folder + "-"))
+                {
+                    year = _carYear[folder];
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static void EnsureLoaded()
         {
             if (_loaded)
