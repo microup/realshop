@@ -273,10 +273,10 @@ namespace RealShop
                     item.ShopName == "TuningShop" || item.ShopName == "BodyTuningShop" || item.ShopName == "MainShop" ||
                     item.ShopName == "GearboxShop" || item.ShopName == "TireShop")
                 {
-                    int retroMultiplier = GetYearRetroMultiplier(item, (int)_config.RemoveCarsOlderThanYear);
-                    if (retroMultiplier != 0)
+                    float retroMultiplier = GetYearRetroMultiplier(item, (int)_config.RemoveCarsOlderThanYear);
+                    if (retroMultiplier != 0f)
                     {
-                        item.Price = item.Price * retroMultiplier;
+                        item.Price = Mathf.RoundToInt(item.Price * retroMultiplier);
 
                         item.ShopGroup = "Noinshop";
                         item.ShopName = "none";
@@ -322,14 +322,16 @@ namespace RealShop
         {
             public int Year;
             public string Token;
+            public string Rarity;
         }
 
-        private System.Collections.Generic.List<RetroEntry> _retroEntries;
-        private string[] _retroSource;
+        private static System.Collections.Generic.List<RetroEntry> _retroEntries;
+        private static string[] _retroSource;
 
-        private System.Collections.Generic.List<RetroEntry> GetRetroEntries()
+        private static System.Collections.Generic.List<RetroEntry> GetRetroEntries()
         {
-            var src = _config.ListRetroPartYears;
+            Config config = RealParts.ActiveConfig;
+            string[] src = config != null ? config.ListRetroPartYears : null;
             if (_retroEntries != null && ReferenceEquals(_retroSource, src))
             {
                 return _retroEntries;
@@ -362,7 +364,24 @@ namespace RealShop
                         continue;
                     }
 
-                    list.Add(new RetroEntry { Year = year, Token = token });
+                    string rarity = "common";
+                    int bar2 = token.IndexOf('|');
+                    if (bar2 >= 0)
+                    {
+                        rarity = token.Substring(bar2 + 1).Trim().ToLowerInvariant();
+                        token = token.Substring(0, bar2);
+                        if (rarity != "uncommon" && rarity != "rare" && rarity != "unique")
+                        {
+                            rarity = "common";
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        continue;
+                    }
+
+                    list.Add(new RetroEntry { Year = year, Token = token, Rarity = rarity });
                 }
             }
 
@@ -371,7 +390,7 @@ namespace RealShop
             return list;
         }
 
-        private int GetYearRetroMultiplier(PartProperty item, int threshold)
+        private static float GetYearRetroMultiplier(PartProperty item, int threshold)
         {
             foreach (var e in GetRetroEntries())
             {
@@ -382,7 +401,7 @@ namespace RealShop
 
                 if (ContainsToken(item.CarID, e.Token) || ContainsToken(item.ID, e.Token))
                 {
-                    return PriceForYear(e.Year);
+                    return PriceForYear(e.Year) * RarityFactor(e.Rarity);
                 }
             }
 
@@ -391,7 +410,46 @@ namespace RealShop
                 return PriceForYear(bodyYear);
             }
 
-            return 0;
+            return 0f;
+        }
+
+        internal static string GetRarityForPart(string partId)
+        {
+            if (string.IsNullOrEmpty(partId))
+            {
+                return "common";
+            }
+
+            foreach (var e in GetRetroEntries())
+            {
+                if (ContainsToken(partId, e.Token))
+                {
+                    return e.Rarity;
+                }
+            }
+
+            return "common";
+        }
+
+        private static float RarityFactor(string rarity)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null)
+            {
+                return 1f;
+            }
+
+            switch (rarity)
+            {
+                case "uncommon":
+                    return config.PriceRarityUncommon;
+                case "rare":
+                    return config.PriceRarityRare;
+                case "unique":
+                    return config.PriceRarityUnique;
+                default:
+                    return config.PriceRarityCommon;
+            }
         }
 
         private static bool ContainsToken(string input, string token)
@@ -399,34 +457,40 @@ namespace RealShop
             return !string.IsNullOrEmpty(input) && input.Contains(token);
         }
 
-        private int PriceForYear(int year)
+        private static int PriceForYear(int year)
         {
+            Config config = RealParts.ActiveConfig;
+            if (config == null)
+            {
+                return 1;
+            }
+
             if (year < 1960)
             {
-                return _config.PriceParts1950_1959;
+                return config.PriceParts1950_1959;
             }
 
             if (year < 1970)
             {
-                return _config.PriceParts1960_1969;
+                return config.PriceParts1960_1969;
             }
 
             if (year < 1980)
             {
-                return _config.PriceParts1970_1979;
+                return config.PriceParts1970_1979;
             }
 
             if (year <= 1990)
             {
-                return _config.PriceParts1980_1990;
+                return config.PriceParts1980_1990;
             }
 
             if (year <= 2000)
             {
-                return _config.PriceParts1991_2000;
+                return config.PriceParts1991_2000;
             }
 
-            return _config.PriceParts2001_2005;
+            return config.PriceParts2001_2005;
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -755,6 +819,17 @@ namespace RealShop
     {
         private static void Prefix(ref int money)
         {
+            if (SellItemCapPatch.PendingSellCap >= 0f)
+            {
+                if (money > 0 && money > SellItemCapPatch.PendingSellCap)
+                {
+                    money = (int)SellItemCapPatch.PendingSellCap;
+                }
+
+                SellItemCapPatch.PendingSellCap = -1f;
+                return;
+            }
+
             if (RealParts.PendingFreeTravelCost <= 0 || money >= 0)
             {
                 return;
@@ -868,6 +943,185 @@ namespace RealShop
                     __result.RemoveAt(i);
                 }
             }
+
+            JunkyardCarIds.Clear();
+            for (int i = 0; i < __result.Count; i++)
+            {
+                JunkyardCarIds.Add(NormalizeCarId(__result[i].CarID));
+            }
+        }
+
+        internal static readonly System.Collections.Generic.HashSet<string> JunkyardCarIds = new System.Collections.Generic.HashSet<string>();
+
+        internal static bool IsJunkyardCar(CarLoader loader)
+        {
+            if (loader == null || JunkyardCarIds.Count == 0)
+            {
+                return false;
+            }
+
+            string id = GetCarLoaderId(loader);
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+
+            return JunkyardCarIds.Contains(NormalizeCarId(id));
+        }
+
+        private static string GetCarLoaderId(CarLoader loader)
+        {
+            try
+            {
+                var type = loader.GetType();
+                var prop = type.GetProperty("CarID");
+                if (prop != null)
+                {
+                    string value = prop.GetValue(loader, null) as string;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        return value;
+                    }
+                }
+
+                var field = type.GetField("CarID");
+                if (field != null)
+                {
+                    string value = field.GetValue(loader) as string;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        return value;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
+        }
+
+        internal static string NormalizeCarId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return id;
+            }
+
+            string value = id.ToLowerInvariant();
+            if (value.StartsWith("car_"))
+            {
+                value = value.Substring(4);
+            }
+
+            return value;
+        }
+    }
+
+    [HarmonyPatch(typeof(Inventory), "SellItem", new[] { typeof(Item), typeof(bool), typeof(bool) })]
+    internal static class SellItemCapPatch
+    {
+        internal static float PendingSellCap = -1f;
+
+        private static void Prefix(Item item)
+        {
+            PendingSellCap = -1f;
+
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableSellCap || item == null)
+            {
+                return;
+            }
+
+            PartProperty property = Singleton<GameInventory>.Instance.GetItemProperty(item.ID);
+            if (property == null || property.Price <= 0)
+            {
+                return;
+            }
+
+            PendingSellCap = property.Price * config.SellRatio;
+        }
+    }
+
+    [HarmonyPatch(typeof(RepairPartWindow), "ProcessGameResult")]
+    internal static class LaborCostOnRepairPatch
+    {
+        private static void Postfix(RepairPartWindow __instance, BarType result)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableLaborCost || config.LaborCostBase <= 0)
+            {
+                return;
+            }
+
+            if (result != BarType.Success)
+            {
+                return;
+            }
+
+            Item item = __instance.currentItemInfo?.Item;
+            if (item == null)
+            {
+                return;
+            }
+
+            string rarity = RealParts.GetRarityForPart(item.ID);
+            float mult = config.PriceRarityCommon;
+            if (rarity == "unique")
+            {
+                mult = config.PriceRarityUnique;
+            }
+            else if (rarity == "rare")
+            {
+                mult = config.PriceRarityRare;
+            }
+            else if (rarity == "uncommon")
+            {
+                mult = config.PriceRarityUncommon;
+            }
+
+            int fee = Mathf.RoundToInt(config.LaborCostBase * mult);
+            if (fee > 0)
+            {
+                GlobalData.AddPlayerMoney(-fee);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(CarLoader), "SetConditionOnDetails", new[] { typeof(float) })]
+    internal static class JunkyardDonorConditionOnDetailsPatch
+    {
+        private static void Prefix(CarLoader __instance, ref float condition)
+        {
+            JunkyardDonorConditionCore.Apply(__instance, ref condition);
+        }
+    }
+
+    [HarmonyPatch(typeof(CarLoader), "SetConditionAll")]
+    internal static class JunkyardDonorConditionAllPatch
+    {
+        private static void Prefix(CarLoader __instance, ref float condition)
+        {
+            JunkyardDonorConditionCore.Apply(__instance, ref condition);
+        }
+    }
+
+    internal static class JunkyardDonorConditionCore
+    {
+        internal static void Apply(CarLoader loader, ref float condition)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableDonorCondition || condition <= 0f)
+            {
+                return;
+            }
+
+            if (!FilterJunkyardCarsByYearPatch.IsJunkyardCar(loader))
+            {
+                return;
+            }
+
+            condition = Mathf.Clamp01(condition * config.DonorConditionScale);
         }
     }
 

@@ -23,11 +23,21 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 12. Configuration file allows for customization, including:
 - Changing the year for cars that will not appear in the shop (add name to config section).
 - Customizing the key binding to enable or disable the mod.
-﻿﻿- A year dictionary `ListRetroPartYears` of `year|part_id` entries for engine, interior and wheel-rim parts that are no longer sold in the store. A part is hidden when its year is below `RemoveCarsOlderThanYear`; body parts do not need entries (they are detected from each car's own year).
+﻿﻿- A year dictionary `ListRetroPartYears` of `year|part_id` entries for engine, interior and wheel-rim parts that are no longer sold in the store. A part is hidden when its year is below `RemoveCarsOlderThanYear`; body parts do not need entries (they are detected from each car's own year). Entries may carry an optional rarity token `year|part_id|rarity` (`common`/`uncommon`/`rare`/`unique`) that drives the rarity price multiplier.
 - Whitelist addition: If a desired item is not available or not displayed in the store, it can be added to the configuration file whitelist for visibility.
 ﻿﻿- You can enable or disable visiting the store. You can also enable or disable the auction where higher-quality cars were sold
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
+- Optional economy realism toggles (all off by default): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by rarity), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` rarity multipliers.  
+
+## Last update v 0.3.8
+
+1. Two-factor part pricing: a hidden retro part's price is now `base × era multiplier × rarity multiplier`. `ListRetroPartYears` entries accept an optional third token — `year|part_id|rarity` (rarity = `common`/`uncommon`/`rare`/`unique`). Old two-token entries still work and default to `common`. Rarity multipliers are configurable: `PriceRarityCommon` (1.0), `PriceRarityUncommon` (1.5), `PriceRarityRare` (2.5), `PriceRarityUnique` (4.0).
+2. Sell-price cap (anti-flipping): when `EnableSellCap` is on, selling a part pays at most `SellRatio` (default 0.35) of that part's shop price, so restoring and reselling a rare part can no longer print money.
+3. Labor cost per repair: when `EnableLaborCost` is on, each successful repair also charges `LaborCostBase` scaled by the part's rarity, so a full rebuild of a 1950s engine costs real money even when the part came from the junkyard.
+4. Junkyard donor condition: when `EnableDonorCondition` is on, the parts carried by junkyard donor cars have their condition scaled by `DonorConditionScale` (default 0.6), so old donors yield worse parts. This is scoped to junkyard cars only.
+
+Note: the three new economy features (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`) are **off by default**, so existing saves are unaffected until you opt in. Because the game is built with IL2CPP, the sell-price, repair-charge and donor-condition hooks were confirmed by method signature only and should be verified in-game; the toggles let you test each one independently.
 
 ## Last update v 0.3.7
 

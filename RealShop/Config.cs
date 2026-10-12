@@ -1400,6 +1400,20 @@ namespace RealShop
         public const int ValuePriceSpecialRetro = 10;
         public const int ValuePriceOther = 2;
 
+        public const float ValuePriceRarityCommon = 1.0f;
+        public const float ValuePriceRarityUncommon = 1.5f;
+        public const float ValuePriceRarityRare = 2.5f;
+        public const float ValuePriceRarityUnique = 4.0f;
+
+        private const bool ValueEnableSellCap = false;
+        public const float ValueSellRatio = 0.35f;
+
+        private const bool ValueEnableLaborCost = false;
+        public const int ValueLaborCostBase = 0;
+
+        private const bool ValueEnableDonorCondition = false;
+        public const float ValueDonorConditionScale = 0.6f;
+
         private const string ConfigCategoryName = "MainSection";
         private const string ConfigCarSection = "CarSection";
         private const string ConfigRepairSection = "RepairSection";
@@ -1422,6 +1436,20 @@ namespace RealShop
         public readonly MelonPreferences_Entry<int> _pricePartsGT;
         public readonly MelonPreferences_Entry<int> _pricePartsSpecialRetro;
         public readonly MelonPreferences_Entry<int> _pricePartsOther;
+
+        public readonly MelonPreferences_Entry<float> _priceRarityCommon;
+        public readonly MelonPreferences_Entry<float> _priceRarityUncommon;
+        public readonly MelonPreferences_Entry<float> _priceRarityRare;
+        public readonly MelonPreferences_Entry<float> _priceRarityUnique;
+
+        private readonly MelonPreferences_Entry<bool> _enableSellCap;
+        private readonly MelonPreferences_Entry<float> _sellRatio;
+
+        private readonly MelonPreferences_Entry<bool> _enableLaborCost;
+        private readonly MelonPreferences_Entry<int> _laborCostBase;
+
+        private readonly MelonPreferences_Entry<bool> _enableDonorCondition;
+        private readonly MelonPreferences_Entry<float> _donorConditionScale;
 
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
         private readonly MelonPreferences_Entry<bool> _isEnableShop;
@@ -1452,6 +1480,20 @@ namespace RealShop
         public int PricePartsSportGT => _pricePartsGT.Value;
         public int PricePartsSpecialRetro => _pricePartsSpecialRetro.Value;
         public int PricePartsOther => _pricePartsOther.Value;
+
+        public float PriceRarityCommon => _priceRarityCommon.Value;
+        public float PriceRarityUncommon => _priceRarityUncommon.Value;
+        public float PriceRarityRare => _priceRarityRare.Value;
+        public float PriceRarityUnique => _priceRarityUnique.Value;
+
+        public bool EnableSellCap => _enableSellCap.Value;
+        public float SellRatio => _sellRatio.Value;
+
+        public bool EnableLaborCost => _enableLaborCost.Value;
+        public int LaborCostBase => _laborCostBase.Value;
+
+        public bool EnableDonorCondition => _enableDonorCondition.Value;
+        public float DonorConditionScale => _donorConditionScale.Value;
 
 
         public string[] ListCarNames => _carNames.Value;
@@ -1492,6 +1534,20 @@ namespace RealShop
             _pricePartsGT = _cfgSectionCars.CreateEntry(nameof(PricePartsSportGT), ValuePriceSportGT);
             _pricePartsSpecialRetro = _cfgSectionCars.CreateEntry(nameof(PricePartsSpecialRetro), ValuePriceSpecialRetro);
             _pricePartsOther = _cfgSectionCars.CreateEntry(nameof(PricePartsOther), ValuePriceOther);
+
+            _priceRarityCommon = _cfgSectionCars.CreateEntry(nameof(PriceRarityCommon), ValuePriceRarityCommon);
+            _priceRarityUncommon = _cfgSectionCars.CreateEntry(nameof(PriceRarityUncommon), ValuePriceRarityUncommon);
+            _priceRarityRare = _cfgSectionCars.CreateEntry(nameof(PriceRarityRare), ValuePriceRarityRare);
+            _priceRarityUnique = _cfgSectionCars.CreateEntry(nameof(PriceRarityUnique), ValuePriceRarityUnique);
+
+            _enableSellCap = _cfgSectionCars.CreateEntry(nameof(EnableSellCap), ValueEnableSellCap);
+            _sellRatio = _cfgSectionCars.CreateEntry(nameof(SellRatio), ValueSellRatio);
+
+            _enableLaborCost = _cfgSectionCars.CreateEntry(nameof(EnableLaborCost), ValueEnableLaborCost);
+            _laborCostBase = _cfgSectionCars.CreateEntry(nameof(LaborCostBase), ValueLaborCostBase);
+
+            _enableDonorCondition = _cfgSectionCars.CreateEntry(nameof(EnableDonorCondition), ValueEnableDonorCondition);
+            _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);
 
             _whiteCarParts = _cfgSectionCars.CreateEntry(nameof(WhiteCarParts), ListWhiteCarParts);
             _isEnableBrandFilter = _cfgSectionCars.CreateEntry(nameof(IsEnableBrandFilter), true);
