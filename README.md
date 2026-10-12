@@ -35,6 +35,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 2. The six year-based lists (`ListRetroParts1950_1959` … `ListRetroParts2001_2005`) are replaced by one year dictionary `ListRetroPartYears`, where every entry is `year|part_id`. A part is hidden only when its year is lower than `RemoveCarsOlderThanYear`, and the price multiplier is chosen from that same year.
 3. Body parts are no longer marked by hand. The mod now reads each car's year from its own `config.txt` (base game and DLC cars alike) and automatically hides the body parts of every car older than the cutoff, so newly added cars are covered without any manual marking.
 4. Engine, interior and wheel-rim parts stay in the year dictionary (the game does not expose a reliable part-to-engine mapping, so these remain explicit but are now year-tagged and threshold-driven). `ListSportGT` and `ListSpecialRetro` remain always-hidden lists.
+5. Junkyard car filtering is more robust: each junkyard car's year is now read from its own `config.txt` first (covering base game and all DLC), falling back to the game API only if that fails. An old car can no longer be dropped from the junkyard when the game API fails to resolve a year that is present in the config.
 
 Note: the config format changed. Delete `Mods/RealShop.cfg` so it regenerates with the new `ListRetroPartYears` section (the old `ListRetroParts*` sections are no longer used).
 
