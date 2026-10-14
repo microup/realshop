@@ -329,10 +329,28 @@ namespace RealShop
         }
     }
 
-    [HarmonyPatch(typeof(GlobalData), "GetStartingMoney")]
     internal static class StartingMoneyPatch
     {
-        private static void Postfix(ref int __result)
+        internal static bool Pending;
+        internal static bool SceneLoaded;
+
+        private static bool Prefix(ref int __result)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || config.StartingMoney <= 0)
+            {
+                return true;
+            }
+
+            __result = config.StartingMoney;
+            MelonLogger.Msg("[Money] GetStartingMoney -> " + __result);
+            return false;
+        }
+    }
+
+    internal static class UpdateStartingMoneyPatch
+    {
+        private static void Postfix()
         {
             Config config = RealParts.ActiveConfig;
             if (config == null || config.StartingMoney <= 0)
@@ -340,8 +358,10 @@ namespace RealShop
                 return;
             }
 
-            __result = config.StartingMoney;
-            MelonLogger.Msg("[Money] GetStartingMoney override -> " + __result);
+            GlobalData.PlayerMoney = config.StartingMoney;
+            StartingMoneyPatch.Pending = true;
+            StartingMoneyPatch.SceneLoaded = false;
+            MelonLogger.Msg("[Money] UpdateStartingMoney called -> PlayerMoney=" + config.StartingMoney + " (holding until stable)");
         }
     }
 }

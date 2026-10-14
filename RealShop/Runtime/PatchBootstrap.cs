@@ -23,6 +23,7 @@ namespace RealShop
             TryPatchSellPrice(harmony);
             SellProbePatch.Install(harmony);
             RarityColorPatches.Install(harmony);
+            TryPatchStartingMoney(harmony);
             LogDiagnostics();
         }
 
@@ -199,6 +200,38 @@ namespace RealShop
             catch (System.Exception e)
             {
                 MelonLogger.Warning("[SellCap] sellPrice patch failed: " + e.Message);
+            }
+        }
+
+        private static void TryPatchStartingMoney(HarmonyInstance harmony)
+        {
+            try
+            {
+                System.Reflection.MethodInfo getStart = typeof(GlobalData).GetMethod("GetStartingMoney", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (getStart != null)
+                {
+                    var pre = typeof(StartingMoneyPatch).GetMethod("Prefix", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                    harmony.Patch(getStart, new HarmonyLib.HarmonyMethod(pre));
+                }
+
+                System.Type pm = HarmonyLib.AccessTools.TypeByName("ProfileManager");
+                System.Reflection.MethodInfo upd = pm != null ? pm.GetMethod("UpdateStartingMoney", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance) : null;
+                if (upd != null)
+                {
+                    var post = typeof(UpdateStartingMoneyPatch).GetMethod("Postfix", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                    harmony.Patch(upd, null, new HarmonyLib.HarmonyMethod(post));
+                }
+                else
+                {
+                    MelonLogger.Warning("[Money] UpdateStartingMoney not found");
+                }
+
+                int sm = RealParts.ActiveConfig != null ? RealParts.ActiveConfig.StartingMoney : 0;
+                MelonLogger.Msg("[Money] starting-money hooks OK (StartingMoney=" + sm + ", upd=" + (upd != null) + ")");
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[Money] GetStartingMoney patch failed: " + e.Message);
             }
         }
 
