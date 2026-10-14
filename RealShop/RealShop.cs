@@ -81,6 +81,14 @@ namespace RealShop
                 MelonLogger.Msg($"the mod has been {_modIsEnable}");
             }
 
+            if (_config.EnableMoneyHotkey && Input.GetKeyDown(_config.AddMoneyKey) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+            {
+                int amount = _config.AddMoneyAmount;
+                GlobalData.AddPlayerMoney(amount);
+                UIManager.Get().ShowPopup("[RealShop]", $"+{amount} CR", PopupType.Normal);
+                MelonLogger.Msg($"[Money] Ctrl+{_config.AddMoneyKey}: +{amount} (balance={GlobalData.PlayerMoney})");
+            }
+
             if (!_modIsEnable)
             {
                 return;

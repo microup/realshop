@@ -1424,6 +1424,9 @@ namespace RealShop
         private readonly MelonPreferences_Category _cfgSectionCars;
         private readonly MelonPreferences_Category _cfgSectionParts;
         private readonly MelonPreferences_Entry<KeyCode> _isKeyBindEnableSwitchMode;
+        private readonly MelonPreferences_Entry<KeyCode> _addMoneyKey;
+        private readonly MelonPreferences_Entry<int> _addMoneyAmount;
+        private readonly MelonPreferences_Entry<bool> _enableMoneyHotkey;
         
         private readonly MelonPreferences_Entry<uint> _removeCarsOlderThanYear;
 
@@ -1468,6 +1471,9 @@ namespace RealShop
         private readonly MelonPreferences_Entry<string[]> _specialRetro;
 
         public KeyCode IsKeyBindEnableSwitchMode => _isKeyBindEnableSwitchMode.Value;
+        public KeyCode AddMoneyKey => _addMoneyKey.Value;
+        public int AddMoneyAmount => _addMoneyAmount.Value;
+        public bool EnableMoneyHotkey => _enableMoneyHotkey.Value;
         public uint RemoveCarsOlderThanYear => _removeCarsOlderThanYear.Value;
 
 
@@ -1516,6 +1522,9 @@ namespace RealShop
             _config = MelonPreferences.CreateCategory(ConfigCategoryName);
             _config.SetFilePath("Mods/RealShop.cfg");
             _isKeyBindEnableSwitchMode = _config.CreateEntry(nameof(IsKeyBindEnableSwitchMode), KeyCode.F9);
+            _addMoneyKey = _config.CreateEntry(nameof(AddMoneyKey), KeyCode.S);
+            _addMoneyAmount = _config.CreateEntry(nameof(AddMoneyAmount), 1000);
+            _enableMoneyHotkey = _config.CreateEntry(nameof(EnableMoneyHotkey), true);
             _isEnableShop = _config.CreateEntry(nameof(IsEnableShop), true);
             _isEnableAdditionalAuction = _config.CreateEntry(nameof(IsEnableAdditionalAuction), false);
             _isEnableShopCarParts = _config.CreateEntry(nameof(IsEnableShopCarParts), false);
