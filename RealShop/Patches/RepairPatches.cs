@@ -53,7 +53,7 @@ namespace RealShop
 
         private static bool IsRedRepairablePart(Item item, bool bodyParts)
         {
-            if (item == null || !RealParts.IsDamagedRed(item.Condition))
+            if (item == null || !RealParts.IsDamagedRed(item.GetConditionToShow()))
             {
                 return false;
             }
@@ -105,8 +105,7 @@ namespace RealShop
 
         private static bool IsConditionFullyRepaired(Item item)
         {
-            return RealParts.IsFullyRepaired(item.Condition) ||
-                   RealParts.IsFullyRepaired(item.GetConditionToShow());
+            return RealParts.IsFullyRepaired(item.GetConditionToShow());
         }
 
         private static bool IsConditionFullyRepaired(float conditionToShow)
@@ -186,6 +185,41 @@ namespace RealShop
             }
 
             AddRedPartsToRepairTablePatch.RemoveRepairedParts(__result, allItems);
+            AddDamagedPartsToRepairWindow(__result, allItems);
+        }
+
+        private static void AddDamagedPartsToRepairWindow(Il2CppSystem.Collections.Generic.List<ChoosePartDownItem> items, Il2CppSystem.Collections.Generic.List<Item> allItems)
+        {
+            for (int i = 0; i < allItems.Count; i++)
+            {
+                Item item = allItems[i];
+                if (item == null || !(item.GetConditionToShow() < 0.995f))
+                {
+                    continue;
+                }
+
+                PartProperty property = Singleton<GameInventory>.Instance.GetItemProperty(item.ID);
+                if (property == null || property.RepairGroup <= 0)
+                {
+                    continue;
+                }
+
+                bool present = false;
+                for (int j = 0; j < items.Count; j++)
+                {
+                    if (items[j] != null && items[j].BaseItem != null && items[j].BaseItem.UID == item.UID)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+                if (present)
+                {
+                    continue;
+                }
+
+                items.Add(new ChoosePartDownItem(item) { IsLocked = false });
+            }
         }
     }
 
@@ -195,8 +229,7 @@ namespace RealShop
         private static bool Prefix(RepairPartWindow __instance)
         {
             Item item = __instance.currentItemInfo?.Item;
-            return item == null ||
-                   (!RealParts.IsFullyRepaired(item.Condition) && !RealParts.IsFullyRepaired(item.GetConditionToShow()));
+            return item == null || !RealParts.IsFullyRepaired(item.GetConditionToShow());
         }
     }
 
