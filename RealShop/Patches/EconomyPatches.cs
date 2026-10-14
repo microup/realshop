@@ -328,4 +328,20 @@ namespace RealShop
             }
         }
     }
+
+    [HarmonyPatch(typeof(GlobalData), "GetStartingMoney")]
+    internal static class StartingMoneyPatch
+    {
+        private static void Postfix(ref int __result)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || config.StartingMoney <= 0)
+            {
+                return;
+            }
+
+            __result = config.StartingMoney;
+            MelonLogger.Msg("[Money] GetStartingMoney override -> " + __result);
+        }
+    }
 }

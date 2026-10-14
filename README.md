@@ -1,7 +1,7 @@
 # RealShop
 This mod was created with the aim of adding more realism to the game. In real life, it's unlikely that you can buy a new body part or engine for cars older than 2005. In this mod, I'm trying to address this issue to introduce more realism. There's still a lot of work to be done, but you can already experience and evaluate a certain part of the new gameplay. I hope you'll enjoy this challenge because now, to assemble an old car, you'll have to visit junkyards, auctions, or barns to find the necessary parts. Starting from v0.3.4, this gameplay is available from the beginning of a save because the junkyard and repair restrictions are opened earlier by the mod. Good luck in restoring retro cars! 😊
 
-From v0.3.8 the hunt has a color: rare parts glow **green** and unique parts glow **purple** wherever they appear — junkyard, inventory, repair bench. Some finds are worth the trip the moment you spot them.
+From v0.3.9 the hunt has a color **and a ceiling**: no part can be restored to a flawless 100% anymore — every part can only be brought back so far, and the better it can get, the brighter it glows. Ordinary parts top out around 30–50%, good ones reach 50–70% and glow **green**, and only rare survivors can be pushed to 70–100% and glow **purple**. A car you raise from the junkyard is never perfect — and that is the whole challenge.
 
 ## IMPORTANT
 
@@ -25,57 +25,81 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 12. Configuration file allows for customization, including:
 - Changing the year for cars that will not appear in the shop (add name to config section).
 - Customizing the key binding to enable or disable the mod.
-﻿﻿- A year dictionary `ListRetroPartYears` of `year|part_id` entries for engine, interior and wheel-rim parts that are no longer sold in the store. A part is hidden when its year is below `RemoveCarsOlderThanYear`; body parts do not need entries (they are detected from each car's own year). Entries may carry an optional rarity token `year|part_id|rarity` (`common`/`uncommon`/`rare`/`unique`) that drives the rarity price multiplier and the rarity color highlight.
+﻿﻿- A year dictionary `ListRetroPartYears` of `year|part_id` entries for engine, interior and wheel-rim parts that are no longer sold in the store. A part is hidden when its year is below `RemoveCarsOlderThanYear`; body parts do not need entries (they are detected from each car's own year). As of v0.3.9 the optional third token `year|part_id|rarity` is **ignored**: a part's rarity is no longer stored in the config but derived from its hidden restoration ceiling (see *Rarity, Restoration Ceilings & The New Economy*); shop prices for hidden retro parts are now era-based only.
 - Whitelist addition: If a desired item is not available or not displayed in the store, it can be added to the configuration file whitelist for visibility.
 ﻿﻿- You can enable or disable visiting the store. You can also enable or disable the auction where higher-quality cars were sold
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
-- Economy realism toggles (on by default in v0.3.8): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by rarity), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` rarity multipliers.
-13. Rarity highlighting: **rare** parts glow green and **unique** parts glow purple on their card in the junkyard, inventory and repair lists; common/uncommon keep the normal grey card, and highlighted slots reset correctly when the game reuses them.  
+- Economy realism toggles (on by default in v0.3.8): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by grade), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` labor multipliers.
+- Restoration ceilings (`EnableMaxQuality`, on by default): the per-part maximum repair condition, the `MaxQuality*Min/Max` ranges and the `MaxQuality*Weight` odds. Starting balance for a new game via `StartingMoney` (default 10000).
+13. Rarity highlighting: a part's card glows **green** (restoration ceiling 50–70%) or **purple** (ceiling 70–100%) in the junkyard, inventory and repair lists; ordinary parts stay grey, and highlighted slots reset correctly when the game reuses them. A part that has reached its ceiling shows a **`MAX xx%`** marker; below it the card reads `current-max%`.  
+14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.  
 
-## Rarity & The New Economy
+## Rarity, Restoration Ceilings & The New Economy
 
-RealShop v0.3.8 turns parts into a treasure hunt. Every engine, interior and wheel-rim part can now carry a **rarity tier**, and rarity is not just a label — it changes what a part costs, what it takes to restore, and how it glows when you finally spot it in the dirt.
+RealShop v0.3.9 changes what "repair" means. In the vanilla game any part can be ground back to a flawless 100% — a rust-eaten junkyard block comes out looking factory-new. That is the illusion this mod breaks.
 
-### Rarity tiers
+### You can no longer restore a part to 100%
+Every part now carries a **hidden restoration ceiling** — the best condition its worn core will ever allow. It is decided once, the moment the part enters the world, and it never changes (not across saves, not across repairs, and not with your skill level). How far a part can be brought back is a property of the part, not of your patience.
 
-| Tier | Card color | Shop price × | Repair labor × |
-| --- | --- | --- | --- |
-| Common | default (grey) | 1.0 | 1.0 |
-| Uncommon | default (grey) | 1.5 | 1.5 |
-| Rare | **green** | 2.5 | 2.5 |
-| Unique | **purple** | 4.0 | 4.0 |
+- Most parts top out around **30–50%** — ordinary, tired, honest about it.
+- Some reach **50–70%** — worth the detour.
+- A lucky few can be pushed to **70–100%** — the survivors worth building a car around.
 
-- Rarity is stored as an optional third token in the year dictionary: `year|part_id|rarity`. Old `year|part_id` entries still work and read as `common`.
-- A **green** or **purple** card is your reward for keeping your eyes open: rare and unique parts are highlighted right in the junkyard, inventory and repair lists, so a once-in-a-restore find no longer hides in plain sight. Common and uncommon parts keep the normal grey card — the glow is reserved for the pieces worth chasing.
-- The multipliers are fully configurable (`PriceRarityCommon` / `PriceRarityUncommon` / `PriceRarityRare` / `PriceRarityUnique`).
+The ceiling is rolled from the part's unique id, so it is stable and reproducible. A part that has hit its ceiling stops improving, drops out of the repair list, and shows a **`MAX xx%`** marker (grey bar) so you know the hunt for that piece is over. Below the ceiling the card reads **`current-max%`** (e.g. `12-45%`) so you always know the target.
+
+### Rarity is now the ceiling — and it has a color
+Rarity is no longer a label in a config file. It is simply **how good a part can get**, and the card color falls out of it:
+
+| Grade | Card color | Restoration ceiling | How often | Repair labor × |
+| --- | --- | --- | --- | --- |
+| Common | grey | 30–50% | ~65% | 1.0 |
+| Rare | **green** | 50–70% | ~25% | 2.5 |
+| Unique | **purple** | 70–100% | ~10% | 4.0 |
+
+- A **green** or **purple** card is no longer a pre-tagged treasure — it is a part that happens to have a high ceiling, and it is genuinely rare (only about 1 in 10 parts can be pushed past 70%).
+- The grade also drives **repair labor cost** (green 2.5×, purple 4×), so the parts worth keeping are also the parts that cost to restore.
+- The odds and ranges are configurable: `MaxQualityCommonWeight/RareWeight/UniqueWeight` (65/25/10) and `MaxQualityCommonMin/Max`, `MaxQualityRareMin/Max`, `MaxQualityUniqueMin/Max`.
+- New parts bought in the shop are **not** colored — a part's ceiling only exists once the part is yours (in the inventory or lying in the junkyard).
 
 ### What the new economy changes vs. the vanilla game
 
-- **Two-factor pricing.** A hidden retro part's shop price is `base × era multiplier × rarity multiplier`. A 1950s unique engine block is not just old — it is genuinely precious.
+- **Era-based pricing.** A hidden retro part's shop price is `base × era multiplier` — the older the era, the dearer the part. (The old config rarity multiplier was retired when rarity became a per-part ceiling.)
 - **Resale is capped (anti-flip).** Selling a part pays at most `SellRatio` (default **0.35**, i.e. 35%) of its shop price — and the number you see in the "Sell" dialog is the number you actually receive. Restoring and reselling can no longer print money.
-- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by rarity, so a full rebuild of a rare engine is a real investment even when the part came out of a junkyard for free.
+- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by the part's grade (green 2.5×, purple 4×), so a full rebuild of a high-ceiling engine is a real investment even when the part came out of a junkyard for free.
 - **Old donors yield worse parts.** Junkyard donor cars older than the cutoff have their parts' condition scaled by `DonorConditionScale` (default 0.6), so a donor is a starting point, not a gift.
-- **One bad call can end a legend.** A failed repair on a red part destroys it permanently — and now, with rarity, that loss can be a unique part you may never see again.
+- **One bad call can end a legend.** A failed repair on a red part destroys it permanently — and now a high-ceiling part is painful to lose.
 
 ### Why it's worth it (the upside)
 
-- The junkyard stops being a chore and becomes a **hunt**: spotting a purple card is a genuine jolt.
-- Rarity gives old parts a reason to be precious, so a restored retro car feels *earned*.
-- The loop is closed: cheap junkyard finds + capped resale + labor cost mean you can't brute-force your way to credits — you have to actually restore.
+- A car you raise from the junkyard is **never perfect**. Every panel and every block carries its own ceiling, so a full restoration is a long, deliberate hunt for the few parts that can actually reach high condition — and the finished car wears that history.
+- The junkyard stops being a chore and becomes a **hunt**: spotting a purple card is a genuine jolt, because it means this piece can be brought back almost to new.
+- The loop is closed: capped resale + labor cost + restoration ceilings mean you can't brute-force a flawless build — you have to actually hunt.
 
 ### The trade-offs (know them before you commit)
 
-- **Rarer = pricier and slower.** A unique part costs 4× to buy and 4× in labor to restore; chasing purples is a long game.
+- **Nothing is ever 100%.** If you want a pristine, all-green garage, this is not it — most parts cap low, and that is the point.
+- **Rarer = slower and dearer to restore.** A purple part costs 4× in labor to bring up, and there are few of them; chasing purples is a long game.
 - **Resale is deliberately weak.** At 35% you will almost always lose money flipping parts — that is the point, but it removes the easy-money loop the base game allows.
 - **Donor parts arrive tired.** With donor-condition scaling, expect to spend time and labor bringing a donor part back up.
-- **Risk is real.** Permanent part loss + rarity means a single mistake can erase a unique find. Save before high-stakes repairs.
+- **Risk is real.** Permanent part loss + ceilings means a single mistake can erase a part that could have been brought back to near-new. Save before high-stakes repairs.
 
 ### Risks & caveats
 
-- Rarity is **data-driven**: only parts listed with a rarity token in `ListRetroPartYears` are highlighted and priced as rare. Everything else is `common`. If a part you expected to glow doesn't, it simply isn't tagged yet — add it to the dictionary.
-- The economy hooks run on an IL2CPP build. The sell-cap (display + payment), labor charge, donor condition and rarity color were **verified in live gameplay** on build 1.0.40, but a future game update can move method signatures and silently disable a hook — the mod logs every patch at startup so you can tell what is active.
-- Every economy feature is an independent toggle (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`) — turn any of them off to soften the challenge.
+- Rarity is **per-part and random**: it comes from each part's restoration ceiling, rolled from its id. Two used copies of the same part can roll different ceilings — that is intended (no two worn parts are equally tired). There is nothing to tag by hand anymore.
+- The economy hooks run on an IL2CPP build. The sell-cap (display + payment), labor charge, donor condition, ceilings and rarity color were **verified in live gameplay** on build 1.0.40, but a future game update can move method signatures and silently disable a hook — the mod logs every patch at startup so you can tell what is active.
+- Every economy feature is an independent toggle (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`, `EnableMaxQuality`) — turn any of them off to soften the challenge.
+
+## Last update v 0.3.9
+
+1. **Restoration ceilings (the big one).** Parts can no longer be ground to a perfect 100%. Every part gets a hidden maximum condition it can be restored to, rolled once from its id and stable across saves. Most parts cap at 30–50%, some at 50–70%, a few at 70–100%. A part at its ceiling stops improving, leaves the repair list, and shows a `MAX xx%` marker; below it the card shows `current-max%`. Toggle with `EnableMaxQuality`.
+2. **Rarity is now the ceiling.** Rarity is no longer a config tag — it is simply how high a part can be restored, and the card color follows it: grey (30–50%), green (50–70%), purple (70–100%). Odds are configurable (`MaxQualityCommonWeight/RareWeight/UniqueWeight`, default 65/25/10) and so are the ranges. The old `year|part_id|rarity` token is ignored, and shop prices for hidden retro parts are now era-based only.
+3. **Repair fix.** Repairs now key off the part's *displayed* condition, so body panels and previously "stuck" parts (hoods, doors) repair correctly and are added to the repair window as intended.
+4. **Labor cost follows the new grade.** Green parts cost 2.5× and purple 4× the base labor; common 1×.
+5. **Starting balance.** A new game now starts with `StartingMoney` (default **10000**), configurable.
+6. **Marker polish.** The at-ceiling marker reads `MAX xx%` (with the percentage); below-ceiling cards read `current-max%`.
+
+Note: `EnableMaxQuality` (default on) is the master switch for ceilings and the new color-by-ceiling; set it to `false` to return to vanilla 100% repairs and drop the coloring. Verified in live gameplay on build 1.0.40.
 
 ## Last update v 0.3.8
 

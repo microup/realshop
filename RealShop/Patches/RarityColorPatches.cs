@@ -21,6 +21,7 @@ namespace RealShop
     {
         private static readonly Color RareColor = new Color(0.13f, 0.5f, 0.13f, 1f);
         private static readonly Color UniqueColor = new Color(0.5f, 0.15f, 0.65f, 1f);
+        private static readonly Color MaxBarColor = new Color(0.55f, 0.55f, 0.55f, 1f);
 
         internal static bool TestAllRare = false;
 
@@ -104,13 +105,21 @@ namespace RealShop
         {
             try
             {
+                Item item = __0 as Item;
+                if (item == null)
+                {
+                    return;
+                }
+
                 string id = GetId(__0);
                 if (string.IsNullOrEmpty(id))
                 {
                     return;
                 }
 
-                string rarity = RetroPartCatalog.GetRarityForPart(id);
+                ApplyMaxQualityMarker(item, __1);
+
+                string rarity = MaxQualityService.RarityFor(item);
                 if (TestAllRare)
                 {
                     rarity = "rare";
@@ -175,6 +184,70 @@ namespace RealShop
             catch
             {
             }
+        }
+
+        private static void ApplyMaxQualityMarker(object source, object ui)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableMaxQuality)
+            {
+                return;
+            }
+
+            Item item = source as Item;
+            if (item == null || ui == null)
+            {
+                return;
+            }
+
+            Image bar = GetPropAny(ui, "condition") as Image;
+            Text text = GetPropAny(ui, "conditionPercentage") as Text;
+            if (bar == null && text == null)
+            {
+                return;
+            }
+
+            float max = MaxQualityService.MaxFraction(item);
+            float show = item.GetConditionToShow();
+
+            if (show >= 0.995f)
+            {
+                return;
+            }
+
+            if (show >= max - 0.0001f)
+            {
+                if (bar != null)
+                {
+                    bar.color = MaxBarColor;
+                }
+
+                if (text != null)
+                {
+                    text.text = "MAX " + Mathf.RoundToInt(max * 100f) + "%";
+                }
+            }
+            else if (text != null)
+            {
+                text.text = Mathf.RoundToInt(show * 100f) + "-" + Mathf.RoundToInt(max * 100f) + "%";
+            }
+        }
+
+        private static object GetPropAny(object target, string name)
+        {
+            try
+            {
+                PropertyInfo prop = target.GetType().GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (prop != null && prop.CanRead && prop.GetIndexParameters().Length == 0)
+                {
+                    return prop.GetValue(target, null);
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
         }
 
         private static string GetId(object source)

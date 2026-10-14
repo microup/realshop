@@ -131,6 +131,7 @@
     <Compile Include="Runtime\GameTypes.cs" />
     <Compile Include="Scene\SceneUiController.cs" />
     <Compile Include="Catalog\RetroPartCatalog.cs" />
+    <Compile Include="Catalog\MaxQualityService.cs" />
     <Compile Include="Travel\FreeTravelService.cs" />
     <Compile Include="Patches\RepairPatches.cs" />
     <Compile Include="Patches\EconomyPatches.cs" />

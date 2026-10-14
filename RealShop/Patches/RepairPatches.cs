@@ -105,7 +105,7 @@ namespace RealShop
 
         private static bool IsConditionFullyRepaired(Item item)
         {
-            return RealParts.IsFullyRepaired(item.GetConditionToShow());
+            return MaxQualityService.IsRepairComplete(item);
         }
 
         private static bool IsConditionFullyRepaired(float conditionToShow)
@@ -193,7 +193,7 @@ namespace RealShop
             for (int i = 0; i < allItems.Count; i++)
             {
                 Item item = allItems[i];
-                if (item == null || !(item.GetConditionToShow() < 0.995f))
+                if (item == null || MaxQualityService.IsRepairComplete(item))
                 {
                     continue;
                 }
@@ -229,7 +229,59 @@ namespace RealShop
         private static bool Prefix(RepairPartWindow __instance)
         {
             Item item = __instance.currentItemInfo?.Item;
-            return item == null || !RealParts.IsFullyRepaired(item.GetConditionToShow());
+            return item == null || !MaxQualityService.IsRepairComplete(item);
+        }
+    }
+
+    [HarmonyPatch(typeof(RepairPartWindow), "ProcessGameResult")]
+    internal static class CapRepairResultOnProcessGameResultPatch
+    {
+        private static void Prefix(RepairPartWindow __instance)
+        {
+            PartInfo partInfo = __instance.currentItemInfo;
+            if (partInfo == null || partInfo.Item == null)
+            {
+                return;
+            }
+
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableMaxQuality)
+            {
+                return;
+            }
+
+            float maxFraction = MaxQualityService.MaxFraction(partInfo.Item);
+            partInfo.SuccessCondition = ClampToCap(partInfo.SuccessCondition, maxFraction);
+            partInfo.DentSuccessCondition = ClampToCap(partInfo.DentSuccessCondition, maxFraction);
+        }
+
+        private static void Postfix(RepairPartWindow __instance)
+        {
+            Item item = __instance.currentItemInfo?.Item;
+            if (item == null)
+            {
+                return;
+            }
+
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableMaxQuality)
+            {
+                return;
+            }
+
+            float maxFraction = MaxQualityService.MaxFraction(item);
+            item.Condition = ClampToCap(item.Condition, maxFraction);
+        }
+
+        private static float ClampToCap(float value, float maxFraction)
+        {
+            if (value <= 0f)
+            {
+                return value;
+            }
+
+            float cap = value > 1f ? maxFraction * 100f : maxFraction;
+            return value > cap ? cap : value;
         }
     }
 
@@ -274,22 +326,24 @@ namespace RealShop
                 ? partInfo.CurrentCondition
                 : partInfo.Item.GetConditionToShow();
 
-            partInfo.SuccessCondition = FixSuccessCondition(currentCondition, partInfo.SuccessCondition);
+            float maxFraction = partInfo.Item != null ? MaxQualityService.MaxFraction(partInfo.Item) : 1f;
+            partInfo.SuccessCondition = FixSuccessCondition(currentCondition, partInfo.SuccessCondition, maxFraction);
             if (partInfo.DentCurrentCondition > 0f || partInfo.DentSuccessCondition > 0f)
             {
-                partInfo.DentSuccessCondition = FixSuccessCondition(partInfo.DentCurrentCondition, partInfo.DentSuccessCondition);
+                partInfo.DentSuccessCondition = FixSuccessCondition(partInfo.DentCurrentCondition, partInfo.DentSuccessCondition, maxFraction);
             }
         }
 
-        private static float FixSuccessCondition(float currentCondition, float successCondition)
+        private static float FixSuccessCondition(float currentCondition, float successCondition, float maxFraction)
         {
+            bool percentScale = currentCondition > 1f;
+            float cap = percentScale ? maxFraction * 100f : maxFraction;
+            float inc = percentScale ? RealParts.MinimumRepairConditionIncrease : RealParts.MinimumRepairConditionIncrease / 100f;
             if (successCondition > currentCondition)
             {
-                return successCondition;
+                return Mathf.Min(successCondition, cap);
             }
 
-            float cap = currentCondition <= 1f ? 1f : (float)RealParts.FullyRepairedPartConditionToShow;
-            float inc = currentCondition <= 1f ? RealParts.MinimumRepairConditionIncrease / 100f : RealParts.MinimumRepairConditionIncrease;
             return Mathf.Min(cap, currentCondition + inc);
         }
     }
@@ -353,7 +407,7 @@ namespace RealShop
                 return;
             }
 
-            string rarity = RetroPartCatalog.GetRarityForPart(item.ID);
+            string rarity = MaxQualityService.RarityFor(item);
             float mult = config.PriceRarityCommon;
             if (rarity == "unique")
             {

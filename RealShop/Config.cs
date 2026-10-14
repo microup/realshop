@@ -1426,6 +1426,7 @@ namespace RealShop
         private readonly MelonPreferences_Entry<KeyCode> _isKeyBindEnableSwitchMode;
         private readonly MelonPreferences_Entry<KeyCode> _addMoneyKey;
         private readonly MelonPreferences_Entry<int> _addMoneyAmount;
+        private readonly MelonPreferences_Entry<int> _startingMoney;
         private readonly MelonPreferences_Entry<bool> _enableMoneyHotkey;
         
         private readonly MelonPreferences_Entry<uint> _removeCarsOlderThanYear;
@@ -1452,7 +1453,17 @@ namespace RealShop
         private readonly MelonPreferences_Entry<int> _laborCostBase;
 
         private readonly MelonPreferences_Entry<bool> _enableDonorCondition;
-        private readonly MelonPreferences_Entry<float> _donorConditionScale;
+        private readonly MelonPreferences_Entry<float> _donorConditionScale;        private readonly MelonPreferences_Entry<bool> _enableMaxQuality;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonMax;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareMax;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueMax;
+        private readonly MelonPreferences_Entry<bool> _maxQualityRevealAfterRepair;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonWeight;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareWeight;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueWeight;
 
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
         private readonly MelonPreferences_Entry<bool> _isEnableShop;
@@ -1473,6 +1484,7 @@ namespace RealShop
         public KeyCode IsKeyBindEnableSwitchMode => _isKeyBindEnableSwitchMode.Value;
         public KeyCode AddMoneyKey => _addMoneyKey.Value;
         public int AddMoneyAmount => _addMoneyAmount.Value;
+        public int StartingMoney => _startingMoney.Value;
         public bool EnableMoneyHotkey => _enableMoneyHotkey.Value;
         public uint RemoveCarsOlderThanYear => _removeCarsOlderThanYear.Value;
 
@@ -1499,7 +1511,17 @@ namespace RealShop
         public int LaborCostBase => _laborCostBase.Value;
 
         public bool EnableDonorCondition => _enableDonorCondition.Value;
-        public float DonorConditionScale => _donorConditionScale.Value;
+        public float DonorConditionScale => _donorConditionScale.Value;        public bool EnableMaxQuality => _enableMaxQuality.Value;
+        public int MaxQualityCommonMin => _maxQualityCommonMin.Value;
+        public int MaxQualityCommonMax => _maxQualityCommonMax.Value;
+        public int MaxQualityRareMin => _maxQualityRareMin.Value;
+        public int MaxQualityRareMax => _maxQualityRareMax.Value;
+        public int MaxQualityUniqueMin => _maxQualityUniqueMin.Value;
+        public int MaxQualityUniqueMax => _maxQualityUniqueMax.Value;
+        public int MaxQualityCommonWeight => _maxQualityCommonWeight.Value;
+        public int MaxQualityRareWeight => _maxQualityRareWeight.Value;
+        public int MaxQualityUniqueWeight => _maxQualityUniqueWeight.Value;
+        public bool MaxQualityRevealAfterRepair => _maxQualityRevealAfterRepair.Value;
 
 
         public string[] ListCarNames => _carNames.Value;
@@ -1525,6 +1547,7 @@ namespace RealShop
             _addMoneyKey = _config.CreateEntry(nameof(AddMoneyKey), KeyCode.S);
             _addMoneyAmount = _config.CreateEntry(nameof(AddMoneyAmount), 1000);
             _enableMoneyHotkey = _config.CreateEntry(nameof(EnableMoneyHotkey), true);
+            _startingMoney = _config.CreateEntry(nameof(StartingMoney), 10000);
             _isEnableShop = _config.CreateEntry(nameof(IsEnableShop), true);
             _isEnableAdditionalAuction = _config.CreateEntry(nameof(IsEnableAdditionalAuction), false);
             _isEnableShopCarParts = _config.CreateEntry(nameof(IsEnableShopCarParts), false);
@@ -1556,7 +1579,17 @@ namespace RealShop
             _laborCostBase = _cfgSectionCars.CreateEntry(nameof(LaborCostBase), ValueLaborCostBase);
 
             _enableDonorCondition = _cfgSectionCars.CreateEntry(nameof(EnableDonorCondition), ValueEnableDonorCondition);
-            _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);
+            _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);            _enableMaxQuality = _cfgSectionCars.CreateEntry(nameof(EnableMaxQuality), true);
+            _maxQualityCommonMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonMin), 30);
+            _maxQualityCommonMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonMax), 50);
+            _maxQualityRareMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareMin), 50);
+            _maxQualityRareMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareMax), 70);
+            _maxQualityUniqueMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueMin), 70);
+            _maxQualityUniqueMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueMax), 100);
+            _maxQualityRevealAfterRepair = _cfgSectionCars.CreateEntry(nameof(MaxQualityRevealAfterRepair), true);
+            _maxQualityCommonWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonWeight), 65);
+            _maxQualityRareWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareWeight), 25);
+            _maxQualityUniqueWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueWeight), 10);
 
             _whiteCarParts = _cfgSectionCars.CreateEntry(nameof(WhiteCarParts), ListWhiteCarParts);
             _isEnableBrandFilter = _cfgSectionCars.CreateEntry(nameof(IsEnableBrandFilter), true);
