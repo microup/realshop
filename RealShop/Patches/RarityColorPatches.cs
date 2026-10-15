@@ -119,7 +119,7 @@ namespace RealShop
 
                 ApplyMaxQualityMarker(item, __1);
 
-                string rarity = MaxQualityService.RarityFor(item);
+                string rarity = MaxQualityService.GradeFor(item);
                 if (TestAllRare)
                 {
                     rarity = "rare";
@@ -128,6 +128,11 @@ namespace RealShop
                 if (SeenRarity.Add(id))
                 {
                     MelonLogger.Msg("[RarityColor] RARITY id=" + id + " rarity=" + rarity);
+                }
+
+                if (rarity == "rare" && MaxQualityService.IsBody(item))
+                {
+                    rarity = "common";
                 }
 
                 bool isRare = rarity == "rare" || rarity == "unique";

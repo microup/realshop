@@ -1,7 +1,7 @@
 # RealShop
 This mod was created with the aim of adding more realism to the game. In real life, it's unlikely that you can buy a new body part or engine for cars older than 2005. In this mod, I'm trying to address this issue to introduce more realism. There's still a lot of work to be done, but you can already experience and evaluate a certain part of the new gameplay. I hope you'll enjoy this challenge because now, to assemble an old car, you'll have to visit junkyards, auctions, or barns to find the necessary parts. Starting from v0.3.4, this gameplay is available from the beginning of a save because the junkyard and repair restrictions are opened earlier by the mod. Good luck in restoring retro cars! 😊
 
-From v0.3.9 the hunt has a color **and a ceiling**: no part can be restored to a flawless 100% anymore — every part can only be brought back so far, and the better it can get, the brighter it glows. Ordinary parts top out around 30–50%, good ones reach 50–70% and glow **green**, and only rare survivors can be pushed to 70–100% and glow **purple**. A car you raise from the junkyard is never perfect — and that is the whole challenge.
+From v0.3.9 the hunt has a color **and a ceiling**: no part can be restored to a flawless 100% anymore — every part can only be brought back so far, and the better it can get, the brighter it glows. Ordinary parts top out around 30–50%, good ones reach 50–70% and glow **green**, and only rare survivors can be pushed to 70–100% and glow **purple**. A car you raise from the junkyard is never perfect — and that is the whole challenge. Bodywork is the one place the rule bends: rusted metal can be cut, welded and patched, so panels can always be brought back further than the rest of the car. **The deal is simple:** a car you pull from the junkyard will never be a flawless 100% — but hunt patiently, weld well and choose your parts, and you can still bring them **above 70%** and build a machine that turns heads. Perfect is gone; remarkable is still yours to earn.
 
 ## IMPORTANT
 
@@ -31,7 +31,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 ﻿﻿- Adding or removing specific brands from the list that won't appear in the shop.
 - Change the prices of all spare parts through the configuration file using these variables (PriceParts1950_1959 and etc)  
 - Economy realism toggles (on by default in v0.3.8): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by grade), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` labor multipliers.
-- Restoration ceilings (`EnableMaxQuality`, on by default): the per-part maximum repair condition, the `MaxQuality*Min/Max` ranges and the `MaxQuality*Weight` odds. Starting balance for a new game via `StartingMoney` (default 10000).
+- Restoration ceilings (`EnableMaxQuality`, on by default): the per-part maximum repair condition, the `MaxQuality*Min/Max` ranges and the `MaxQuality*Weight` odds. Body panels are the deliberate exception — they roll their own restoration range `MaxQualityBodyMin`–`MaxQualityBodyMax` (default 50–100%), so a rusted panel can come back anywhere from tired to as-new. Starting balance for a new game via `StartingMoney` (default 20000).
 13. Rarity highlighting: a part's card glows **green** (restoration ceiling 50–70%) or **purple** (ceiling 70–100%) in the junkyard, inventory and repair lists; ordinary parts stay grey, and highlighted slots reset correctly when the game reuses them. A part that has reached its ceiling shows a **`MAX xx%`** marker; below it the card reads `current-max%`.  
 14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.  
 
@@ -72,7 +72,7 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 
 ### Why it's worth it (the upside)
 
-- A car you raise from the junkyard is **never perfect**. Every panel and every block carries its own ceiling, so a full restoration is a long, deliberate hunt for the few parts that can actually reach high condition — and the finished car wears that history.
+- A car you raise from the junkyard is **never perfect**. Every panel and every block carries its own ceiling, so a full restoration is a long, deliberate hunt for the few parts that can actually reach high condition — and the finished car wears that history. The ceiling is real, but so is the reward: the parts that clear 70% are exactly the ones worth chasing, and a car built from them is a trophy, not a showroom copy.
 - The junkyard stops being a chore and becomes a **hunt**: spotting a purple card is a genuine jolt, because it means this piece can be brought back almost to new.
 - The loop is closed: capped resale + labor cost + restoration ceilings mean you can't brute-force a flawless build — you have to actually hunt.
 
@@ -96,10 +96,12 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 2. **Rarity is now the ceiling.** Rarity is no longer a config tag — it is simply how high a part can be restored, and the card color follows it: grey (30–50%), green (50–70%), purple (70–100%). Odds are configurable (`MaxQualityCommonWeight/RareWeight/UniqueWeight`, default 65/25/10) and so are the ranges. The old `year|part_id|rarity` token is ignored, and shop prices for hidden retro parts are now era-based only.
 3. **Repair fix.** Repairs now key off the part's *displayed* condition, so body panels and previously "stuck" parts (hoods, doors) repair correctly and are added to the repair window as intended.
 4. **Labor cost follows the new grade.** Green parts cost 2.5× and purple 4× the base labor; common 1×.
-5. **Starting balance.** A new game now starts with `StartingMoney` (default **10000**), configurable.
+5. **Starting balance.** A new game now starts with `StartingMoney` (default **20000**), applied reliably at new-game creation. The cushion is deliberate: with resale capped, labor billed on every repair and junkyard donors handing over tired parts, the opening economy is genuinely tighter — so 20000 gives you a real first move: buy the **welding machine** and the **pressure washer**, and still have enough to **pull a cheap donor car off the junkyard** and start a first build, instead of stalling broke in the first hour.
 6. **Marker polish.** The at-ceiling marker reads `MAX xx%` (with the percentage); below-ceiling cards read `current-max%`.
 
-Note: `EnableMaxQuality` (default on) is the master switch for ceilings and the new color-by-ceiling; set it to `false` to return to vanilla 100% repairs and drop the coloring. Verified in live gameplay on build 1.0.40.
+7. **Bodywork is restorable.** Body panels (doors, hoods, fenders, bumpers, ...) are the one place the ceiling bends: because you can cut, weld and patch metal, every body part rolls its own ceiling in `MaxQualityBodyMin`–`MaxQualityBodyMax` (default **50–100%**), so panels vary from tired to as-new instead of all topping out at one number, and its card color follows that true ceiling. Engines, drivetrain and electrics keep the hard ceiling — worn internals stay worn. The "a junkyard car is never perfect" promise holds where it matters, while a rusted shell can genuinely be resurrected. To keep green meaningful as a value signal, body panels are **not** tinted green — a green-tier panel reads as ordinary, and only purple bodywork (71–100%) glows.
+
+Note: `EnableMaxQuality` (default on) is the master switch for ceilings and the new color-by-ceiling; set it to `false` to return to vanilla 100% repairs and drop the coloring. Verified in live gameplay on build 1.0.40. The starting-balance override was confirmed in live gameplay: a new game now opens at the configured `StartingMoney`.
 
 ## Last update v 0.3.8
 

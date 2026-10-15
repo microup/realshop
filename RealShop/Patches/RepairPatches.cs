@@ -407,7 +407,7 @@ namespace RealShop
                 return;
             }
 
-            string rarity = MaxQualityService.RarityFor(item);
+            string rarity = MaxQualityService.GradeFor(item);
             float mult = config.PriceRarityCommon;
             if (rarity == "unique")
             {

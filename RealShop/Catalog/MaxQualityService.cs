@@ -1,3 +1,11 @@
+using CMS.UI.Logic;
+using CMS.UI.Logic.Map;
+using CMS.UI.Logic.RepairPart;
+using CMS.UI.Windows;
+using CMS.Containers;
+using CMS.Helpers;
+using CMS.Extensions;
+
 namespace RealShop
 {
     internal static class MaxQualityService
@@ -75,7 +83,53 @@ namespace RealShop
 
             int span = max - min + 1;
             int value = min + (int)(HashUid(item.UID ^ 0x51ED2701L) % (uint)span);
+            if (IsBody(item))
+            {
+                int bmin = config.MaxQualityBodyMin;
+                int bmax = config.MaxQualityBodyMax;
+                if (bmax < bmin)
+                {
+                    int t = bmin;
+                    bmin = bmax;
+                    bmax = t;
+                }
+                int bspan = bmax - bmin + 1;
+                value = bmin + (int)(HashUid(item.UID ^ 0x51ED2701L) % (uint)bspan);
+            }
             return value / 100f;
+        }
+
+        internal static string GradeFor(Item item)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableMaxQuality || item == null)
+            {
+                return RarityFor(item);
+            }
+
+            int pct = (int)(MaxFraction(item) * 100f + 0.5f);
+            if (pct <= config.MaxQualityCommonMax)
+            {
+                return "common";
+            }
+
+            if (pct <= config.MaxQualityRareMax)
+            {
+                return "rare";
+            }
+
+            return "unique";
+        }
+
+        internal static bool IsBody(Item item)
+        {
+            if (item == null)
+            {
+                return false;
+            }
+
+            PartProperty property = Singleton<GameInventory>.Instance.GetItemProperty(item.ID);
+            return property != null && property.IsBody;
         }
 
         internal static bool IsRepairComplete(Item item)
