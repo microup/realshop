@@ -1413,6 +1413,19 @@ namespace RealShop
 
         private const bool ValueEnableDonorCondition = true;
         public const float ValueDonorConditionScale = 0.6f;
+        private const bool ValueEnableSellConditionFactor = true;
+        public const float ValueSellConditionFloor = 0.4f;
+        public const float ValueSellConditionSpan = 0.6f;
+
+        private const bool ValueEnableLaborCurve = true;
+        public const float ValueLaborCurveK = 0.25f;
+        public const float ValueLaborCurveMaxCond = 0.98f;
+
+        private const bool ValueEnableCarSaleCondition = true;
+        public const float ValueCarSaleConditionFloor = 0.5f;
+        public const float ValueCarSaleConditionSpan = 0.5f;
+
+        private const bool ValueEnableRepairCostPreview = true;
 
         private const string ConfigCategoryName = "MainSection";
         private const string ConfigCarSection = "CarSection";
@@ -1453,7 +1466,20 @@ namespace RealShop
         private readonly MelonPreferences_Entry<int> _laborCostBase;
 
         private readonly MelonPreferences_Entry<bool> _enableDonorCondition;
-        private readonly MelonPreferences_Entry<float> _donorConditionScale;        private readonly MelonPreferences_Entry<bool> _enableMaxQuality;
+        private readonly MelonPreferences_Entry<float> _donorConditionScale;
+        private readonly MelonPreferences_Entry<bool> _enableSellConditionFactor;
+        private readonly MelonPreferences_Entry<float> _sellConditionFloor;
+        private readonly MelonPreferences_Entry<float> _sellConditionSpan;
+
+        private readonly MelonPreferences_Entry<bool> _enableLaborCurve;
+        private readonly MelonPreferences_Entry<float> _laborCurveK;
+        private readonly MelonPreferences_Entry<float> _laborCurveMaxCond;
+
+        private readonly MelonPreferences_Entry<bool> _enableCarSaleCondition;
+        private readonly MelonPreferences_Entry<float> _carSaleConditionFloor;
+        private readonly MelonPreferences_Entry<float> _carSaleConditionSpan;
+
+        private readonly MelonPreferences_Entry<bool> _enableRepairCostPreview;        private readonly MelonPreferences_Entry<bool> _enableMaxQuality;
         private readonly MelonPreferences_Entry<int> _maxQualityCommonMin;
         private readonly MelonPreferences_Entry<int> _maxQualityCommonMax;
         private readonly MelonPreferences_Entry<int> _maxQualityRareMin;
@@ -1511,6 +1537,19 @@ namespace RealShop
 
         public bool EnableLaborCost => _enableLaborCost.Value;
         public int LaborCostBase => _laborCostBase.Value;
+        public bool EnableSellConditionFactor => _enableSellConditionFactor.Value;
+        public float SellConditionFloor => _sellConditionFloor.Value;
+        public float SellConditionSpan => _sellConditionSpan.Value;
+
+        public bool EnableLaborCurve => _enableLaborCurve.Value;
+        public float LaborCurveK => _laborCurveK.Value;
+        public float LaborCurveMaxCond => _laborCurveMaxCond.Value;
+
+        public bool EnableCarSaleCondition => _enableCarSaleCondition.Value;
+        public float CarSaleConditionFloor => _carSaleConditionFloor.Value;
+        public float CarSaleConditionSpan => _carSaleConditionSpan.Value;
+
+        public bool EnableRepairCostPreview => _enableRepairCostPreview.Value;
 
         public bool EnableDonorCondition => _enableDonorCondition.Value;
         public float DonorConditionScale => _donorConditionScale.Value;        public bool EnableMaxQuality => _enableMaxQuality.Value;
@@ -1581,6 +1620,19 @@ namespace RealShop
 
             _enableLaborCost = _cfgSectionCars.CreateEntry(nameof(EnableLaborCost), ValueEnableLaborCost);
             _laborCostBase = _cfgSectionCars.CreateEntry(nameof(LaborCostBase), ValueLaborCostBase);
+            _enableSellConditionFactor = _cfgSectionCars.CreateEntry(nameof(EnableSellConditionFactor), ValueEnableSellConditionFactor);
+            _sellConditionFloor = _cfgSectionCars.CreateEntry(nameof(SellConditionFloor), ValueSellConditionFloor);
+            _sellConditionSpan = _cfgSectionCars.CreateEntry(nameof(SellConditionSpan), ValueSellConditionSpan);
+
+            _enableLaborCurve = _cfgSectionCars.CreateEntry(nameof(EnableLaborCurve), ValueEnableLaborCurve);
+            _laborCurveK = _cfgSectionCars.CreateEntry(nameof(LaborCurveK), ValueLaborCurveK);
+            _laborCurveMaxCond = _cfgSectionCars.CreateEntry(nameof(LaborCurveMaxCond), ValueLaborCurveMaxCond);
+
+            _enableCarSaleCondition = _cfgSectionCars.CreateEntry(nameof(EnableCarSaleCondition), ValueEnableCarSaleCondition);
+            _carSaleConditionFloor = _cfgSectionCars.CreateEntry(nameof(CarSaleConditionFloor), ValueCarSaleConditionFloor);
+            _carSaleConditionSpan = _cfgSectionCars.CreateEntry(nameof(CarSaleConditionSpan), ValueCarSaleConditionSpan);
+
+            _enableRepairCostPreview = _cfgSectionCars.CreateEntry(nameof(EnableRepairCostPreview), ValueEnableRepairCostPreview);
 
             _enableDonorCondition = _cfgSectionCars.CreateEntry(nameof(EnableDonorCondition), ValueEnableDonorCondition);
             _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);            _enableMaxQuality = _cfgSectionCars.CreateEntry(nameof(EnableMaxQuality), true);

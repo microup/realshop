@@ -383,10 +383,66 @@ namespace RealShop
         }
     }
 
+    internal static class LaborCostService
+    {
+        internal static float MultFor(Config config, string rarity)
+        {
+            if (rarity == "unique")
+            {
+                return config.PriceRarityUnique;
+            }
+
+            if (rarity == "rare")
+            {
+                return config.PriceRarityRare;
+            }
+
+            if (rarity == "uncommon")
+            {
+                return config.PriceRarityUncommon;
+            }
+
+            return config.PriceRarityCommon;
+        }
+
+        internal static int Fee(Config config, string rarity, float cond)
+        {
+            if (config == null || config.LaborCostBase <= 0)
+            {
+                return 0;
+            }
+
+            float mult = MultFor(config, rarity);
+            float curve = 1f;
+            if (config.EnableLaborCurve)
+            {
+                if (cond < 0f)
+                {
+                    cond = 0f;
+                }
+
+                if (cond > config.LaborCurveMaxCond)
+                {
+                    cond = config.LaborCurveMaxCond;
+                }
+
+                curve = 1f + config.LaborCurveK * cond / (1f - cond);
+            }
+
+            return Mathf.RoundToInt(config.LaborCostBase * mult * curve);
+        }
+    }
+
     [HarmonyPatch(typeof(RepairPartWindow), "ProcessGameResult")]
     internal static class LaborCostOnRepairPatch
     {
-        private static void Postfix(RepairPartWindow __instance, BarType result)
+        private static void Prefix(RepairPartWindow __instance, out float __state)
+        {
+            Item item = __instance != null ? __instance.currentItemInfo?.Item : null;
+            __state = item != null ? item.GetConditionToShow() : -1f;
+        }
+
+        private static void Postfix(RepairPartWindow __instance, BarType result, float __state)
         {
             Config config = RealParts.ActiveConfig;
             if (config == null || !config.EnableLaborCost || config.LaborCostBase <= 0)
@@ -408,22 +464,9 @@ namespace RealShop
             }
 
             string rarity = MaxQualityService.GradeFor(item);
-            float mult = config.PriceRarityCommon;
-            if (rarity == "unique")
-            {
-                mult = config.PriceRarityUnique;
-            }
-            else if (rarity == "rare")
-            {
-                mult = config.PriceRarityRare;
-            }
-            else if (rarity == "uncommon")
-            {
-                mult = config.PriceRarityUncommon;
-            }
-
-            int fee = Mathf.RoundToInt(config.LaborCostBase * mult);
-            MelonLogger.Msg("[Labor] PROCESS: rarity=" + rarity + " base=" + config.LaborCostBase + " mult=" + mult + " fee=" + fee);
+            float cond = __state >= 0f ? __state : item.GetConditionToShow();
+            int fee = LaborCostService.Fee(config, rarity, cond);
+            MelonLogger.Msg("[Labor] PROCESS: rarity=" + rarity + " base=" + config.LaborCostBase + " cond=" + cond + " fee=" + fee);
             if (fee > 0)
             {
                 GlobalData.AddPlayerMoney(-fee);
@@ -433,6 +476,106 @@ namespace RealShop
             {
                 MelonLogger.Msg("[Labor] DONE: fee=0, nothing charged");
             }
+        }
+    }
+
+    internal static class RepairCostPreviewService
+    {
+        internal static void Apply(RepairPartWindow window)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableRepairCostPreview || window == null)
+            {
+                return;
+            }
+
+            try
+            {
+                PartInfo partInfo = window.currentItemInfo;
+                Item item = partInfo != null ? partInfo.Item : null;
+                if (item == null || MaxQualityService.IsRepairComplete(item))
+                {
+                    return;
+                }
+
+                float cond = item.GetConditionToShow();
+                if (cond < 0f)
+                {
+                    cond = 0f;
+                }
+
+                if (cond > 1f)
+                {
+                    cond = 1f;
+                }
+
+                float cap = MaxQualityService.MaxFraction(item);
+                float current = partInfo.CurrentCondition > 1f ? partInfo.CurrentCondition / 100f : partInfo.CurrentCondition;
+                float success = partInfo.SuccessCondition > 1f ? partInfo.SuccessCondition / 100f : partInfo.SuccessCondition;
+                if (success > cap)
+                {
+                    success = cap;
+                }
+
+                float delta = success - current;
+                if (delta <= 0f)
+                {
+                    return;
+                }
+
+                int fee = LaborCostService.Fee(config, MaxQualityService.GradeFor(item), cond);
+                int total = fee;
+                var priceMethod = window.GetType().GetMethod("CalculateRepairPrice", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+                if (priceMethod != null)
+                {
+                    object raw = priceMethod.Invoke(window, new object[] { item });
+                    if (raw != null)
+                    {
+                        total += System.Convert.ToInt32(raw);
+                    }
+                }
+
+                Text button = window.startButtonText;
+                if (button == null || string.IsNullOrEmpty(button.text))
+                {
+                    return;
+                }
+
+                int deltaPct = Mathf.RoundToInt(delta * 100f);
+                button.text = button.text + "  +" + deltaPct + "%  -" + total;
+                MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total);
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[RepairPreview] failed: " + e.Message);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(RepairPartWindow), "FillItemData")]
+    internal static class RepairCostPreviewOnFillItemDataPatch
+    {
+        private static void Postfix(RepairPartWindow __instance)
+        {
+            RepairCostPreviewService.Apply(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(RepairPartWindow), "FillItemDataWithAnimation")]
+    internal static class RepairCostPreviewOnFillItemDataWithAnimationPatch
+    {
+        private static void Postfix(RepairPartWindow __instance)
+        {
+            RepairCostPreviewService.Apply(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(RepairPartWindow), "OnDownWindowItemChange")]
+    internal static class RepairCostPreviewOnDownWindowItemChangePatch
+    {
+        private static void Postfix(RepairPartWindow __instance)
+        {
+            RepairCostPreviewService.Apply(__instance);
         }
     }
 }

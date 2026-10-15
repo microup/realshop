@@ -66,8 +66,8 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 ### What the new economy changes vs. the vanilla game
 
 - **Era-based pricing.** A hidden retro part's shop price is `base × era multiplier` — the older the era, the dearer the part. (The old config rarity multiplier was retired when rarity became a per-part ceiling.)
-- **Resale is capped (anti-flip).** Selling a part pays at most `SellRatio` (default **0.35**, i.e. 35%) of its shop price — and the number you see in the "Sell" dialog is the number you actually receive. Restoring and reselling can no longer print money.
-- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by the part's grade (green 2.5×, purple 4×), so a full rebuild of a high-ceiling engine is a real investment even when the part came out of a junkyard for free.
+- **Resale is capped (anti-flip).** Selling a part pays at most `SellRatio` (default **0.35**, i.e. 35%) of its shop price — and the number you see in the "Sell" dialog is the number you actually receive. Restoring and reselling can no longer print money. Since v0.3.11 the cap scales with the part's condition: `SellRatio × (0.4 + 0.6 × condition)` — a restored part sells for more than the same part in rust.
+- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by the part's grade (green 2.5×, purple 4×), so a full rebuild of a high-ceiling engine is a real investment even when the part came out of a junkyard for free. Since v0.3.11 the fee also grows with the part's condition — see "The Condition Economy".
 - **Old donors yield worse parts.** Junkyard donor cars older than the cutoff have their parts' condition scaled by `DonorConditionScale` (default 0.6), so a donor is a starting point, not a gift.
 - **One bad call can end a legend.** A failed repair on a red part destroys it permanently — and now a high-ceiling part is painful to lose.
 
@@ -90,6 +90,36 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 - Rarity is **per-part and random**: it comes from each part's restoration ceiling, rolled from its id. Two used copies of the same part can roll different ceilings — that is intended (no two worn parts are equally tired). There is nothing to tag by hand anymore.
 - The economy hooks run on an IL2CPP build. The sell-cap (display + payment), labor charge, donor condition, ceilings and rarity color were **verified in live gameplay** on build 1.0.40, but a future game update can move method signatures and silently disable a hook — the mod logs every patch at startup so you can tell what is active.
 - Every economy feature is an independent toggle (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`, `EnableMaxQuality`) — turn any of them off to soften the challenge.
+
+## The Condition Economy (v0.3.11)
+
+v0.3.11 changes what a repair is *worth*. Before, the money you got for selling a car barely cared about how good the car was, while every repair cycle cost the same flat fee — so restoring a 70% body panel was a guaranteed loss, and the rational play was to flip the car untouched. The new model follows how real restoration works: **the market pays for condition, and the last percents are the expensive ones.**
+
+Three formulas now drive the loop:
+
+| Lever | Formula | Default |
+| --- | --- | --- |
+| Car sale price | `baseCarPrice × (CarSaleConditionFloor + CarSaleConditionSpan × condition)` | `0.5 + 0.5 × cond` |
+| Part resale | `shopPrice × SellRatio × (SellConditionFloor + SellConditionSpan × condition)` | `0.35 × (0.4 + 0.6 × cond)` |
+| Repair labor | `LaborCostBase × grade × (1 + LaborCurveK × cond / (1 − cond))` | `k = 0.25`, cond capped at 98% |
+
+- **A restored car sells for more than the same car in rust.** A car at 10% condition sells for ~60% of its base value; at 90% — for ~95%. Condition is what the buyer pays for, exactly like in real life.
+- **Labor is a hyperbola, not a flat fee.** Lifting a part from 10% to 40% costs ~1× the base fee per cycle; pushing it from 90% toward 95% costs ~3.5× per cycle. The first cycles of a tired part are cheap, the last cycles near the ceiling are a luxury.
+- **The optimum is not 100%.** Because labor grows hyperbolically while the sale price grows linearly, the best margin sits around **70%** condition. Pushing a panel from 70% to 99% is a deliberate, expensive choice — a trophy, not a chore. That is the golden mean: no grind on the cheap cycles, no free money on the expensive ones.
+- **The repair button tells the truth.** The Start button now shows the next cycle: `+3%  -1250` — the condition gain and the full price (game repair price + labor) before you commit. A decision you can see is a real decision.
+- **Failure still destroys the part.** Risk was left untouched on purpose: a ruined panel is lost for good, so what you find and keep has real value.
+
+Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`, `EnableLaborCurve` (with `LaborCurveK`, `LaborCurveMaxCond`), `EnableRepairCostPreview`.
+
+## Last update v 0.3.11
+
+1. **Car sale price now scales with condition.** A new hook on the car Sell tab recalculates the price as `baseCarPrice × (0.5 + 0.5 × globalCondition)`; the sell-value and profit lines are rewritten to match. Restoring a car is now the way to turn labor into money — flipping it "as is" stays viable but pays less.
+2. **Part resale pays for condition.** The sell cap is now `SellRatio × (0.4 + 0.6 × condition)`: a restored part sells for up to ~2.4× more than the same part in rust. The anti-flip cap stays; the reward for quality appears.
+3. **Labor cost is a curve.** Each successful repair charges `LaborCostBase × grade × (1 + 0.25 × cond/(1 − cond))` (cond capped at `LaborCurveMaxCond` = 0.98): cheap early cycles, expensive late cycles.
+4. **Repair preview on the Start button.** The button now reads `+Δ%  -total` — the condition the next cycle adds and its full price (game repair price + labor) — before you start the mini-game.
+5. **Version 0.3.11.**
+
+Note: the car-sale hook is new; it logs `[CarSale] cond=... base=... game=... new=...` every time the Sell tab opens, so a future game update that moves the method is visible in the log. All hooks log at startup like the rest of the mod.
 
 ## Last update v 0.3.10
 
