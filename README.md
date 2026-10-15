@@ -33,7 +33,8 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 - Economy realism toggles (on by default in v0.3.8): `EnableSellCap`/`SellRatio` (cap resale price), `EnableLaborCost`/`LaborCostBase` (charge labor per repair, scaled by grade), `EnableDonorCondition`/`DonorConditionScale` (junkyard donors yield worse parts), and the `PriceRarity*` labor multipliers.
 - Restoration ceilings (`EnableMaxQuality`, on by default): the per-part maximum repair condition, the `MaxQuality*Min/Max` ranges and the `MaxQuality*Weight` odds. Body panels are the deliberate exception — they roll their own restoration range `MaxQualityBodyMin`–`MaxQualityBodyMax` (default 50–100%), so a rusted panel can come back anywhere from tired to as-new. Starting balance for a new game via `StartingMoney` (default 20000).
 13. Rarity highlighting: a part's card glows **green** (restoration ceiling 50–70%) or **purple** (ceiling 70–100%) in the junkyard, inventory and repair lists; ordinary parts stay grey, and highlighted slots reset correctly when the game reuses them. A part that has reached its ceiling shows a **`MAX xx%`** marker; below it the card reads `current-max%`.  
-14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.  
+14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.
+15. Junkyard need/upgrade markers: an orange `!` marks a part your cars are missing, and a green `▲` marks a part you already own that has a better-condition copy on the junkyard — checked against every car in the garage and on the parking lot.  
 
 ## Rarity, Restoration Ceilings & The New Economy
 
@@ -89,6 +90,27 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 - Rarity is **per-part and random**: it comes from each part's restoration ceiling, rolled from its id. Two used copies of the same part can roll different ceilings — that is intended (no two worn parts are equally tired). There is nothing to tag by hand anymore.
 - The economy hooks run on an IL2CPP build. The sell-cap (display + payment), labor charge, donor condition, ceilings and rarity color were **verified in live gameplay** on build 1.0.40, but a future game update can move method signatures and silently disable a hook — the mod logs every patch at startup so you can tell what is active.
 - Every economy feature is an independent toggle (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`, `EnableMaxQuality`) — turn any of them off to soften the challenge.
+
+## Last update v 0.3.10
+
+1. **The junkyard now flags what your cars need.** Every part card in the junkyard and inventory is checked against the cars you actually own — the ones in the garage *and* the ones you just bought and parked. Two corner markers were added:
+   - **Orange `!`** — this part is **missing** on one of your cars (it sits unmounted somewhere), so it is worth picking up.
+   - **Green `▲`** — you **already have** this part fitted, but the copy on the junkyard is in **better current condition** than the best copy installed on any of your cars — a genuine upgrade you can swap in.
+   The "already have it" check takes the **best** installed copy across all your cars, so a car you just bought at the junkyard counts too (it is picked up within a few seconds in the same session).
+
+<p align="center">
+  <img src="/Assets/new_junk_list_items.png" alt="Junkyard cards with rarity colors, current-max condition ranges and an orange ! on a missing part">
+</p>
+<p align="center"><em>Found items: the card color shows the restoration ceiling (green/purple), the bar reads <code>current-max%</code> (current repair value vs. the part's hidden maximum), and the orange <code>!</code> marks a part your car is missing.</em></p>
+
+<p align="center">
+  <img src="/Assets/can_be_upgrade.png" alt="Junkyard card with a green up-arrow meaning a better-condition copy of a part you already own">
+</p>
+<p align="center"><em>The green <code>▲</code> means you already own this part, but a better-condition copy is available — an upgrade you can grab.</em></p>
+
+2. **Build quality now really drives the car.** Because no part can be restored to a flawless 100%, a car's overall condition — and with it its handling, braking and drivability — can no longer be maxed out by grinding every part back to perfect. A truly perfect build is now the rare exception rather than the default: the best you can do is hunt down high-ceiling survivors and fit them well. A well-restored old car should feel restored, not factory-new — and that is exactly what the ceilings enforce.
+
+Note: the junkyard need/upgrade markers are always on (no config flag) and read your cars from the saved profile, so a car bought at the junkyard is included in the same session. Verified in live gameplay on build 1.0.40.
 
 ## Last update v 0.3.9
 

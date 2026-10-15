@@ -127,6 +127,11 @@ namespace RealShop
                 MelonLogger.Msg($"[Money] Ctrl+{_config.AddMoneyKey}: +{amount} (balance={GlobalData.PlayerMoney})");
             }
 
+            if (Input.GetKeyDown(KeyCode.G) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+            {
+                GarageNeedsRecon.Dump();
+            }
+
             if (!_modIsEnable)
             {
                 return;

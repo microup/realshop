@@ -120,6 +120,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Car Mechanic Simulator 2021\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Car Mechanic Simulator 2021\MelonLoader\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
@@ -129,6 +133,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Runtime\PatchBootstrap.cs" />
     <Compile Include="Runtime\GameTypes.cs" />
+    <Compile Include="Runtime\GarageNeedsRecon.cs" />
     <Compile Include="Scene\SceneUiController.cs" />
     <Compile Include="Catalog\RetroPartCatalog.cs" />
     <Compile Include="Catalog\MaxQualityService.cs" />

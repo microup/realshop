@@ -24,6 +24,7 @@ namespace RealShop
             SellProbePatch.Install(harmony);
             RarityColorPatches.Install(harmony);
             TryPatchStartingMoney(harmony);
+            TryCacheProfileManager(harmony);
             LogDiagnostics();
         }
 
@@ -232,6 +233,32 @@ namespace RealShop
             catch (System.Exception e)
             {
                 MelonLogger.Warning("[Money] GetStartingMoney patch failed: " + e.Message);
+            }
+        }
+
+        private static void TryCacheProfileManager(HarmonyInstance harmony)
+        {
+            try
+            {
+                System.Type pm = HarmonyLib.AccessTools.TypeByName("ProfileManager");
+                if (pm == null)
+                {
+                    MelonLogger.Warning("[Recon] ProfileManager type not found");
+                    return;
+                }
+                System.Reflection.MethodInfo awake = pm.GetMethod("Awake", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                if (awake == null)
+                {
+                    MelonLogger.Warning("[Recon] ProfileManager.Awake not found");
+                    return;
+                }
+                System.Reflection.MethodInfo post = typeof(GarageNeedsRecon).GetMethod("AwakePostfix", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                harmony.Patch(awake, null, new HarmonyLib.HarmonyMethod(post));
+                MelonLogger.Msg("[Recon] ProfileManager.Awake cache hook OK");
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[Recon] Awake cache hook failed: " + e.Message);
             }
         }
 
