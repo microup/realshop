@@ -179,7 +179,7 @@ namespace RealShop
 
                 if (ContainsToken(item.CarID, e.Token) || ContainsToken(item.ID, e.Token))
                 {
-                    return PriceForYear(e.Year) * RarityFactor(e.Rarity);
+                    return PriceForYear(e.Year);
                 }
             }
 
@@ -207,27 +207,6 @@ namespace RealShop
             }
 
             return "common";
-        }
-
-        private static float RarityFactor(string rarity)
-        {
-            Config config = RealParts.ActiveConfig;
-            if (config == null)
-            {
-                return 1f;
-            }
-
-            switch (rarity)
-            {
-                case "uncommon":
-                    return config.PriceRarityUncommon;
-                case "rare":
-                    return config.PriceRarityRare;
-                case "unique":
-                    return config.PriceRarityUnique;
-                default:
-                    return config.PriceRarityCommon;
-            }
         }
 
         private static bool ContainsToken(string input, string token)

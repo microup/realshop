@@ -45,6 +45,8 @@ namespace RealShop
         private Config _config;
         private bool _modIsEnable = true;
         private bool _isRunOnce = false;
+        private int _moneyStableFrames = 0;
+        private int _moneyPendingFrames = 0;
         private readonly SceneUiController _scene = new SceneUiController();
 
         [Obsolete]
@@ -66,6 +68,42 @@ namespace RealShop
                 return;
             }
 
+            if (StartingMoneyPatch.Pending)
+            {
+                _moneyPendingFrames++;
+                if (_moneyPendingFrames > 3000)
+                {
+                    StartingMoneyPatch.Pending = false;
+                }
+                else if (_config.StartingMoney > 0)
+                {
+                    int cur = GlobalData.PlayerMoney;
+                    if (cur != _config.StartingMoney)
+                    {
+                        GlobalData.AddPlayerMoney(_config.StartingMoney - cur);
+                        MelonLogger.Msg("[Money] hold: " + cur + " -> " + _config.StartingMoney);
+                        _moneyStableFrames = 0;
+                    }
+                    else if (StartingMoneyPatch.SceneLoaded)
+                    {
+                        _moneyStableFrames++;
+                        if (_moneyStableFrames > 150)
+                        {
+                            StartingMoneyPatch.Pending = false;
+                            MelonLogger.Msg("[Money] hold released");
+                        }
+                    }
+                }
+                else
+                {
+                    StartingMoneyPatch.Pending = false;
+                }
+            }
+            else
+            {
+                _moneyPendingFrames = 0;
+            }
+
             if (Input.GetKeyDown(_config.IsKeyBindEnableSwitchMode))
             {
                 if (_modIsEnable)
@@ -81,6 +119,19 @@ namespace RealShop
                 MelonLogger.Msg($"the mod has been {_modIsEnable}");
             }
 
+            if (_config.EnableMoneyHotkey && Input.GetKeyDown(_config.AddMoneyKey) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+            {
+                int amount = _config.AddMoneyAmount;
+                GlobalData.AddPlayerMoney(amount);
+                UIManager.Get().ShowPopup("[RealShop]", $"+{amount} CR", PopupType.Normal);
+                MelonLogger.Msg($"[Money] Ctrl+{_config.AddMoneyKey}: +{amount} (balance={GlobalData.PlayerMoney})");
+            }
+
+            if (Input.GetKeyDown(KeyCode.G) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+            {
+                GarageNeedsRecon.Dump();
+            }
+
             if (!_modIsEnable)
             {
                 return;
@@ -93,6 +144,15 @@ namespace RealShop
         {
             GameSettings.CanShowPopups = true;
             FreeTravelService.PendingFreeTravelCost = 0;
+
+            if (StartingMoneyPatch.Pending)
+            {
+                MelonLogger.Msg("[Money] scene loaded: " + sceneName + " (idx=" + buildIndex + ")");
+                if (sceneName != "SceneLoader")
+                {
+                    StartingMoneyPatch.SceneLoaded = true;
+                }
+            }
 
             if (buildIndex == 1)
             {

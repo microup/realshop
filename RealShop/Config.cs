@@ -1250,11 +1250,11 @@ namespace RealShop
             "v12_zonda_oslona_kolektora", "w_v12zonda_koncowy", "v12_zonda_filtr", "seat_zonda", "steering_wheel_zonda", "t_v12_zonda_filtr", "t_v12_zonda_kolektor_dolotowy",
             "t_v12_zonda_kolektor_wydechowy_1", "t_v12_zonda_kolektor_wydechowy_2", "t_v12_zonda_listwa_wtryskowa", "t_w_v12zonda_koncowy", "rim_zonda_A", "rim_zonda_B",
             "t_v12_zonda_gearbox",
-        
+
             // PORSCHE 911 RS AMERICA (964) ||  PORSCHE 911 Turbo S (964)  (1993)
             "car_porsche964", "car_porsche964rs", "w_b62_koncowy_A_porshe964", "w_b62_koncowy_B_porshe964", "w_b62_koncowy_A_porshe964RS", "w_b62_koncowy_B_porshe964RS",
             "w_b62_poczatkowy_porshe964RS", "seat_964", "steering_wheel_964", "t_w_b62_koncowy_A_porshe964", "t_w_b62_koncowy_A_porshe964RS", "t_w_b62_koncowy_B_porshe964",
-            "t_w_b62_koncowy_B_porshe964RS", "t_w_b62_poczatkowy_porshe964RS", "rim_porsche_964RS", 
+            "t_w_b62_koncowy_B_porshe964RS", "t_w_b62_poczatkowy_porshe964RS", "rim_porsche_964RS",
 
             // PORSCHE CARRERA GT (2003) || PORSCHE 911 CARRERA 4S (991) (2016) ??????
             "car_porsche991", "car_porschecarreragt", "w_v10_koncowy_carreragt", "w_v10_srodkowy_carreragt", "w_v10_poczatkowy_carreragt", "seat_carreragt", "steering_wheel_carreragt",
@@ -1276,7 +1276,7 @@ namespace RealShop
             "v10_kolektor_wydechowy", "v10_lancuch", "v10_listwa_wtryskowa", "v10_miska_olejowa", "v10_obudowa_sprzegla", "v10_oslona_rozrzadu", "v10_pasek_1",
             "v10_pasek_2", "v10_pokrywa_glowicy_1", "v10_pokrywa_glowicy_2", "v10_rolka_walka_1", "v10_rolka_walka_2", "v10_slizg", "v10_sprzeglo", "v10_walek_rozrzadu",
             "v10_walKorbowy", "v10_pompaWody", "v10_rolka_pompy_wody", "t_v10_filtr", "t_v10_glowica_1", "t_v10_glowica_2", "t_v10_kolektor_dolotowy",
-            "t_v10_kolektor_wydechowy", "t_v10_listwa_wtryskowa", "t_v10_sprzeglo", "t_v10_walek_rozrzadu", "t_v10_gearbox", 
+            "t_v10_kolektor_wydechowy", "t_v10_listwa_wtryskowa", "t_v10_sprzeglo", "t_v10_walek_rozrzadu", "t_v10_gearbox",
 
             // 911 Carrera 4S (991.2) ||  B6 MA 1.03
             // https://car-mechanic-simulator-2021.fandom.com/wiki/B6_MA_1.03
@@ -1285,7 +1285,7 @@ namespace RealShop
             "b61_pompaWody", "b61_przepustnica", "b61_rolka_pompy_wody", "b61_rolka_walka_1", "b61_rolka_walka_2", "b61_slizg", "b61_turbo",
             "b61_walek_rozrzadu", "b61_walKorbowy", "b61_wlew_oleju", "b61_blok_nakladka", "b61_filtr_dol", "b61_filtr_gora",
             "b61_filtr_srodek", "b61_glowica_1_pokrywa", "b61_glowica_2_pokrywa", "b61_dyferPrzod",
-        
+
             // 2016 BMW M4 GTS Special Edition (F82)
             "car_bmwm4gts-bumper_front", "car_bmwm4gts-bumper_rear", "car_bmwm4gts-door_front_left", "car_bmwm4gts-door_front_right", "car_bmwm4gts-fender_front_left",
             "car_bmwm4gts-fender_front_right", "car_bmwm4gts-headlight_left", "car_bmwm4gts-headlight_right", "car_bmwm4gts-hood", "car_bmwm4gts-mirror_left",
@@ -1314,7 +1314,7 @@ namespace RealShop
             "car_mercedes300slgullwing-window_body_left_1", "car_mercedes300slgullwing-window_body_right_1", "car_mercedes300slgullwing-window_door_front_left",
             "car_mercedes300slgullwing-window_door_front_right", "car_mercedes300slgullwing-mirror_left",
 
-            // Aston martin DB5 (1963)         
+            // Aston martin DB5 (1963)
             "car_astonmartindb5", "w_r6_tm_koncowy_1_astonmartindb5", "w_r6_tm_koncowy_2_astonmartindb5", "w_r6_tm_poczatkowy_1_astonmartindb5",
             "w_r6_tm_poczatkowy_2_astonmartindb5", "w_r6_tm_srodkowy_1_astonmartindb5", "w_r6_tm_srodkowy_2_astonmartindb5", "seat_db5",
             "steering_wheel_db5", "bench_db5", "t_w_r6_tm_koncowy_1_astonmartindb5", "t_w_r6_tm_koncowy_2_astonmartindb5", "t_w_r6_tm_poczatkowy_1_astonmartindb5",
@@ -1324,7 +1324,7 @@ namespace RealShop
             // https://car-mechanic-simulator-2021.fandom.com/wiki/I6_Tadek_Marek
 
             // JUEYUAN QIANFENG (1959)
-            "car_jueyuanqianfeng", 
+            "car_jueyuanqianfeng",
 
             // DC TYPHOON (1964)
             "car_dctyphoon", "seat_typhoon", "seat_typhoon2", "seat_typhoon3", "steering_wheel_typhoon", "rim_typhoon",
@@ -1368,7 +1368,7 @@ namespace RealShop
             "t_r4_old_kolektor_wydechowy", "t_r4_old_kopulkaRozdzielacza", "t_r4_old_gearbox", "r4_old_kable", "r4_old_kopulkaRozdzielacza",
 
             // SAKURA GT20 (1969)
-            "car_sakuragt20", 
+            "car_sakuragt20",
 
             //
             "steering_wheel1", "steering_wheel3", "steering_wheel4", "steering_wheel5", "steering_wheel6", "steering_wheel7", "steering_wheel8", "steering_wheel9",
@@ -1424,7 +1424,11 @@ namespace RealShop
         private readonly MelonPreferences_Category _cfgSectionCars;
         private readonly MelonPreferences_Category _cfgSectionParts;
         private readonly MelonPreferences_Entry<KeyCode> _isKeyBindEnableSwitchMode;
-        
+        private readonly MelonPreferences_Entry<KeyCode> _addMoneyKey;
+        private readonly MelonPreferences_Entry<int> _addMoneyAmount;
+        private readonly MelonPreferences_Entry<int> _startingMoney;
+        private readonly MelonPreferences_Entry<bool> _enableMoneyHotkey;
+
         private readonly MelonPreferences_Entry<uint> _removeCarsOlderThanYear;
 
         public readonly MelonPreferences_Entry<int> _priceParts1950_1959;
@@ -1449,7 +1453,19 @@ namespace RealShop
         private readonly MelonPreferences_Entry<int> _laborCostBase;
 
         private readonly MelonPreferences_Entry<bool> _enableDonorCondition;
-        private readonly MelonPreferences_Entry<float> _donorConditionScale;
+        private readonly MelonPreferences_Entry<float> _donorConditionScale;        private readonly MelonPreferences_Entry<bool> _enableMaxQuality;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonMax;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareMax;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueMax;
+        private readonly MelonPreferences_Entry<int> _maxQualityBodyMin;
+        private readonly MelonPreferences_Entry<int> _maxQualityBodyMax;
+        private readonly MelonPreferences_Entry<bool> _maxQualityRevealAfterRepair;
+        private readonly MelonPreferences_Entry<int> _maxQualityCommonWeight;
+        private readonly MelonPreferences_Entry<int> _maxQualityRareWeight;
+        private readonly MelonPreferences_Entry<int> _maxQualityUniqueWeight;
 
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
         private readonly MelonPreferences_Entry<bool> _isEnableShop;
@@ -1468,6 +1484,10 @@ namespace RealShop
         private readonly MelonPreferences_Entry<string[]> _specialRetro;
 
         public KeyCode IsKeyBindEnableSwitchMode => _isKeyBindEnableSwitchMode.Value;
+        public KeyCode AddMoneyKey => _addMoneyKey.Value;
+        public int AddMoneyAmount => _addMoneyAmount.Value;
+        public int StartingMoney => _startingMoney.Value;
+        public bool EnableMoneyHotkey => _enableMoneyHotkey.Value;
         public uint RemoveCarsOlderThanYear => _removeCarsOlderThanYear.Value;
 
 
@@ -1493,7 +1513,19 @@ namespace RealShop
         public int LaborCostBase => _laborCostBase.Value;
 
         public bool EnableDonorCondition => _enableDonorCondition.Value;
-        public float DonorConditionScale => _donorConditionScale.Value;
+        public float DonorConditionScale => _donorConditionScale.Value;        public bool EnableMaxQuality => _enableMaxQuality.Value;
+        public int MaxQualityCommonMin => _maxQualityCommonMin.Value;
+        public int MaxQualityCommonMax => _maxQualityCommonMax.Value;
+        public int MaxQualityRareMin => _maxQualityRareMin.Value;
+        public int MaxQualityRareMax => _maxQualityRareMax.Value;
+        public int MaxQualityUniqueMin => _maxQualityUniqueMin.Value;
+        public int MaxQualityUniqueMax => _maxQualityUniqueMax.Value;
+        public int MaxQualityBodyMin => _maxQualityBodyMin.Value;
+        public int MaxQualityBodyMax => _maxQualityBodyMax.Value;
+        public int MaxQualityCommonWeight => _maxQualityCommonWeight.Value;
+        public int MaxQualityRareWeight => _maxQualityRareWeight.Value;
+        public int MaxQualityUniqueWeight => _maxQualityUniqueWeight.Value;
+        public bool MaxQualityRevealAfterRepair => _maxQualityRevealAfterRepair.Value;
 
 
         public string[] ListCarNames => _carNames.Value;
@@ -1516,13 +1548,17 @@ namespace RealShop
             _config = MelonPreferences.CreateCategory(ConfigCategoryName);
             _config.SetFilePath("Mods/RealShop.cfg");
             _isKeyBindEnableSwitchMode = _config.CreateEntry(nameof(IsKeyBindEnableSwitchMode), KeyCode.F9);
+            _addMoneyKey = _config.CreateEntry(nameof(AddMoneyKey), KeyCode.S);
+            _addMoneyAmount = _config.CreateEntry(nameof(AddMoneyAmount), 1000);
+            _enableMoneyHotkey = _config.CreateEntry(nameof(EnableMoneyHotkey), true);
+            _startingMoney = _config.CreateEntry(nameof(StartingMoney), 20000);
             _isEnableShop = _config.CreateEntry(nameof(IsEnableShop), true);
             _isEnableAdditionalAuction = _config.CreateEntry(nameof(IsEnableAdditionalAuction), false);
             _isEnableShopCarParts = _config.CreateEntry(nameof(IsEnableShopCarParts), false);
 
             _cfgSectionCars = MelonPreferences.CreateCategory(ConfigCarSection);
             _cfgSectionCars.SetFilePath("Mods/RealShop.cfg");
-            
+
             _removeCarsOlderThanYear = _cfgSectionCars.CreateEntry(nameof(RemoveCarsOlderThanYear), RemoveCarsOlderYear);
 
             _priceParts1950_1959 = _cfgSectionCars.CreateEntry(nameof(PriceParts1950_1959), ValuePriceParts1950_1959);
@@ -1547,7 +1583,19 @@ namespace RealShop
             _laborCostBase = _cfgSectionCars.CreateEntry(nameof(LaborCostBase), ValueLaborCostBase);
 
             _enableDonorCondition = _cfgSectionCars.CreateEntry(nameof(EnableDonorCondition), ValueEnableDonorCondition);
-            _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);
+            _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);            _enableMaxQuality = _cfgSectionCars.CreateEntry(nameof(EnableMaxQuality), true);
+            _maxQualityCommonMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonMin), 30);
+            _maxQualityCommonMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonMax), 50);
+            _maxQualityRareMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareMin), 50);
+            _maxQualityRareMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareMax), 70);
+            _maxQualityUniqueMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueMin), 70);
+            _maxQualityUniqueMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueMax), 100);
+            _maxQualityBodyMin = _cfgSectionCars.CreateEntry(nameof(MaxQualityBodyMin), 50);
+            _maxQualityBodyMax = _cfgSectionCars.CreateEntry(nameof(MaxQualityBodyMax), 100);
+            _maxQualityRevealAfterRepair = _cfgSectionCars.CreateEntry(nameof(MaxQualityRevealAfterRepair), true);
+            _maxQualityCommonWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityCommonWeight), 65);
+            _maxQualityRareWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityRareWeight), 25);
+            _maxQualityUniqueWeight = _cfgSectionCars.CreateEntry(nameof(MaxQualityUniqueWeight), 10);
 
             _whiteCarParts = _cfgSectionCars.CreateEntry(nameof(WhiteCarParts), ListWhiteCarParts);
             _isEnableBrandFilter = _cfgSectionCars.CreateEntry(nameof(IsEnableBrandFilter), true);
