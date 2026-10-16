@@ -496,39 +496,8 @@ namespace RealShop
         }
     }
 
-    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "Method_Private_Void_Boolean_PDM_0")]
-    internal static class CarSaleReapplyPdm0Patch
-    {
-        private static void Postfix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
-        {
-            CarSaleDisplay.Apply(__instance, "pdm0");
-        }
-    }
-
-    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "Method_Private_Void_Boolean_PDM_1")]
-    internal static class CarSaleReapplyPdm1Patch
-    {
-        private static void Postfix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
-        {
-            CarSaleDisplay.Apply(__instance, "pdm1");
-        }
-    }
-
-    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "SubmitAction")]
-    internal static class CarSaleSubmitActionPatch
-    {
-        private static void Prefix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
-        {
-            CarSaleDisplay.Apply(__instance, "submit");
-        }
-    }
-
     internal static class CarSaleDisplay
     {
-        private static readonly Color ProfitGreen = new Color(0.2f, 0.75f, 0.3f);
-        private static readonly Color LossRed = new Color(0.85f, 0.25f, 0.25f);
-        private static int lastApplied = -1;
-
         internal static void Apply(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab tab, string tag)
         {
             Config config = RealParts.ActiveConfig;
@@ -539,165 +508,20 @@ namespace RealShop
 
             try
             {
-                if (tab.buyCar)
-                {
-                    if (tag == "setup" || tag == "submit")
-                    {
-                        MelonLogger.Msg("[CarSale] skip tag=" + tag + " buyCar=true (buy mode)");
-                    }
-
-                    return;
-                }
-
-                float cond = tab.globalCondition;
-                if (cond > 1f)
-                {
-                    cond = cond / 100f;
-                }
-
-                if (cond < 0f)
-                {
-                    cond = 0f;
-                }
-
-                if (cond > 1f)
-                {
-                    cond = 1f;
-                }
-
                 int basePrice = tab.baseCarPrice;
                 if (basePrice <= 0)
                 {
-                    MelonLogger.Warning("[CarSale] tag=" + tag + " baseCarPrice=" + basePrice + "; scaling skipped (game price kept)");
+                    MelonLogger.Warning("[CarSale] tag=" + tag + " baseCarPrice=" + basePrice + "; cache skipped");
                     return;
                 }
 
-                int newPrice = Mathf.RoundToInt(basePrice * (config.CarSaleConditionFloor + config.CarSaleConditionSpan * cond));
-                if (tag == "setup")
-                {
-                    lastApplied = -1;
-                }
-
-                bool changed = newPrice != lastApplied;
-                lastApplied = newPrice;
-                tab.sellPrice = newPrice;
                 CarPriceCache.Remember(tab.currentCarLoader != null ? tab.currentCarLoader.carToLoad : null, basePrice);
-
-                Text sell = tab.sellValue;
-                if (sell != null && !string.IsNullOrEmpty(sell.text))
-                {
-                    sell.text = SetNumber(sell.text, newPrice);
-                }
-
-                Text profit = tab.profit;
-                if (profit != null && !string.IsNullOrEmpty(profit.text) && tab.buyPrice != null)
-                {
-                    int buyPrice;
-                    if (TryReadNumber(tab.buyPrice.text, out buyPrice))
-                    {
-                        int ourProfit = newPrice - buyPrice;
-                        profit.text = SetNumber(profit.text, ourProfit);
-                        profit.color = ourProfit >= 0 ? ProfitGreen : LossRed;
-                    }
-                }
-
-                if (changed || tag == "setup" || tag == "submit")
-                {
-                    MelonLogger.Msg("[CarSale] apply tag=" + tag + " cond=" + cond + " base=" + basePrice + " new=" + newPrice);
-                }
+                MelonLogger.Msg("[CarSale] cache tag=" + tag + " base=" + basePrice + " cond=" + tab.globalCondition);
             }
             catch (System.Exception e)
             {
                 MelonLogger.Warning("[CarSale] failed tag=" + tag + ": " + e.Message);
             }
-        }
-
-        private static string SetNumber(string text, int value)
-        {
-            var matches = System.Text.RegularExpressions.Regex.Matches(text, @"\d[\d\s.,\u00A0]*\d|\d");
-            if (matches.Count == 0)
-            {
-                return text;
-            }
-
-            var m = matches[0];
-            char sep = '\0';
-            foreach (char c in m.Value)
-            {
-                if (!char.IsDigit(c))
-                {
-                    sep = c;
-                    break;
-                }
-            }
-
-            int start = m.Index;
-            int scan = m.Index - 1;
-            while (scan >= 0 && (text[scan] == ' ' || text[scan] == '\u00A0'))
-            {
-                scan--;
-            }
-
-            if (scan >= 0 && text[scan] == '-')
-            {
-                start = scan;
-            }
-
-            return text.Substring(0, start) + FormatWithSeparator(value, sep) + text.Substring(m.Index + m.Value.Length);
-        }
-
-        private static bool TryReadNumber(string text, out int value)
-        {
-            value = 0;
-            var matches = System.Text.RegularExpressions.Regex.Matches(text, @"\d[\d\s.,\u00A0]*\d|\d");
-            foreach (System.Text.RegularExpressions.Match m in matches)
-            {
-                string digits = DigitsOnly(m.Value);
-                if (int.TryParse(digits, out value))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static string DigitsOnly(string token)
-        {
-            var sb = new System.Text.StringBuilder();
-            foreach (char c in token)
-            {
-                if (char.IsDigit(c))
-                {
-                    sb.Append(c);
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        private static string FormatWithSeparator(int value, char sep)
-        {
-            string digits = System.Math.Abs(value).ToString(System.Globalization.CultureInfo.InvariantCulture);
-            string sign = value < 0 ? "-" : "";
-            if (sep == '\0' || digits.Length <= 3)
-            {
-                return sign + digits;
-            }
-
-            var sb = new System.Text.StringBuilder();
-            int count = 0;
-            for (int i = digits.Length - 1; i >= 0; i--)
-            {
-                sb.Insert(0, digits[i]);
-                count++;
-                if (count % 3 == 0 && i > 0)
-                {
-                    sb.Insert(0, sep);
-                }
-            }
-
-            return sign + sb.ToString();
         }
     }
 }

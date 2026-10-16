@@ -112,18 +112,18 @@ Three formulas now drive the loop:
 
 Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`, `EnableLaborCurve` (with `LaborCurveK`, `LaborCurveMaxCond`), `EnableRepairCostPreview`, `EnableProfitMarker`.
 
-## Last update v 0.3.11-dev2 (in development, unreleased)
+## Last update v 0.3.11-dev3 (in development, unreleased)
 
 1. **Green `$` profit marker.** Part cards (inventory, junkyard, repair list) show a green `$` under the need/upgrade corner marker while the *next repair cycle is profitable*: the condition it adds is worth more than the cycle costs — via the part's own resale value (`shopPrice × SellRatio × SellConditionSpan × Δ`, the junkyard-find-repair-sell loop) or via a car that needs it (`baseCarPrice × CarSaleConditionSpan × Δ / partCount`). The marker vanishes past the golden mean and at the ceiling. The car channel needs no Sell-tab visit: the mod reads the car's price from the save profile (`CarInfoData.BuyPrice`) and refines it with the live `baseCarPrice` once the Sell tab has been opened.
 2. **The Start button is color-coded.** Green while the next cycle pays for itself, red once it destroys value — the same margin math as the `$`, using the exact cycle cost shown in the preview. The color is always shown, so the golden mean is visible during the repair itself.
-3. **Sale price display is consistent.** The Sell tab line and the confirmation dialog now always show the mod's condition-scaled price: the game recalculates its own numbers after the tab opens (condition selection), and the mod re-applies its price after every recalculation and right before the sell confirmation. Profit line follows as `our price − purchase price`.
-4. **Version 0.3.11-dev2.** Dev suffix per the versioning rule (release number bumps only after merge to `main`). Toggle: `EnableProfitMarker`.
+3. **The Sell tab shows the price the game actually pays.** Live evidence (logs + screenshots) proved the game pays `parts value + body value + tuning + condition bonus` through its own sell coroutine (`_SellCarCoroutine`), while the mod's Sell-tab line overwrite showed a different, formula-based number (7,984 vs the real 14,848). The mod no longer overwrites the car sale display — line, dialog and payout are one and the same game number; the mod keeps caching the car's base price for the `$` marker.
+4. **Version 0.3.11-dev3.** Dev suffix per the versioning rule (release number bumps only after merge to `main`). Toggle: `EnableProfitMarker`.
 
 Note: the marker is advisory, not accounting — the game's exact weighting of one part inside the car's global condition is not exposed, so the mod uses `1/partCount` and an estimated 15% cycle step. It marks the *zone*, not the last kopeck. Verified by build.
 
 ## Last update v 0.3.11
 
-1. **Car sale price now scales with condition.** A new hook on the car Sell tab recalculates the price as `baseCarPrice × (0.5 + 0.5 × globalCondition)`; the sell-value and profit lines are rewritten to match. Restoring a car is now the way to turn labor into money — flipping it "as is" stays viable but pays less.
+1. **Car sale price now scales with condition.** A new hook on the car Sell tab recalculates the price as `baseCarPrice × (0.5 + 0.5 × globalCondition)`; the sell-value and profit lines are rewritten to match. Restoring a car is now the way to turn labor into money — flipping it "as is" stays viable but pays less. *(Superseded in 0.3.11-dev3: the game pays its own formula — parts + body + tuning + condition bonus — and the mod no longer overwrites the car sale display; see the dev3 entry.)*
 2. **Part resale pays for condition.** The sell cap is now `SellRatio × (0.4 + 0.6 × condition)`: a restored part sells for up to ~2.4× more than the same part in rust. The anti-flip cap stays; the reward for quality appears.
 3. **Labor cost is a curve.** Each successful repair charges `LaborCostBase × grade × (1 + 0.25 × cond/(1 − cond))` (cond capped at `LaborCurveMaxCond` = 0.98): cheap early cycles, expensive late cycles.
 4. **Repair preview on the Start button.** The button now reads `+Δ%  -total` — the condition the next cycle adds and its full price (game repair price + labor) — before you start the mini-game.
