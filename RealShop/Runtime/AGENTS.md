@@ -8,7 +8,7 @@
 | --- | --- |
 | `PatchBootstrap.cs` | Единая точка установки всех рефлексивных хуков: `TryPatchSellItem`, `TryPatchSellPrice`, `SellProbePatch.Install`, `RarityColorPatches.Install`, `TryPatchStartingMoney`, `TryCacheProfileManager`, затем `LogDiagnostics()`. Каждый `Try*` — try/catch + лог `[Подсистема] ... patched OK / not found`. Поиск целей идёт через `HarmonyLib.AccessTools.TypeByName` и перебор `GameTypes.All()` по имени и сигнатуре параметров. |
 | `GameTypes.cs` | Кэш всех типов сборки игры (`typeof(Item).Assembly.GetTypes()`), устойчивый к `ReflectionTypeLoadException` (IL2CPP-сборка частично не грузится — это норма). |
-| `GarageNeedsRecon.cs` | Рефлексивная разведка профиля: кэш `ProfileManager` (из `TryCacheProfileManager`), списки «какие детали нужны моим машинам» (`IsNeeded`) и «есть ли лучшая копия» (`IsBetter`) для маркеров `!`/`▲`; с v0.3.12 — `TryGetNeedModels` (id → модели, которым нужна деталь) и `PartCountFor` (число деталей модели, вес в маржинальности) для `$`-маркера; `Dump()` печатает диагностику по `Ctrl+G`. Работает через `MemberCache` и перечисление `carsOnParking`/сохранённых машин. |
+| `GarageNeedsRecon.cs` | Рефлексивная разведка профиля: кэш `ProfileManager` (из `TryCacheProfileManager`), списки «какие детали нужны моим машинам» (`IsNeeded`) и «есть ли лучшая копия» (`IsBetter`) для маркеров `!`/`▲`; с 0.3.11-devN — `TryGetNeedModels` (id → модели, которым нужна деталь), `PartCountFor` (число деталей модели, вес в маржинальности) и кэш цены машины `TryGetModelBuyPrice` (`CarInfoData.BuyPrice` из профиля, канал машины без вкладки Sell) для `$`-маркера; `Dump()` печатает диагностику по `Ctrl+G`. Работает через `MemberCache` и перечисление `carsOnParking`/сохранённых машин. |
 
 ## Правила этого уровня
 

@@ -23,6 +23,7 @@ namespace RealShop
         private static readonly Dictionary<string, HashSet<string>> NeededBodyByModel = new Dictionary<string, HashSet<string>>();
         private static readonly Dictionary<string, List<string>> NeedModelsByComponent = new Dictionary<string, List<string>>();
         private static readonly Dictionary<string, int> PartCountByModel = new Dictionary<string, int>();
+        private static readonly Dictionary<string, int> ModelBuyPrice = new Dictionary<string, int>();
         private static readonly HashSet<string> OwnedModels = new HashSet<string>();
         private static readonly Dictionary<string, float> OwnedBestCond = new Dictionary<string, float>();
         private static readonly Dictionary<string, Dictionary<string, float>> OwnedBodyBestCond = new Dictionary<string, Dictionary<string, float>>();
@@ -144,6 +145,7 @@ namespace RealShop
             NeededBodyByModel.Clear();
             NeedModelsByComponent.Clear();
             PartCountByModel.Clear();
+            ModelBuyPrice.Clear();
             OwnedModels.Clear();
             OwnedBestCond.Clear();
             OwnedBodyBestCond.Clear();
@@ -192,8 +194,23 @@ namespace RealShop
             }
 
             OwnedModels.Add(model);
+            object info = Get(ct, car, "CarInfoData");
+            if (info != null)
+            {
+                int buyPrice = (int)ToFloat(Get(info.GetType(), info, "BuyPrice"));
+                if (buyPrice > 0)
+                {
+                    ModelBuyPrice[model] = buyPrice;
+                }
+            }
+
             CollectComponents(Get(ct, car, "PartData"), model);
             CollectBody(Get(ct, car, "BodyPartsData"), model);
+        }
+
+        internal static bool TryGetModelBuyPrice(string model, out int buyPrice)
+        {
+            return ModelBuyPrice.TryGetValue(model, out buyPrice);
         }
 
         internal static bool TryGetNeedModels(string id, out List<string> models)

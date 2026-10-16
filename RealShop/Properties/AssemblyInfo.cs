@@ -16,8 +16,8 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("386af579-e4eb-41ea-8bac-021fe322abf9")]
 
-[assembly: AssemblyVersion("0.3.12.0")]
-[assembly: AssemblyFileVersion("0.3.12.0")]
+[assembly: AssemblyVersion("0.3.11.0")]
+[assembly: AssemblyFileVersion("0.3.11.0")]
 
-[assembly: MelonInfo(typeof(RealParts), "RealShop", "0.3.12", "https://microup.ru")]
+[assembly: MelonInfo(typeof(RealParts), "RealShop", "0.3.11-dev1", "https://microup.ru")]
 [assembly: MelonGame("Red Dot Games", "Car Mechanic Simulator 2021")]

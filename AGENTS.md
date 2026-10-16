@@ -4,7 +4,7 @@
 
 Каноническое расположение проекта: `D:\dev\src\realshop\` (remote `https://github.com/microup/realshop.git`). Любые копии этого дерева в других папках — снимки для чтения; код менять только здесь.
 
-RealShop — MelonLoader-мод для *Car Mechanic Simulator 2021* (Red Dot Games). C# / .NET Framework **4.8**, `OutputType=Library`, сборка в `RealShop.dll`. Игра собрана на **IL2CPP**, поэтому мод работает через MelonLoader 0.6.1 + UnhollowerBaseLib 0.4.18 и Harmony **2.9.0** (`using Harmony;` + `HarmonyInstance` — это алиасы Harmony 2.x, не устаревшая 1.x). Мод убирает из магазина запчасти машин старше `RemoveCarsOlderThanYear` (2005), вводит restoration ceilings (потолок восстановления, v0.3.9), экономику (sell-cap, labor cost, donor condition), маркеры потребности/апгрейда на свалке (v0.3.10) и условную экономику v0.3.11: цена продажи машины и деталей зависит от состояния, труд — гипербола `1 + k·cond/(1−cond)`, превью цены/прироста следующего цикла на кнопке Start; v0.3.12 добавила индикатор маржинальности: зелёный `$`-маркер на карточках и зелёная/красная раскраска превью, когда цикл ремонта окупается/не окупается на машине (`MarginService`). Текущая версия: **0.3.12** (`RealShop/Properties/AssemblyInfo.cs`).
+RealShop — MelonLoader-мод для *Car Mechanic Simulator 2021* (Red Dot Games). C# / .NET Framework **4.8**, `OutputType=Library`, сборка в `RealShop.dll`. Игра собрана на **IL2CPP**, поэтому мод работает через MelonLoader 0.6.1 + UnhollowerBaseLib 0.4.18 и Harmony **2.9.0** (`using Harmony;` + `HarmonyInstance` — это алиасы Harmony 2.x, не устаревшая 1.x). Мод убирает из магазина запчасти машин старше `RemoveCarsOlderThanYear` (2005), вводит restoration ceilings (потолок восстановления, v0.3.9), экономику (sell-cap, labor cost, donor condition), маркеры потребности/апгрейда на свалке (v0.3.10) и условную экономику v0.3.11: цена продажи машины и деталей зависит от состояния, труд — гипербола `1 + k·cond/(1−cond)`, превью цены/прироста следующего цикла на кнопке Start; индикатор маржинальности (`MarginService`, в разработке как 0.3.11-devN): зелёный `$`-маркер на карточках и зелёная/красная раскраска превью, когда цикл ремонта окупается/не окупается (resale-канал детали + канал машины). Текущая версия: **0.3.11** в разработке, `MelonInfo` = `0.3.11-dev1` (`RealShop/Properties/AssemblyInfo.cs`).
 
 ## Настройка окружения
 
@@ -52,6 +52,7 @@ RealShop — MelonLoader-мод для *Car Mechanic Simulator 2021* (Red Dot Ga
 ## Git
 
 - Коммиты в стиле Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`), новые ветки — с префиксом `bionic/`.
+- **Версионирование**: релиз-номер поднимать **только после мержа MR в `main`** на GitHub (один подъём на мерж). В ветке — суффикс `X.Y.Z-devN` в `MelonInfo` (N растёт на каждой dev-сборке); **перед заливкой MR суффикс `-devN` убирать** финальным коммитом. Подробности — [RealShop/Properties/AGENTS.md](RealShop/Properties/AGENTS.md).
 - Перед завершением задачи: сборка проходит, `git status` чистый по артефактам (`bin/`, `obj/`, `output/`, `.vs/` в `.gitignore`).
 - Не пушить без явного запроса.
 - Системный контракт (`SYSTEM_PROMPT.md`) имеет приоритет над этим файлом в вопросах безопасности, секретов и объёма изменений; локальные правила его только конкретизируют.

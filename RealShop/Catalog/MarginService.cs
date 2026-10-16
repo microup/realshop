@@ -41,7 +41,7 @@ namespace RealShop
             foreach (var m in models)
             {
                 int basePrice;
-                if (!CarPriceCache.TryGet(m, out basePrice))
+                if (!CarPriceCache.TryGet(m, out basePrice) && !GarageNeedsRecon.TryGetModelBuyPrice(m, out basePrice))
                 {
                     continue;
                 }

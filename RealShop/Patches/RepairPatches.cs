@@ -550,10 +550,7 @@ namespace RealShop
                 string profitModel;
                 float profitGain;
                 bool profitable = MarginService.IsCycleProfitable(item, total, delta, out profitModel, out profitGain);
-                if (profitModel != null)
-                {
-                    button.color = profitable ? ProfitGreen : LossRed;
-                }
+                button.color = profitable ? ProfitGreen : LossRed;
 
                 MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total + " gain=" + profitGain + " model=" + profitModel + " profitable=" + profitable);
             }
