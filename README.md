@@ -112,11 +112,12 @@ Three formulas now drive the loop:
 
 Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`, `EnableLaborCurve` (with `LaborCurveK`, `LaborCurveMaxCond`), `EnableRepairCostPreview`, `EnableProfitMarker`.
 
-## Last update v 0.3.11-dev1 (in development, unreleased)
+## Last update v 0.3.11-dev2 (in development, unreleased)
 
 1. **Green `$` profit marker.** Part cards (inventory, junkyard, repair list) show a green `$` under the need/upgrade corner marker while the *next repair cycle is profitable*: the condition it adds is worth more than the cycle costs — via the part's own resale value (`shopPrice × SellRatio × SellConditionSpan × Δ`, the junkyard-find-repair-sell loop) or via a car that needs it (`baseCarPrice × CarSaleConditionSpan × Δ / partCount`). The marker vanishes past the golden mean and at the ceiling. The car channel needs no Sell-tab visit: the mod reads the car's price from the save profile (`CarInfoData.BuyPrice`) and refines it with the live `baseCarPrice` once the Sell tab has been opened.
 2. **The Start button is color-coded.** Green while the next cycle pays for itself, red once it destroys value — the same margin math as the `$`, using the exact cycle cost shown in the preview. The color is always shown, so the golden mean is visible during the repair itself.
-3. **Version 0.3.11-dev1.** Dev suffix per the versioning rule (release number bumps only after merge to `main`). Toggle: `EnableProfitMarker`.
+3. **Sale price display is consistent.** The Sell tab line and the confirmation dialog now always show the mod's condition-scaled price: the game recalculates its own numbers after the tab opens (condition selection), and the mod re-applies its price after every recalculation and right before the sell confirmation. Profit line follows as `our price − purchase price`.
+4. **Version 0.3.11-dev2.** Dev suffix per the versioning rule (release number bumps only after merge to `main`). Toggle: `EnableProfitMarker`.
 
 Note: the marker is advisory, not accounting — the game's exact weighting of one part inside the car's global condition is not exposed, so the mod uses `1/partCount` and an estimated 15% cycle step. It marks the *zone*, not the last kopeck. Verified by build.
 

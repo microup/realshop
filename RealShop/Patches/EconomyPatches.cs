@@ -492,15 +492,57 @@ namespace RealShop
     {
         private static void Postfix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
         {
+            CarSaleDisplay.Apply(__instance, "setup");
+        }
+    }
+
+    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "Method_Private_Void_Boolean_PDM_0")]
+    internal static class CarSaleReapplyPdm0Patch
+    {
+        private static void Postfix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
+        {
+            CarSaleDisplay.Apply(__instance, "pdm0");
+        }
+    }
+
+    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "Method_Private_Void_Boolean_PDM_1")]
+    internal static class CarSaleReapplyPdm1Patch
+    {
+        private static void Postfix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
+        {
+            CarSaleDisplay.Apply(__instance, "pdm1");
+        }
+    }
+
+    [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "SubmitAction")]
+    internal static class CarSaleSubmitActionPatch
+    {
+        private static void Prefix(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab __instance)
+        {
+            CarSaleDisplay.Apply(__instance, "submit");
+        }
+    }
+
+    internal static class CarSaleDisplay
+    {
+        private static int lastApplied = -1;
+
+        internal static void Apply(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab tab, string tag)
+        {
             Config config = RealParts.ActiveConfig;
-            if (config == null || !config.EnableCarSaleCondition || __instance == null)
+            if (config == null || !config.EnableCarSaleCondition || tab == null)
             {
                 return;
             }
 
             try
             {
-                float cond = __instance.globalCondition;
+                if (tab.buyCar)
+                {
+                    return;
+                }
+
+                float cond = tab.globalCondition;
                 if (cond > 1f)
                 {
                     cond = cond / 100f;
@@ -516,40 +558,78 @@ namespace RealShop
                     cond = 1f;
                 }
 
-                int basePrice = __instance.baseCarPrice;
-                int gamePrice = __instance.sellPrice;
+                int basePrice = tab.baseCarPrice;
                 if (basePrice <= 0)
                 {
-                    MelonLogger.Warning("[CarSale] baseCarPrice=" + basePrice + "; scaling skipped (game price kept)");
+                    MelonLogger.Warning("[CarSale] tag=" + tag + " baseCarPrice=" + basePrice + "; scaling skipped (game price kept)");
                     return;
                 }
 
                 int newPrice = Mathf.RoundToInt(basePrice * (config.CarSaleConditionFloor + config.CarSaleConditionSpan * cond));
-                __instance.sellPrice = newPrice;
-                CarPriceCache.Remember(__instance.currentCarLoader != null ? __instance.currentCarLoader.carToLoad : null, basePrice);
+                bool changed = newPrice != lastApplied;
+                lastApplied = newPrice;
+                tab.sellPrice = newPrice;
+                CarPriceCache.Remember(tab.currentCarLoader != null ? tab.currentCarLoader.carToLoad : null, basePrice);
 
-                Text sell = __instance.sellValue;
-                if (sell != null && sell.text != null)
+                Text sell = tab.sellValue;
+                if (sell != null && !string.IsNullOrEmpty(sell.text))
                 {
-                    sell.text = ReplaceNumber(sell.text, gamePrice, newPrice);
+                    sell.text = SetNumber(sell.text, newPrice);
                 }
 
-                Text profit = __instance.profit;
-                if (profit != null && profit.text != null)
+                Text profit = tab.profit;
+                if (profit != null && !string.IsNullOrEmpty(profit.text) && tab.buyPrice != null)
                 {
-                    int oldProfit;
-                    if (TryReadNumber(profit.text, out oldProfit))
+                    int buyPrice;
+                    if (TryReadNumber(tab.buyPrice.text, out buyPrice))
                     {
-                        profit.text = ReplaceNumber(profit.text, oldProfit, oldProfit + (newPrice - gamePrice));
+                        profit.text = SetNumber(profit.text, newPrice - buyPrice);
                     }
                 }
 
-                MelonLogger.Msg("[CarSale] cond=" + cond + " base=" + basePrice + " game=" + gamePrice + " new=" + newPrice);
+                if (changed || tag == "setup" || tag == "submit")
+                {
+                    MelonLogger.Msg("[CarSale] apply tag=" + tag + " cond=" + cond + " base=" + basePrice + " new=" + newPrice);
+                }
             }
             catch (System.Exception e)
             {
-                MelonLogger.Warning("[CarSale] failed: " + e.Message);
+                MelonLogger.Warning("[CarSale] failed tag=" + tag + ": " + e.Message);
             }
+        }
+
+        private static string SetNumber(string text, int value)
+        {
+            var matches = System.Text.RegularExpressions.Regex.Matches(text, @"\d[\d\s.,\u00A0]*\d|\d");
+            if (matches.Count == 0)
+            {
+                return text;
+            }
+
+            var m = matches[0];
+            char sep = '\0';
+            foreach (char c in m.Value)
+            {
+                if (!char.IsDigit(c))
+                {
+                    sep = c;
+                    break;
+                }
+            }
+
+            int start = m.Index;
+            int scan = m.Index - 1;
+            while (scan >= 0 && (text[scan] == ' ' || text[scan] == '\u00A0'))
+            {
+                scan--;
+            }
+
+            if (scan >= 0 && text[scan] == '-')
+            {
+                start = scan;
+            }
+
+            return text.Substring(0, start) + FormatWithSeparator(value, sep) + text.Substring(m.Index + m.Value.Length);
         }
 
         private static bool TryReadNumber(string text, out int value)
@@ -566,38 +646,6 @@ namespace RealShop
             }
 
             return false;
-        }
-
-        private static string ReplaceNumber(string text, int oldValue, int newValue)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-
-            var matches = System.Text.RegularExpressions.Regex.Matches(text, @"\d[\d\s.,\u00A0]*\d|\d");
-            foreach (System.Text.RegularExpressions.Match m in matches)
-            {
-                int v;
-                if (!int.TryParse(DigitsOnly(m.Value), out v) || v != oldValue)
-                {
-                    continue;
-                }
-
-                char sep = '\0';
-                foreach (char c in m.Value)
-                {
-                    if (!char.IsDigit(c))
-                    {
-                        sep = c;
-                        break;
-                    }
-                }
-
-                return text.Substring(0, m.Index) + FormatWithSeparator(newValue, sep) + text.Substring(m.Index + m.Value.Length);
-            }
-
-            return text;
         }
 
         private static string DigitsOnly(string token)

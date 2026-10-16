@@ -5,7 +5,7 @@
 `AssemblyInfo.cs` — версия и регистрация MelonMod:
 
 - `AssemblyVersion`/`AssemblyFileVersion` — `0.3.11.0` (только числовая база, без суффиксов);
-- `[assembly: MelonInfo(typeof(RealParts), "RealShop", "0.3.11-dev1", "https://microup.ru")]` — версия, видимая MelonLoader (здесь носится `-devN`);
+- `[assembly: MelonInfo(typeof(RealParts), "RealShop", "0.3.11-dev2", "https://microup.ru")]` — версия, видимая MelonLoader (здесь носится `-devN`);
 - `[assembly: MelonGame("Red Dot Games", "Car Mechanic Simulator 2021")]` — привязка к игре.
 
 ## Правила этого уровня
