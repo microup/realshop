@@ -547,12 +547,35 @@ namespace RealShop
                 int deltaPct = Mathf.RoundToInt(delta * 100f);
                 button.text = button.text + "  +" + deltaPct + "%  -" + total;
 
+                Color gameColor = button.color;
                 string profitModel;
                 float profitGain;
                 bool profitable = MarginService.IsCycleProfitable(item, total, delta, out profitModel, out profitGain);
-                button.color = profitable ? ProfitGreen : LossRed;
 
-                MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total + " gain=" + profitGain + " model=" + profitModel + " profitable=" + profitable);
+                int feeBase = LaborCostService.Fee(config, MaxQualityService.GradeFor(item), 0f);
+                int baseCost = (total - fee) + feeBase;
+                string baseModel;
+                float baseGain;
+                bool profitableAtBase = MarginService.IsCycleProfitable(item, baseCost, delta, out baseModel, out baseGain);
+
+                string verdict;
+                if (profitable)
+                {
+                    button.color = ProfitGreen;
+                    verdict = "green";
+                }
+                else if (profitableAtBase)
+                {
+                    button.color = LossRed;
+                    verdict = "red";
+                }
+                else
+                {
+                    button.color = gameColor;
+                    verdict = "neutral";
+                }
+
+                MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total + " gain=" + profitGain + " model=" + profitModel + " profitable=" + profitable + " feeBase=" + feeBase + " verdict=" + verdict);
             }
             catch (System.Exception e)
             {
