@@ -21,6 +21,8 @@ namespace RealShop
 
         private static readonly HashSet<string> NeededComponents = new HashSet<string>();
         private static readonly Dictionary<string, HashSet<string>> NeededBodyByModel = new Dictionary<string, HashSet<string>>();
+        private static readonly Dictionary<string, List<string>> NeedModelsByComponent = new Dictionary<string, List<string>>();
+        private static readonly Dictionary<string, int> PartCountByModel = new Dictionary<string, int>();
         private static readonly HashSet<string> OwnedModels = new HashSet<string>();
         private static readonly Dictionary<string, float> OwnedBestCond = new Dictionary<string, float>();
         private static readonly Dictionary<string, Dictionary<string, float>> OwnedBodyBestCond = new Dictionary<string, Dictionary<string, float>>();
@@ -140,6 +142,8 @@ namespace RealShop
         {
             NeededComponents.Clear();
             NeededBodyByModel.Clear();
+            NeedModelsByComponent.Clear();
+            PartCountByModel.Clear();
             OwnedModels.Clear();
             OwnedBestCond.Clear();
             OwnedBodyBestCond.Clear();
@@ -188,11 +192,58 @@ namespace RealShop
             }
 
             OwnedModels.Add(model);
-            CollectComponents(Get(ct, car, "PartData"));
+            CollectComponents(Get(ct, car, "PartData"), model);
             CollectBody(Get(ct, car, "BodyPartsData"), model);
         }
 
-        private static void CollectComponents(object listObj)
+        internal static bool TryGetNeedModels(string id, out List<string> models)
+        {
+            models = null;
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+
+            MaybeRefresh();
+            List<string> direct;
+            if (NeedModelsByComponent.TryGetValue(id, out direct) && direct.Count > 0)
+            {
+                models = direct;
+                return true;
+            }
+
+            if (id.StartsWith("car_"))
+            {
+                foreach (var m in OwnedModels)
+                {
+                    if (id.StartsWith(m + "-"))
+                    {
+                        string rest = id.Substring(m.Length + 1);
+                        HashSet<string> slots;
+                        if (NeededBodyByModel.TryGetValue(m, out slots) && slots.Contains(BaseSlot(rest)))
+                        {
+                            models = new List<string> { m };
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        internal static int PartCountFor(string model)
+        {
+            int n;
+            if (PartCountByModel.TryGetValue(model, out n))
+            {
+                return n;
+            }
+
+            return 0;
+        }
+
+        private static void CollectComponents(object listObj, string model)
         {
             foreach (var p in Enumerate(listObj))
             {
@@ -206,9 +257,25 @@ namespace RealShop
                 {
                     continue;
                 }
+
+                int count;
+                PartCountByModel.TryGetValue(model, out count);
+                PartCountByModel[model] = count + 1;
+
                 if (AsStr(Get(pt, p, "Unmounted")) == "True")
                 {
                     NeededComponents.Add(leaf);
+                    List<string> models;
+                    if (!NeedModelsByComponent.TryGetValue(leaf, out models))
+                    {
+                        models = new List<string>();
+                        NeedModelsByComponent[leaf] = models;
+                    }
+
+                    if (!models.Contains(model))
+                    {
+                        models.Add(model);
+                    }
                 }
                 else
                 {
@@ -248,6 +315,11 @@ namespace RealShop
                 {
                     continue;
                 }
+
+                int count;
+                PartCountByModel.TryGetValue(model, out count);
+                PartCountByModel[model] = count + 1;
+
                 string baseSlot = BaseSlot(id);
                 if (AsStr(Get(pt, p, "Unmounted")) == "True")
                 {

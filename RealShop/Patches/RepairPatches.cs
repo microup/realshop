@@ -481,6 +481,9 @@ namespace RealShop
 
     internal static class RepairCostPreviewService
     {
+        private static readonly Color ProfitGreen = new Color(0.2f, 0.75f, 0.3f, 1f);
+        private static readonly Color LossRed = new Color(0.85f, 0.25f, 0.25f, 1f);
+
         internal static void Apply(RepairPartWindow window)
         {
             Config config = RealParts.ActiveConfig;
@@ -543,7 +546,16 @@ namespace RealShop
 
                 int deltaPct = Mathf.RoundToInt(delta * 100f);
                 button.text = button.text + "  +" + deltaPct + "%  -" + total;
-                MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total);
+
+                string profitModel;
+                float profitGain;
+                bool profitable = MarginService.IsCycleProfitable(item, total, delta, out profitModel, out profitGain);
+                if (profitModel != null)
+                {
+                    button.color = profitable ? ProfitGreen : LossRed;
+                }
+
+                MelonLogger.Msg("[RepairPreview] id=" + item.ID + " cond=" + cond + " cap=" + cap + " delta=" + deltaPct + "% fee=" + fee + " total=" + total + " gain=" + profitGain + " model=" + profitModel + " profitable=" + profitable);
             }
             catch (System.Exception e)
             {

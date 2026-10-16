@@ -37,6 +37,11 @@ namespace RealShop
         private static Sprite _needSprite;
         private static Sprite _betterSprite;
 
+        private static readonly Color ProfitColor = new Color(0.18f, 0.7f, 0.28f, 1f);
+        private static readonly System.Collections.Generic.Dictionary<System.IntPtr, GameObject> ProfitMarkerCache = new System.Collections.Generic.Dictionary<System.IntPtr, GameObject>();
+        private static readonly System.Collections.Generic.HashSet<string> SeenProfitLog = new System.Collections.Generic.HashSet<string>();
+        private static Sprite _profitSprite;
+
         internal static void Install(HarmonyInstance harmony)
         {
             MethodInfo postfix = typeof(RarityColorPatches).GetMethod("Postfix", BindingFlags.NonPublic | BindingFlags.Static);
@@ -125,6 +130,7 @@ namespace RealShop
 
                 ApplyMaxQualityMarker(item, __1);
                 ApplyNeededMarker(id, __1, item.GetConditionToShow());
+                ApplyProfitMarker(item, __1);
 
                 string rarity = MaxQualityService.GradeFor(item);
                 if (TestAllRare)
@@ -241,6 +247,142 @@ namespace RealShop
                     MelonLogger.Msg("[Needs] MARK id=" + id + " kind=" + (needed ? "need" : "better") + " cond=" + cond + " ui=" + (ui != null ? ui.GetType().Name : "null"));
                 }
             }
+        }
+
+        private static void ApplyProfitMarker(Item item, object ui)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableProfitMarker || item == null || ui == null)
+            {
+                return;
+            }
+
+            GameObject slot = GetGameObject(ui);
+            if (slot == null)
+            {
+                return;
+            }
+
+            float cond = item.GetConditionToShow();
+            float cap = MaxQualityService.MaxFraction(item);
+            bool show = false;
+            string model = null;
+            float gain = 0f;
+            if (cond < cap - 0.0001f && cond < 0.995f)
+            {
+                float delta = Mathf.Min(cap - cond, MarginService.EstimatedCycleDelta);
+                int fee = LaborCostService.Fee(config, MaxQualityService.GradeFor(item), cond);
+                show = MarginService.IsCycleProfitable(item, fee, delta, out model, out gain);
+            }
+
+            if (!show)
+            {
+                GameObject off = GetCachedProfitMarker(slot);
+                if (off != null && off.activeSelf)
+                {
+                    off.SetActive(false);
+                }
+
+                return;
+            }
+
+            GameObject marker = GetOrCreateProfitMarker(slot);
+            if (marker == null)
+            {
+                return;
+            }
+
+            if (!marker.activeSelf)
+            {
+                marker.SetActive(true);
+                marker.transform.SetAsLastSibling();
+                if (SeenProfitLog.Add(item.ID))
+                {
+                    MelonLogger.Msg("[Profit] MARK $ id=" + item.ID + " cond=" + cond + " gain=" + gain + " model=" + model + " ui=" + (ui != null ? ui.GetType().Name : "null"));
+                }
+            }
+        }
+
+        private static GameObject GetCachedProfitMarker(GameObject slot)
+        {
+            GameObject cached;
+            if (ProfitMarkerCache.TryGetValue(slot.Pointer, out cached) && cached != null)
+            {
+                return cached;
+            }
+
+            return null;
+        }
+
+        private static GameObject GetOrCreateProfitMarker(GameObject slot)
+        {
+            GameObject cached;
+            if (ProfitMarkerCache.TryGetValue(slot.Pointer, out cached) && cached != null)
+            {
+                return cached;
+            }
+
+            Transform existing = slot.transform.Find("RealShopProfit");
+            if (existing != null)
+            {
+                ProfitMarkerCache[slot.Pointer] = existing.gameObject;
+                return existing.gameObject;
+            }
+
+            GameObject root = new GameObject("RealShopProfit");
+            root.transform.SetParent(slot.transform, false);
+            Image bg = root.AddComponent<Image>();
+            bg.sprite = ProfitSprite();
+            bg.color = Color.white;
+            bg.raycastTarget = false;
+            RectTransform rt = bg.rectTransform;
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(6f, -36f);
+            rt.sizeDelta = new Vector2(26f, 26f);
+
+            root.SetActive(false);
+            root.transform.SetAsLastSibling();
+            ProfitMarkerCache[slot.Pointer] = root;
+            return root;
+        }
+
+        private static Sprite ProfitSprite()
+        {
+            if (_profitSprite == null)
+            {
+                int s = 32;
+                Texture2D tex = new Texture2D(s, s, TextureFormat.RGBA32, false);
+                Color[] px = new Color[s * s];
+                for (int i = 0; i < px.Length; i++)
+                {
+                    px[i] = ProfitColor;
+                }
+
+                for (int y = 0; y < s; y++)
+                {
+                    for (int x = 0; x < s; x++)
+                    {
+                        bool stem = x >= 15 && x <= 16 && y >= 3 && y <= 28;
+                        bool topBar = y >= 22 && y <= 24 && x >= 11 && x <= 20;
+                        bool upperLeft = x >= 10 && x <= 12 && y >= 16 && y <= 24;
+                        bool midBar = y >= 14 && y <= 16 && x >= 10 && x <= 21;
+                        bool lowerRight = x >= 19 && x <= 21 && y >= 7 && y <= 16;
+                        bool bottomBar = y >= 6 && y <= 8 && x >= 11 && x <= 20;
+                        if (stem || topBar || upperLeft || midBar || lowerRight || bottomBar)
+                        {
+                            px[y * s + x] = Color.white;
+                        }
+                    }
+                }
+
+                tex.SetPixels(px);
+                tex.Apply();
+                _profitSprite = Sprite.Create(tex, new Rect(0f, 0f, s, s), new Vector2(0.5f, 0.5f));
+            }
+
+            return _profitSprite;
         }
 
         private static GameObject GetCachedMarker(GameObject slot)

@@ -460,6 +460,33 @@ namespace RealShop
         }
     }
 
+    internal static class CarPriceCache
+    {
+        private static readonly System.Collections.Generic.Dictionary<string, int> BaseByModel = new System.Collections.Generic.Dictionary<string, int>();
+
+        internal static void Remember(string model, int basePrice)
+        {
+            if (string.IsNullOrEmpty(model) || basePrice <= 0)
+            {
+                return;
+            }
+
+            int old;
+            if (BaseByModel.TryGetValue(model, out old) && old == basePrice)
+            {
+                return;
+            }
+
+            BaseByModel[model] = basePrice;
+            MelonLogger.Msg("[CarSale] cached baseCarPrice=" + basePrice + " model=" + model);
+        }
+
+        internal static bool TryGet(string model, out int basePrice)
+        {
+            return BaseByModel.TryGetValue(model, out basePrice);
+        }
+    }
+
     [HarmonyPatch(typeof(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab), "SetupForSell")]
     internal static class CarSaleConditionPatch
     {
@@ -499,6 +526,7 @@ namespace RealShop
 
                 int newPrice = Mathf.RoundToInt(basePrice * (config.CarSaleConditionFloor + config.CarSaleConditionSpan * cond));
                 __instance.sellPrice = newPrice;
+                CarPriceCache.Remember(__instance.currentCarLoader != null ? __instance.currentCarLoader.carToLoad : null, basePrice);
 
                 Text sell = __instance.sellValue;
                 if (sell != null && sell.text != null)
