@@ -525,6 +525,8 @@ namespace RealShop
 
     internal static class CarSaleDisplay
     {
+        private static readonly Color ProfitGreen = new Color(0.2f, 0.75f, 0.3f);
+        private static readonly Color LossRed = new Color(0.85f, 0.25f, 0.25f);
         private static int lastApplied = -1;
 
         internal static void Apply(CMS.UI.Logic.Tabs.CarInfo.CarSummaryTab tab, string tag)
@@ -539,6 +541,11 @@ namespace RealShop
             {
                 if (tab.buyCar)
                 {
+                    if (tag == "setup" || tag == "submit")
+                    {
+                        MelonLogger.Msg("[CarSale] skip tag=" + tag + " buyCar=true (buy mode)");
+                    }
+
                     return;
                 }
 
@@ -566,6 +573,11 @@ namespace RealShop
                 }
 
                 int newPrice = Mathf.RoundToInt(basePrice * (config.CarSaleConditionFloor + config.CarSaleConditionSpan * cond));
+                if (tag == "setup")
+                {
+                    lastApplied = -1;
+                }
+
                 bool changed = newPrice != lastApplied;
                 lastApplied = newPrice;
                 tab.sellPrice = newPrice;
@@ -583,7 +595,9 @@ namespace RealShop
                     int buyPrice;
                     if (TryReadNumber(tab.buyPrice.text, out buyPrice))
                     {
-                        profit.text = SetNumber(profit.text, newPrice - buyPrice);
+                        int ourProfit = newPrice - buyPrice;
+                        profit.text = SetNumber(profit.text, ourProfit);
+                        profit.color = ourProfit >= 0 ? ProfitGreen : LossRed;
                     }
                 }
 
