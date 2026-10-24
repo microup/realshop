@@ -18,7 +18,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 5. All body and interior parts can be repaired.
 6. Junkyard and auction access are unlocked from level 1 on the map.
 7. Junkyard and auction travel are intended to be free.
-8. Junkyard car spawns are filtered by `RemoveCarsOlderThanYear`; with the default value `2005`, only cars older than 2005 can appear there.
+8. Junkyard car spawns are filtered by `RemoveCarsOlderThanYear`; with the default value `2005`, only cars older than 2005 can appear there. The auction is filtered by the same cutoff (v0.3.11-dev6): cars from the cutoff year and newer are not offered there at all.
 9. Repair is riskier: red parts can be restored, but any failed repair attempt immediately and permanently destroys the part, even when the part was already in good condition.
 10. Fully repaired parts are hidden from the repair table list.
 11. All repairable parts are available from the first repair level.
@@ -35,6 +35,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 13. Rarity highlighting: a part's card glows **green** (restoration ceiling 50–70%) or **purple** (ceiling 70–100%) in the junkyard, inventory and repair lists; ordinary parts stay grey, and highlighted slots reset correctly when the game reuses them. A part that has reached its ceiling shows a **`MAX xx%`** marker; below it the card reads `current-max%`.  
 14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.
 15. Junkyard need/upgrade markers: an orange `!` marks a part your cars are missing, and a green `▲` marks a part you already own that has a better-condition copy on the junkyard — checked against every car in the garage and on the parking lot.  
+16. Auction quality cap: no car offered at the auction is rated above `AuctionMaxRating` (default **1 star**). The star rating drives the car's value, starting price, the AI's max bid and its generated condition, so the auction you can reach from level 1 sells only the cheapest, most tired machines. Toggle with `EnableAuctionRatingCap`.
 
 ## Rarity, Restoration Ceilings & The New Economy
 
@@ -111,6 +112,20 @@ Three formulas now drive the loop:
 - **Failure still destroys the part.** Risk was left untouched on purpose: a ruined panel is lost for good, so what you find and keep has real value.
 
 Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`, `EnableLaborCurve` (with `LaborCurveK`, `LaborCurveMaxCond`), `EnableRepairCostPreview`, `EnableProfitMarker`.
+
+## Last update v 0.3.11-dev6 (in development, unreleased)
+
+1. **The auction sells retro only.** The auction's car pool is now filtered by the same `RemoveCarsOlderThanYear` cutoff as the junkyard, and the generated auction list is filtered once more as a safety net. With the default `2005`, the auction draws from the **101** pre-2005 cars the game allows there (out of 163), so the list stays full — and every car you can bid on is a car the shop no longer supplies parts for. Combined with the one-star cap, the auction becomes what the loop needs it to be: a source of old, tired machines.
+2. **Version 0.3.11-dev6.** No new config key: `RemoveCarsOlderThanYear` stays the single switch, exactly as for the junkyard filter.
+
+Note: each car's year is read from its own `config.txt` first (base game and DLC alike), falling back to the game's own year API — the same rule that made the junkyard filter robust in v0.3.7. The hooks log `[Auction] pool year filter: cutoff=2005 kept=... removed=...` when the auction builds its pool and `[Auction] list year filter: type=Normal cutoff=2005 kept=... removed=...` for every generated list; if a list would end up empty it is left untouched and a `Warning` is logged, so the auction screen is never offered empty. Verified by build; live acceptance: those log lines and no car from the cutoff year or newer in the auction list.
+
+## Last update v 0.3.11-dev5 (in development, unreleased)
+
+1. **The auction stops handing out winners.** Every car at the auction carries a star rating, and the game rolls it per car (`AuctionHelper.GetRatingForCar`): regular auctions draw good and very good machines, salvage ones draw mid-grade wrecks. The mod clamps that roll to `AuctionMaxRating` (default **1**). The rating is the game's own source for the car's value, its starting price, the AI's maximum bid and the condition the car is generated in, so capping it in one place makes the whole auction — regular, salvage and the additional one — a one-star yard: the cheapest, most tired machines, priced like them.
+2. **Version 0.3.11-dev5.** Toggles: `EnableAuctionRatingCap` (on by default), `AuctionMaxRating` (default `1`; set it to `2` to allow two stars, `5` to return to vanilla).
+
+Note: the cap is a postfix on the game's own rating roll, so it applies to every car the auction generates and to every re-roll of the list, and it never leaves a car behind that the UI shows with more stars than the price was computed for. The hook logs `[Auction] hook active: GetRatingForCar cap=1` on the first roll and `[Auction] cap type=Normal rating 4 -> 1` for each capped car, so a game update that moves the method is visible in the log. Verified by build; live acceptance: open the auction, every card shows a single star, and the log shows the `[Auction] cap ...` lines.
 
 ## Last update v 0.3.11-dev4 (in development, unreleased)
 

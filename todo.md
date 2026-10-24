@@ -1,0 +1,2 @@
+- исправить в магазине есть машине старше заложенного года в RemoveCarsOlderThanYear
+- на свалке не должно быть новых машин после RemoveCarsOlderThanYear

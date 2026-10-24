@@ -1428,6 +1428,8 @@ namespace RealShop
         private const bool ValueEnableRepairCostPreview = true;
 
         private const bool ValueEnableProfitMarker = true;
+        private const bool ValueEnableAuctionRatingCap = true;
+        public const int ValueAuctionMaxRating = 1;
 
         private const string ConfigCategoryName = "MainSection";
         private const string ConfigCarSection = "CarSection";
@@ -1495,6 +1497,8 @@ namespace RealShop
         private readonly MelonPreferences_Entry<int> _maxQualityCommonWeight;
         private readonly MelonPreferences_Entry<int> _maxQualityRareWeight;
         private readonly MelonPreferences_Entry<int> _maxQualityUniqueWeight;
+        private readonly MelonPreferences_Entry<bool> _enableAuctionRatingCap;
+        private readonly MelonPreferences_Entry<int> _auctionMaxRating;
 
         private readonly MelonPreferences_Entry<bool> _isEnableBrandFilter;
         private readonly MelonPreferences_Entry<bool> _isEnableShop;
@@ -1554,6 +1558,8 @@ namespace RealShop
 
         public bool EnableRepairCostPreview => _enableRepairCostPreview.Value;
         public bool EnableProfitMarker => _enableProfitMarker.Value;
+        public bool EnableAuctionRatingCap => _enableAuctionRatingCap.Value;
+        public int AuctionMaxRating => _auctionMaxRating.Value;
 
         public bool EnableDonorCondition => _enableDonorCondition.Value;
         public float DonorConditionScale => _donorConditionScale.Value;        public bool EnableMaxQuality => _enableMaxQuality.Value;
@@ -1638,6 +1644,8 @@ namespace RealShop
 
             _enableRepairCostPreview = _cfgSectionCars.CreateEntry(nameof(EnableRepairCostPreview), ValueEnableRepairCostPreview);
             _enableProfitMarker = _cfgSectionCars.CreateEntry(nameof(EnableProfitMarker), ValueEnableProfitMarker);
+            _enableAuctionRatingCap = _cfgSectionCars.CreateEntry(nameof(EnableAuctionRatingCap), ValueEnableAuctionRatingCap);
+            _auctionMaxRating = _cfgSectionCars.CreateEntry(nameof(AuctionMaxRating), ValueAuctionMaxRating);
 
             _enableDonorCondition = _cfgSectionCars.CreateEntry(nameof(EnableDonorCondition), ValueEnableDonorCondition);
             _donorConditionScale = _cfgSectionCars.CreateEntry(nameof(DonorConditionScale), ValueDonorConditionScale);            _enableMaxQuality = _cfgSectionCars.CreateEntry(nameof(EnableMaxQuality), true);
