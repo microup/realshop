@@ -8,7 +8,7 @@
 - разблокирует junkyard на карте (`MapDestinationButton (5)` — константа имени в точке входа);
 - включает верстак/большой стол в `EngineRoom`;
 - скрывает магазин (`MapDestinationButton (6)`) и доп. аукцион (`AuctionsButton`) по флагам конфига `IsEnableShop`/`IsEnableAdditionalAuction`;
-- фильтрует старые машины/бренды в `ShopCarWindow`/`ShopMenu` (бренд-фильтр по `ListCarNames`).
+- фильтрует старые машины/бренды в `ShopCarWindow`/`ShopMenu` (бренд-фильтр по `ListCarNames`); в `ShopCarWindow` год машины резолвится из `ShowroomCarItem.ID` через `CarData.TryGetYearByCarId` (config.txt), фолбэк — `carName` (`GetYearFromString`); скрывается только подтверждённо-старая машина (`0 <= год < RemoveCarsOlderThanYear`, знаковое сравнение), машину с неизвестным годом мод не трогает.
 
 ## Правила этого уровня
 

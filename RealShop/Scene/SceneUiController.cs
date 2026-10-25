@@ -79,21 +79,45 @@ namespace RealShop
         private void CheckAndDisableOldCarFromShop(GameObject shopCarWindow, Config config)
         {
             var itemsCars = shopCarWindow.transform.Find("Items");
-            if (itemsCars != null)
+            if (itemsCars == null)
             {
-                for (int i = 0; i < itemsCars.childCount; i++)
-                {
-                    Transform ShowroomCarItem21Shop = itemsCars.GetChild(i);
-                    var carName = ShowroomCarItem21Shop.Find("CarName").GetComponent<Text>();
-                    var carYear = Helpers.GetYearFromString(carName.text);
+                return;
+            }
 
-                    if (carYear < config.RemoveCarsOlderThanYear)
-                    {
-                        GameObject ShowroomCarObj = ShowroomCarItem21Shop.gameObject;
-                        ShowroomCarObj.SetActive(false);
-                    }
+            int cutoff = (int)config.RemoveCarsOlderThanYear;
+
+            for (int i = 0; i < itemsCars.childCount; i++)
+            {
+                Transform showroomItem = itemsCars.GetChild(i);
+                int carYear = ResolveShopCarYear(showroomItem);
+
+                if (carYear >= 0 && carYear < cutoff)
+                {
+                    showroomItem.gameObject.SetActive(false);
                 }
             }
+        }
+
+        private static int ResolveShopCarYear(Transform showroomItem)
+        {
+            var showroom = showroomItem.GetComponent<ShowroomCarItem>();
+            if (showroom == null)
+            {
+                return -1;
+            }
+
+            int year;
+            if (!string.IsNullOrEmpty(showroom.ID) && CarData.TryGetYearByCarId(showroom.ID, out year))
+            {
+                return year;
+            }
+
+            if (showroom.carName != null)
+            {
+                return Helpers.GetYearFromString(showroom.carName.text);
+            }
+
+            return -1;
         }
 
         private void CheckAndDisableICarsFromShop(GameObject shopMenu)

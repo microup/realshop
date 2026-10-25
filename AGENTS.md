@@ -1,10 +1,13 @@
 # AGENTS.md — корень репозитория RealShop
 
+Memory tag: realshop
+Memory scope: RealShop — MelonLoader-мод для Car Mechanic Simulator 2021 (Red Dot Games), канонический репозиторий github.com/microup/realshop.
+
 ## Обзор проекта
 
 Каноническое расположение проекта: `D:\dev\src\realshop\` (remote `https://github.com/microup/realshop.git`). Любые копии этого дерева в других папках — снимки для чтения; код менять только здесь.
 
-RealShop — MelonLoader-мод для *Car Mechanic Simulator 2021* (Red Dot Games). C# / .NET Framework **4.8**, `OutputType=Library`, сборка в `RealShop.dll`. Игра собрана на **IL2CPP**, поэтому мод работает через MelonLoader 0.6.1 + UnhollowerBaseLib 0.4.18 и Harmony **2.9.0** (`using Harmony;` + `HarmonyInstance` — это алиасы Harmony 2.x, не устаревшая 1.x). Мод убирает из магазина запчасти машин старше `RemoveCarsOlderThanYear` (2005), вводит restoration ceilings (потолок восстановления, v0.3.9), экономику (sell-cap, labor cost, donor condition), маркеры потребности/апгрейда на свалке (v0.3.10) и условную экономику v0.3.11: цена продажи машины и деталей зависит от состояния, труд — гипербола `1 + k·cond/(1−cond)`, превью цены/прироста следующего цикла на кнопке Start; индикатор маржинальности (`MarginService`, в разработке как 0.3.11-devN): зелёный `$`-маркер на карточках и зелёная/красная раскраска превью, когда цикл ремонта окупается/не окупается (resale-канал детали + канал машины). С 0.3.11-dev5 — кап качества аукциона: звёздный рейтинг каждой аукционной машины зажат к `AuctionMaxRating` (по умолчанию 1); с 0.3.11-dev6 — на аукционе только машины старше `RemoveCarsOlderThanYear` (пул `GetCarsForScene(SceneType.Auction)` + фильтр списка `AuctionManager.GenerateCars`). Текущая версия: **0.3.11** в разработке, `MelonInfo` = `0.3.11-dev6` (`RealShop/Properties/AssemblyInfo.cs`).
+RealShop — MelonLoader-мод для *Car Mechanic Simulator 2021* (Red Dot Games). C# / .NET Framework **4.8**, `OutputType=Library`, сборка в `RealShop.dll`. Игра собрана на **IL2CPP**, поэтому мод работает через MelonLoader 0.6.1 + UnhollowerBaseLib 0.4.18 и Harmony **2.9.0** (`using Harmony;` + `HarmonyInstance` — это алиасы Harmony 2.x, не устаревшая 1.x). Мод убирает из магазина запчасти машин старше `RemoveCarsOlderThanYear` (2005), вводит restoration ceilings (потолок восстановления, v0.3.9), экономику (sell-cap, labor cost, donor condition), маркеры потребности/апгрейда на свалке (v0.3.10) и условную экономику v0.3.11: цена продажи машины и деталей зависит от состояния, труд — гипербола `1 + k·cond/(1−cond)`, превью цены/прироста следующего цикла на кнопке Start; индикатор маржинальности (`MarginService`, в разработке как 0.3.11-devN): зелёный `$`-маркер на карточках и зелёная/красная раскраска превью, когда цикл ремонта окупается/не окупается (resale-канал детали + канал машины). С 0.3.11-dev5 — кап качества аукциона: звёздный рейтинг каждой аукционной машины зажат к `AuctionMaxRating` (по умолчанию 1); с 0.3.11-dev6 — на аукционе только машины старше `RemoveCarsOlderThanYear` (пул `GetCarsForScene(SceneType.Auction)` + фильтр списка `AuctionManager.GenerateCars`); с 0.3.11-dev7 — в автосалоне только современные машины: сетка `ShopCarWindow` скрывает машины с годом ниже `RemoveCarsOlderThanYear` (год — из id машины через `CarData`, фолбэк — год в имени; знаковое сравнение, скрытие только подтверждённо-старых). Текущая версия: **0.3.11** в разработке, `MelonInfo` = `0.3.11-dev7` (`RealShop/Properties/AssemblyInfo.cs`).
 
 ## Настройка окружения
 
@@ -75,4 +78,4 @@ git diff --stat                                # только ожидаемые
 
 Затем (при доступе к игре): запустить игру, в логе MelonLoader убедиться, что все ожидаемые `[...]`-патчи сообщают об успехе.
 
-После любой реализации всегда объязательная проверка и ревью через mcp pal и pal deepseek
+После любой реализации всегда объязательная проверка и ревью через mcp pal и pal deepseek. Суббагентов не прерывать по тайм ауту, а только переодически првоерять наличие на результат.

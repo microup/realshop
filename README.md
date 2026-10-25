@@ -36,6 +36,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.
 15. Junkyard need/upgrade markers: an orange `!` marks a part your cars are missing, and a green `▲` marks a part you already own that has a better-condition copy on the junkyard — checked against every car in the garage and on the parking lot.  
 16. Auction quality cap: no car offered at the auction is rated above `AuctionMaxRating` (default **1 star**). The star rating drives the car's value, starting price, the AI's max bid and its generated condition, so the auction you can reach from level 1 sells only the cheapest, most tired machines. Toggle with `EnableAuctionRatingCap`.
+17. Dealership year filter: the car dealership shows only modern cars. Every car whose own `config.txt` year is below `RemoveCarsOlderThanYear` (default 2005) is hidden from the showroom grid — the same single switch as the junkyard and auction. The year is read from each car's id (base game and DLC alike) and falls back to the year in the car's name, so cars whose name carries no year are filtered correctly too.
 
 ## Rarity, Restoration Ceilings & The New Economy
 
@@ -119,6 +120,13 @@ Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`,
 2. **Version 0.3.11-dev6.** No new config key: `RemoveCarsOlderThanYear` stays the single switch, exactly as for the junkyard filter.
 
 Note: each car's year is read from its own `config.txt` first (base game and DLC alike), falling back to the game's own year API — the same rule that made the junkyard filter robust in v0.3.7. The hooks log `[Auction] pool year filter: cutoff=2005 kept=... removed=...` when the auction builds its pool and `[Auction] list year filter: type=Normal cutoff=2005 kept=... removed=...` for every generated list; if a list would end up empty it is left untouched and a `Warning` is logged, so the auction screen is never offered empty. Verified by build; live acceptance: those log lines and no car from the cutoff year or newer in the auction list.
+
+## Last update v 0.3.11-dev7 (in development, unreleased)
+
+1. **The dealership shows only modern cars.** The showroom grid is now filtered by the same `RemoveCarsOlderThanYear` cutoff as the junkyard and auction: every car whose year is below the cutoff is hidden, so the shop offers only cars from the cutoff year and newer. The year is now resolved from each car's own id via its `config.txt` (base game and DLC alike), falling back to the year in the car's name. The old code read the year only from the name text — which the game fills in lazily and which carries no year for some cars — and it only ever hid a card, never restored one, so a card the filter mis-served (name not yet populated, year read as `-1`) was hidden and the shelf ended up showing the wrong cars. Reading the real year from the car's id removes that dependency: a car is hidden only when its true year is below the cutoff, and a modern car is never hidden.
+2. **Version 0.3.11-dev7.** No new config key: `RemoveCarsOlderThanYear` stays the single switch, exactly as for the junkyard and auction filters.
+
+Note: the filter runs on the live `ShopCarWindow` grid each frame and hides only cars it can confirm are older than the cutoff (a readable year below the cutoff); a car it cannot date is left as the game shows it, so a modern car is never hidden by a missing year. Verified by build; live acceptance: open the dealership — no car older than the cutoff is on the shelf, and modern cars (including those whose name has no year) are all present.
 
 ## Last update v 0.3.11-dev5 (in development, unreleased)
 
