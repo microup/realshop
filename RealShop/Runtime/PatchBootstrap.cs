@@ -25,7 +25,62 @@ namespace RealShop
             RarityColorPatches.Install(harmony);
             TryPatchStartingMoney(harmony);
             TryCacheProfileManager(harmony);
+            LogBuildJobs(harmony);
             LogDiagnostics();
+        }
+
+        private static readonly string[] BuildJobTargetTypes =
+        {
+            "OrderGenerator", "OrdersWindow", "JobHelper", "GameScript", "CarLoader",
+        };
+
+        private static void LogBuildJobs(HarmonyInstance harmony)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null)
+            {
+                MelonLogger.Warning("[BuildJob] config not active; build-job layer inactive");
+                return;
+            }
+
+            int patched = 0;
+            try
+            {
+                foreach (System.Reflection.MethodBase method in harmony.GetPatchedMethods())
+                {
+                    if (method == null)
+                    {
+                        continue;
+                    }
+
+                    System.Type declaring = method.DeclaringType;
+                    if (declaring == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (string name in BuildJobTargetTypes)
+                    {
+                        if (string.Equals(declaring.Name, name, System.StringComparison.Ordinal))
+                        {
+                            patched++;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[BuildJob] patched-method scan failed: " + e.Message);
+            }
+
+            MelonLogger.Msg("[BuildJob] hooks on target game types (OrderGenerator/OrdersWindow/JobHelper/GameScript/CarLoader): " + patched
+                + "; feature=" + (config.EnableBuildFromScratchJobs ? "ON" : "OFF (EnableBuildFromScratchJobs = false in Mods/RealShop.cfg)")
+                + " level=" + config.BuildJobMinLevel + ".." + config.BuildJobMaxLevel
+                + " chance=" + config.BuildJobChance + "% offerSeconds=" + config.BuildJobOfferSeconds
+                + " advance=" + config.BuildJobAdvancePercent + "% strip=" + config.BuildJobStripMode
+                + " methods=" + BuildJobStripTarget.MethodsSummary()
+                + " panels=" + BuildJobPanels.Chance() + "% panelPrefixes=" + BuildJobPanels.PrefixesSummary());
         }
 
         private static void TryPatchSellItem(HarmonyInstance harmony)

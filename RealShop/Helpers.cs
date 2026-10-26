@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,8 +32,69 @@ namespace RealShop
     internal static class CarData
     {
         private static Dictionary<string, int> _carYear;
+        private static Dictionary<string, string> _carPlaces;
         private static string[] _foldersByLengthDesc;
         private static bool _loaded;
+
+        public static string[] GetOrderCars(int maxYearExclusive)
+        {
+            EnsureLoaded();
+            if (_carYear == null || _carYear.Count == 0)
+            {
+                return new string[0];
+            }
+
+            var list = new List<string>();
+            foreach (var pair in _carYear)
+            {
+                int year = pair.Value;
+                if (maxYearExclusive > 0 && year >= maxYearExclusive)
+                {
+                    continue;
+                }
+
+                string places;
+                if (_carPlaces == null || !_carPlaces.TryGetValue(pair.Key, out places))
+                {
+                    continue;
+                }
+
+                if (!PlacesAllowOrder(places))
+                {
+                    continue;
+                }
+
+                list.Add("car_" + pair.Key.ToLowerInvariant());
+            }
+
+            list.Sort(StringComparer.Ordinal);
+            return list.ToArray();
+        }
+
+        private static bool PlacesAllowOrder(string places)
+        {
+            if (string.IsNullOrEmpty(places))
+            {
+                return false;
+            }
+
+            foreach (var token in places.Split(','))
+            {
+                string name = token.Trim();
+                int dot = name.IndexOf('.');
+                if (dot >= 0)
+                {
+                    name = name.Substring(0, dot);
+                }
+
+                if (string.Equals(name, "Order", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public static bool TryGetBodyYear(string partId, out int year)
         {
@@ -107,6 +169,7 @@ namespace RealShop
 
             _loaded = true;
             _carYear = new Dictionary<string, int>();
+            _carPlaces = new Dictionary<string, string>();
 
             try
             {
@@ -132,6 +195,23 @@ namespace RealShop
                         if (y > best)
                         {
                             best = y;
+                        }
+                    }
+
+                    string primary = Path.Combine(dir, "config.txt");
+                    string secondary = Path.Combine(dir, "config1.txt");
+                    string chosen = primary;
+                    if (!File.Exists(primary))
+                    {
+                        chosen = secondary;
+                    }
+
+                    if (chosen != null && File.Exists(chosen))
+                    {
+                        string places = ReadAllowedPlaces(chosen);
+                        if (!string.IsNullOrEmpty(places))
+                        {
+                            _carPlaces[folder] = places;
                         }
                     }
 
@@ -162,6 +242,20 @@ namespace RealShop
             }
 
             return 0;
+        }
+
+        private static string ReadAllowedPlaces(string file)
+        {
+            foreach (var line in File.ReadAllLines(file))
+            {
+                string s = line.Trim();
+                if (s.StartsWith("allowedPlaces="))
+                {
+                    return s.Substring("allowedPlaces=".Length).Trim();
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -134,9 +134,14 @@ namespace RealShop
 
             if (!_modIsEnable)
             {
+                BuildJobState.Tick();
+                BuildJobAcceptPatch.AbandonCandidate("mod disabled");
                 return;
             }
 
+            BuildJobState.Tick();
+            BuildJobAcceptPatch.TickCommit();
+            BuildJobService.TickOffers();
             _scene.Update(_config);
         }
 

@@ -288,8 +288,37 @@
     <Compile Include="Patches\JunkyardPatches.cs" />
 
     <Compile Include="Patches\RarityColorPatches.cs" />
+    <Compile Include="Patches\RarityColorPatchesMarkers.cs" />
+    <Compile Include="Patches\RepairLaborPatches.cs" />
+    <Compile Include="Patches\RepairCostPreviewPatches.cs" />
+    <Compile Include="Patches\MoneyAndCarSalePatches.cs" />
+    <Compile Include="Runtime\GarageNeedsReconPrices.cs" />
+    <Compile Include="Runtime\GarageNeedsReconDump.cs" />
 
     <Compile Include="Patches\AuctionPatches.cs" />
+
+    <Compile Include="Jobs\BuildJobState.cs" />
+    <Compile Include="Jobs\BuildJobPanels.cs" />
+    <Compile Include="Jobs\BuildJobText.cs" />
+
+    <Compile Include="Jobs\BuildJobService.cs" />
+    <Compile Include="Jobs\BuildJobServiceOffers.cs" />
+    <Compile Include="Jobs\BuildJobServiceAdvance.cs" />
+    <Compile Include="Jobs\BuildJobServiceValidation.cs" />
+    <Compile Include="Jobs\BuildJobServicePrices.cs" />
+
+    <Compile Include="Patches\JobPatches.cs" />
+
+    <Compile Include="Patches\JobOfferPatches.cs" />
+    <Compile Include="Patches\JobAcceptPatches.cs" />
+
+    <Compile Include="Patches\CarStripPatches.cs" />
+
+    <Compile Include="ConfigCarYearsA.cs" />
+    <Compile Include="ConfigCarYearsB.cs" />
+    <Compile Include="ConfigCarYearsC.cs" />
+    <Compile Include="ConfigCarLists.cs" />
+    <Compile Include="ConfigInit.cs" />
 
   </ItemGroup>
 
