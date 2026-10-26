@@ -44,6 +44,7 @@ namespace RealShop
 
         private Config _config;
         private bool _modIsEnable = true;
+        internal static bool ModIsEnabled = true;
         private bool _isRunOnce = false;
         private int _moneyStableFrames = 0;
         private int _moneyPendingFrames = 0;
@@ -56,6 +57,7 @@ namespace RealShop
 
             _config = new Config();
             _config.Reload();
+            _config.RepairBuildJobConfig();
             ActiveConfig = _config;
 
             PatchBootstrap.Install(this.Harmony);
@@ -67,6 +69,8 @@ namespace RealShop
             {
                 return;
             }
+
+            BuildJobSuspensionToggle.Update();
 
             if (StartingMoneyPatch.Pending)
             {
@@ -114,6 +118,7 @@ namespace RealShop
                 {
                     _modIsEnable = true;
                 }
+                ModIsEnabled = _modIsEnable;
                 UIManager.Get().ShowPopup("[RealShop]", $"the mod has been status: {_modIsEnable}.", PopupType.Normal);
 
                 MelonLogger.Msg($"the mod has been {_modIsEnable}");

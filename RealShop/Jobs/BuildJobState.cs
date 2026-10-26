@@ -179,6 +179,13 @@ namespace RealShop
             _advancePendingFor = -1;
             _strippedJobId = -1;
             BuildJobPanels.ClearStrippedMarker(jobId);
+            BuildJobCondition.ClearAppliedMarker(jobId);
+            BuildJobCondition.CloseGuard("ClearActiveJob");
+            Config config = RealParts.ActiveConfig;
+            if (config != null && config.BuildJobEngineJobId == jobId)
+            {
+                config.ClearBuildJobEngine();
+            }
         }
 
         internal static void SetAdvancePending(int jobId)
@@ -231,6 +238,7 @@ namespace RealShop
                 _armCarFile = null;
                 _armJobId = -1;
                 _armPlace = -1;
+                BuildJobCondition.CloseGuard("strip window expired");
                 MelonLogger.Msg("[BuildJob] strip window expired: job=" + expiredJobId + " stripped=" + (stripped ? "yes" : "no"));
             }
         }

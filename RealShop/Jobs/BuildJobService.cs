@@ -206,6 +206,19 @@ namespace RealShop
                 return false;
             }
 
+            int configVariants = CarData.GetConfigVariantCount(carFile);
+            if (configVariants <= 0)
+            {
+                MelonLogger.Warning("[BuildJob] job skipped: car " + carFile + " has no config the game loader can reach");
+                return false;
+            }
+
+            int configVersion = configVariants > 1 ? UnityEngine.Random.Range(0, configVariants) : 0;
+            string[] engineOptions = CarData.GetEngineSwapOptions(carFile, configVersion);
+            string engineType = engineOptions.Length > 0
+                ? engineOptions[UnityEngine.Random.Range(0, engineOptions.Length)]
+                : string.Empty;
+
             int place = FreePlaceIndex();
             if (place < 0)
             {
@@ -235,7 +248,7 @@ namespace RealShop
             created.IsMission = false;
             created.carFile = carFile;
             created.carLoaderID = place;
-            created.configVersion = template.configVersion;
+            created.configVersion = configVersion;
             created.LocalizationID = template.LocalizationID;
             created.carColor = template.carColor;
             created.carFactoryColor = template.carFactoryColor;
@@ -245,7 +258,7 @@ namespace RealShop
             created.forXP = template.forXP;
             created.jobType = CopyJobTypeFlags(template);
             created.Mileage = 0;
-            created.jobPartsCount = 0;
+            created.jobPartsCount = TemplatePartsCount(template);
             created.globalCondition = Mathf.Min(frame, Mathf.Min(body, Mathf.Min(parts, interior))) / 100f;
             created.otherPartsCondition = parts / 100f;
             created.timeToEnd = config.BuildJobDeadlineDays * 24;
@@ -257,7 +270,7 @@ namespace RealShop
             created.XP = config.BuildJobXpBonus;
             created.BonusToExp = true;
             created.BonusToMoney = true;
-            created.CanDelete = true;
+            created.CanDelete = false;
             created.IsCompleted = false;
             created.IconTypeEngine = true;
             created.IconTypeTiming = true;
@@ -272,11 +285,22 @@ namespace RealShop
 
             job = created;
             config.RememberBuildJobId(jobId);
+            config.RememberBuildJobEngine(jobId, engineType);
             MelonLogger.Msg("[BuildJob] built job id=" + jobId + " car=" + carFile + " place=" + created.carLoaderID
+                + " config=" + created.configVersion + "/" + configVariants
+                + " engine=" + (string.IsNullOrEmpty(engineType) ? "none" : engineType)
+                + " (options=" + engineOptions.Length + ")"
                 + " body>=" + body + "% parts>=" + parts + "% frame>=" + frame + "% interior>=" + interior + "%"
                 + " deadline=" + config.BuildJobDeadlineDays + "d/" + (config.BuildJobDeadlineDays * 24) + "h"
+                + " partsCount=" + created.jobPartsCount + " canDelete=" + created.CanDelete
                 + " multiplier=x" + config.BuildJobRewardMultiplier);
             return true;
+        }
+
+        private static int TemplatePartsCount(Job template)
+        {
+            int count = template != null ? template.jobPartsCount : 0;
+            return count > 0 ? count : 1;
         }
 
         internal static bool TryOfferJob(Config config, bool force)

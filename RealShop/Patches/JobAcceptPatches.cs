@@ -4,6 +4,7 @@ using CMS.UI.Windows;
 using Harmony;
 using MelonLoader;
 using System;
+using System.Text;
 using UnhollowerBaseLib;
 
 #pragma warning disable CS0618
@@ -217,6 +218,7 @@ namespace RealShop
             _candidate = null;
             _candidateWaits = 0;
             BuildJobState.CandidateJobId = -1;
+            BuildJobCondition.CloseGuard("accept candidate cleared");
             BuildJobState.DisarmStrip("accept candidate cleared");
         }
 
@@ -238,8 +240,38 @@ namespace RealShop
     {
         private static bool _activeLogged;
 
+        private static int _blockedJobId = -1;
+
+        private static bool Prefix([HarmonyArgument(0)] int jobId)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null || !config.EnableBuildFromScratchJobs || !config.BuildJobBlockCancel)
+            {
+                return true;
+            }
+
+            if (BuildJobState.CandidateJobId == jobId || BuildJobState.ActiveJobId == jobId)
+            {
+                _blockedJobId = jobId;
+                MelonLogger.Msg("[BuildJob] cancel blocked: id=" + jobId
+                    + " (the game drops the accepted build job ~8s after accept; the mount mode mounts the parts of a"
+                    + " live job, so the cancel is skipped)");
+                return false;
+            }
+
+            return true;
+        }
+
         private static void Postfix([HarmonyArgument(0)] int jobId)
         {
+            if (_blockedJobId == jobId)
+            {
+                _blockedJobId = -1;
+                MelonLogger.Msg("[BuildJob] cancel skipped by the mod: job=" + jobId
+                    + " stays accepted (Harmony runs the postfix even when the prefix skipped the original)");
+                return;
+            }
+
             Config config = RealParts.ActiveConfig;
             if (config == null || !config.EnableBuildFromScratchJobs)
             {
@@ -254,7 +286,15 @@ namespace RealShop
 
             if (BuildJobState.CandidateJobId == jobId)
             {
+                MelonLogger.Msg("[BuildJob] cancel stack: job=" + jobId + " " + ShortStack());
                 BuildJobAcceptPatch.ClearCandidate();
+                Config keepConfig = RealParts.ActiveConfig;
+                if (keepConfig != null && keepConfig.BuildJobKeepGuardOnCancel)
+                {
+                    BuildJobCondition.OpenGuard(jobId);
+                    MelonLogger.Msg("[BuildJob] guard reopened after cancel: job=" + jobId
+                        + " (the car stays in the garage, condition forces keep working)");
+                }
                 MelonLogger.Msg("[BuildJob] cancelled before commit: id=" + jobId);
             }
 
@@ -273,6 +313,31 @@ namespace RealShop
                 BuildJobService.ForfeitAdvance(jobId, "cancel, job not active (reloaded save)");
                 MelonLogger.Msg("[BuildJob] cancelled: id=" + jobId + " not active, advance clawed back");
             }
+        }
+        private static string ShortStack()
+        {
+            System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(1, false);
+            int frames = trace.FrameCount < 12 ? trace.FrameCount : 12;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < frames; i++)
+            {
+                System.Reflection.MethodBase method = trace.GetFrame(i).GetMethod();
+                if (method == null)
+                {
+                    continue;
+                }
+
+                if (sb.Length > 0)
+                {
+                    sb.Append(" <- ");
+                }
+
+                sb.Append(method.DeclaringType != null
+                    ? method.DeclaringType.Name + "." + method.Name
+                    : method.Name);
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "<empty>";
         }
     }
 }

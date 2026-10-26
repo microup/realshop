@@ -110,7 +110,7 @@ namespace RealShop
             return config.BuildJobAdvanceAmount > 0 ? config.BuildJobAdvanceAmount : 0;
         }
 
-        private static CarLoader FindCarLoaderByOrder(int jobId)
+        internal static CarLoader FindCarLoaderByOrder(int jobId)
         {
             if (jobId < 0)
             {

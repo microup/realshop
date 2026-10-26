@@ -299,11 +299,17 @@
 
     <Compile Include="Jobs\BuildJobState.cs" />
     <Compile Include="Jobs\BuildJobPanels.cs" />
+    <Compile Include="Jobs\BuildJobCondition.cs" />
+    <Compile Include="Jobs\BuildJobConditionGuard.cs" />
+    <Compile Include="Jobs\BuildJobSuspensionToggle.cs" />
     <Compile Include="Jobs\BuildJobText.cs" />
+    <Compile Include="Jobs\BuildJobStripWrites.cs" />
+    <Compile Include="Jobs\BuildJobTextRu.cs" />
 
     <Compile Include="Jobs\BuildJobService.cs" />
     <Compile Include="Jobs\BuildJobServiceOffers.cs" />
     <Compile Include="Jobs\BuildJobServiceAdvance.cs" />
+    <Compile Include="Jobs\BuildJobServiceEngine.cs" />
     <Compile Include="Jobs\BuildJobServiceValidation.cs" />
     <Compile Include="Jobs\BuildJobServicePrices.cs" />
 
@@ -313,6 +319,7 @@
     <Compile Include="Patches\JobAcceptPatches.cs" />
 
     <Compile Include="Patches\CarStripPatches.cs" />
+    <Compile Include="Patches\JobConditionPatches.cs" />
 
     <Compile Include="ConfigCarYearsA.cs" />
     <Compile Include="ConfigCarYearsB.cs" />

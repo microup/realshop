@@ -18,19 +18,252 @@ namespace RealShop
             MelonPreferences.Save();
         }
 
+        public void RememberConditionJob(int jobId)
+        {
+            _buildJobConditionJobId.Value = jobId;
+            MelonPreferences.Save();
+        }
+        public void ClearConditionJob()
+        {
+            _buildJobConditionJobId.Value = -1;
+            MelonPreferences.Save();
+        }
+
         public void RememberBuildJobId(int id)
         {
             _buildJobLastIssuedId.Value = id;
             MelonPreferences.Save();
         }
+
+        public int RepairBuildJobConfig()
+        {
+            int repaired = 0;
+            repaired += RepairTextEntry(_buildJobDifficultyLabel, "difficulty");
+            repaired += RepairTextEntry(_buildJobLabelBody, "body");
+            repaired += RepairTextEntry(_buildJobLabelParts, "parts");
+            repaired += RepairTextEntry(_buildJobLabelInterior, "interior");
+            repaired += RepairTextEntry(_buildJobLabelEngine, "engine");
+            repaired += RepairTextEntry(_buildJobLabelReward, "reward");
+            repaired += RepairTextEntry(_buildJobTakePopup, "takePopup");
+            repaired += RepairTextEntry(_buildJobNotReadyPrefix, "notReadyPrefix");
+            repaired += RepairTextEntry(_buildJobLabelAdvance, "advance");
+            repaired += RepairTextEntry(_buildJobLabelAdvanceSuffix, "advanceSuffix");
+            repaired += RepairTextEntry(_buildJobAdvancePopup, "advancePopup");
+
+            int migrated = 0;
+            int guard = 0;
+            int frame = 0;
+            int wheels = 0;
+            int susp = 0;
+            int prefixes = 0;
+            int block = 0;
+            if (_buildJobConfigSchema == null || _buildJobConfigSchema.Value < ValueBuildJobConfigSchema)
+            {
+                migrated = MigrateStripMethods();
+                guard = MigrateGuardSeconds();
+                frame = MigrateKeepFrame();
+                wheels = MigrateHideWheels();
+                susp = MigrateSuspensionObjects();
+                prefixes = MigrateUnmountPrefixes();
+                block = MigrateBlockCancelOff();
+                if (_buildJobConfigSchema != null)
+                {
+                    _buildJobConfigSchema.Value = ValueBuildJobConfigSchema;
+                }
+            }
+
+            if (repaired > 0 || migrated > 0 || guard > 0 || frame > 0 || wheels > 0 || susp > 0 || prefixes > 0
+                || block > 0)
+            {
+                MelonPreferences.Save();
+                MelonLogger.Msg("[BuildJob] cfg repaired: textKeys=" + repaired + " stripMethods=" + migrated
+                    + " guardSeconds=" + guard + " keepFrame=" + frame + " hideWheels=" + wheels
+                    + " suspensionObjects=" + susp + " unmountPrefixes=" + prefixes + " blockCancel=" + block);
+            }
+
+            return repaired + migrated + guard + frame + wheels + susp + prefixes + block;
+        }
+
+        private static int RepairTextEntry(MelonPreferences_Entry<string> entry, string key)
+        {
+            if (entry == null || BuildJobTextRu.IsUsable(entry.Value))
+            {
+                return 0;
+            }
+
+            string russian = BuildJobTextRu.Get(key);
+            if (string.IsNullOrEmpty(russian))
+            {
+                return 0;
+            }
+
+            MelonLogger.Warning("[BuildJob] cfg text is not text (ASCII save destroyed it): " + entry.Identifier
+                + " = \"" + entry.Value + "\", restored code default");
+            entry.Value = russian;
+            return 1;
+        }
+
+        private int MigrateStripMethods()
+        {
+            if (_buildJobStripMethods == null)
+            {
+                return 0;
+            }
+
+            string current = _buildJobStripMethods.Value;
+            if (current == null)
+            {
+                return 0;
+            }
+
+            current = current.Trim();
+            if (System.String.Equals(current, ValueBuildJobStripMethods, System.StringComparison.Ordinal))
+            {
+                return 0;
+            }
+
+            if (!System.String.Equals(current, LegacyBuildJobStripMethods, System.StringComparison.Ordinal)
+                && !System.String.Equals(current, LegacyBuildJobStripMethodsDev23, System.StringComparison.Ordinal)
+                && !System.String.Equals(current, LegacyBuildJobStripMethodsDev25, System.StringComparison.Ordinal))
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg strip methods migrated from the previous default: "
+                + ValueBuildJobStripMethods);
+            _buildJobStripMethods.Value = ValueBuildJobStripMethods;
+            return 1;
+        }
+
+        private int MigrateGuardSeconds()
+        {
+            if (_buildJobConditionGuardSeconds == null)
+            {
+                return 0;
+            }
+
+            if (_buildJobConditionGuardSeconds.Value != LegacyBuildJobConditionGuardSeconds)
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg guard seconds migrated from the previous default: "
+                + LegacyBuildJobConditionGuardSeconds + " -> " + ValueBuildJobConditionGuardSeconds);
+            _buildJobConditionGuardSeconds.Value = ValueBuildJobConditionGuardSeconds;
+            return 1;
+        }
+
+        private int MigrateKeepFrame()
+        {
+            if (_buildJobStripKeepFrame == null || _buildJobStripKeepFrame.Value != LegacyBuildJobStripKeepFrame)
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg keep-frame migrated from the previous default: true -> "
+                + ValueBuildJobStripKeepFrame);
+            _buildJobStripKeepFrame.Value = ValueBuildJobStripKeepFrame;
+            return 1;
+        }
+
+        private int MigrateHideWheels()
+        {
+            if (_buildJobStripHideWheels == null || _buildJobStripHideWheels.Value != LegacyBuildJobStripHideWheelsTrue)
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg hide-wheels migrated from the previous default: true -> "
+                + ValueBuildJobStripHideWheels + " (hiding is cosmetic: the game cannot mount wheels it does not see)");
+            _buildJobStripHideWheels.Value = ValueBuildJobStripHideWheels;
+            return 1;
+        }
+
+        private int MigrateSuspensionObjects()
+        {
+            if (_buildJobStripSuspensionObjects == null
+                || _buildJobStripSuspensionObjects.Value != LegacyBuildJobStripSuspensionObjectsFalse)
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg suspension objects migrated from the previous default: false -> "
+                + ValueBuildJobStripSuspensionObjects + " (user: remove the suspension, accept the blockers)");
+            _buildJobStripSuspensionObjects.Value = ValueBuildJobStripSuspensionObjects;
+            return 1;
+        }
+
+        private int MigrateBlockCancelOff()
+        {
+            if (_buildJobBlockCancel == null || _buildJobBlockCancel.Value != LegacyBuildJobBlockCancelTrue)
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg block-cancel migrated back: true -> " + ValueBuildJobBlockCancel
+                + " (the ~8s CancelJob is the game finishing the accept: blocking it keeps the offer in the list,"
+                + " live accept not confirmed ... stillOffered)");
+            _buildJobBlockCancel.Value = ValueBuildJobBlockCancel;
+            return 1;
+        }
+
+        private int MigrateUnmountPrefixes()
+        {
+            if (_buildJobStripUnmountPrefixes == null
+                || !string.Equals(_buildJobStripUnmountPrefixes.Value, LegacyBuildJobStripUnmountPrefixes,
+                    System.StringComparison.Ordinal))
+            {
+                return 0;
+            }
+
+            MelonLogger.Msg("[BuildJob] cfg unmount prefixes migrated from the previous default: "
+                + "window_front added (the game keeps the front window mounted, live mountedPanels=1)");
+            _buildJobStripUnmountPrefixes.Value = ValueBuildJobStripUnmountPrefixes;
+            return 1;
+        }
+
+        public void RememberBuildJobEngine(int jobId, string engineType)
+        {
+            _buildJobEngineJobId.Value = jobId;
+            _buildJobEngineType.Value = engineType == null ? "" : engineType;
+            MelonPreferences.Save();
+        }
+
+        public void ClearBuildJobEngine()
+        {
+            _buildJobEngineJobId.Value = -1;
+            _buildJobEngineType.Value = ValueBuildJobEngineType;
+            MelonPreferences.Save();
+        }
+
         public string BuildJobStripMode => _buildJobStripMode.Value;
         public string BuildJobStripMethods => _buildJobStripMethods.Value;
         public int BuildJobStripPanelChance => _buildJobStripPanelChance.Value;
+        public int BuildJobStripConditionPercent => _buildJobStripConditionPercent.Value;
+        public int BuildJobStripDustPercent => _buildJobStripDustPercent.Value;
+        public int BuildJobConditionGuardSeconds => _buildJobConditionGuardSeconds.Value;
+        public int BuildJobConditionReapplyMax => _buildJobConditionReapplyMax.Value;
         public string BuildJobPanelNamePrefixes => _buildJobPanelNamePrefixes.Value;
         public string BuildJobDifficultyLabel => _buildJobDifficultyLabel.Value;
         public string BuildJobLabelBody => _buildJobLabelBody.Value;
         public string BuildJobLabelParts => _buildJobLabelParts.Value;
         public string BuildJobLabelInterior => _buildJobLabelInterior.Value;
+        public string BuildJobLabelEngine => _buildJobLabelEngine.Value;
+        public bool BuildJobStripKeepFrame => _buildJobStripKeepFrame.Value;
+        public bool BuildJobStripEngineObject => _buildJobStripEngineObject.Value;
+        public int BuildJobConfigSchema => _buildJobConfigSchema.Value;
+        public bool BuildJobStripWheels => _buildJobStripWheels.Value;
+        public bool BuildJobStripHideWheels => _buildJobStripHideWheels.Value;
+        public int BuildJobStripSuspensionParts => _buildJobStripSuspensionParts.Value;
+        public int BuildJobGuardKeepSeconds => _buildJobGuardKeepSeconds.Value;
+        public string BuildJobStripSuspensionNames => _buildJobStripSuspensionNames.Value;
+        public bool BuildJobStripSuspensionObjects => _buildJobStripSuspensionObjects.Value;
+        public bool BuildJobKeepGuardOnCancel => _buildJobKeepGuardOnCancel.Value;
+        public bool BuildJobBlockCancel => _buildJobBlockCancel.Value;
+        public string BuildJobSuspensionToggleKey => _buildJobSuspensionToggleKey.Value;
+        public string BuildJobStripUnmountPrefixes => _buildJobStripUnmountPrefixes.Value;
+        public int BuildJobEngineJobId => _buildJobEngineJobId.Value;
+        public string BuildJobEngineType => _buildJobEngineType.Value;
         public string BuildJobLabelReward => _buildJobLabelReward.Value;
         public string BuildJobTakePopup => _buildJobTakePopup.Value;
         public string BuildJobNotReadyPrefix => _buildJobNotReadyPrefix.Value;
@@ -146,6 +379,7 @@ namespace RealShop
             _buildJobOfferSeconds = _cfgSectionCars.CreateEntry(nameof(BuildJobOfferSeconds), ValueBuildJobOfferSeconds);
             _buildJobAdvancePercent = _cfgSectionCars.CreateEntry(nameof(BuildJobAdvancePercent), ValueBuildJobAdvancePercent);
             _buildJobAdvanceJobId = _cfgSectionCars.CreateEntry(nameof(BuildJobAdvanceJobId), ValueBuildJobAdvanceJobId);
+            _buildJobConditionJobId = _cfgSectionCars.CreateEntry(nameof(BuildJobConditionJobId), ValueBuildJobConditionJobId);
             _buildJobAdvanceAmount = _cfgSectionCars.CreateEntry(nameof(BuildJobAdvanceAmount), ValueBuildJobAdvanceAmount);
             _buildJobLabelAdvance = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelAdvance), ValueBuildJobLabelAdvance);
             _buildJobLabelAdvanceSuffix = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelAdvanceSuffix), ValueBuildJobLabelAdvanceSuffix);
@@ -153,11 +387,31 @@ namespace RealShop
             _buildJobStripMode = _cfgSectionCars.CreateEntry(nameof(BuildJobStripMode), ValueBuildJobStripMode);
             _buildJobStripMethods = _cfgSectionCars.CreateEntry(nameof(BuildJobStripMethods), ValueBuildJobStripMethods);
             _buildJobStripPanelChance = _cfgSectionCars.CreateEntry(nameof(BuildJobStripPanelChance), ValueBuildJobStripPanelChance);
+            _buildJobStripConditionPercent = _cfgSectionCars.CreateEntry(nameof(BuildJobStripConditionPercent), ValueBuildJobStripConditionPercent);
+            _buildJobStripDustPercent = _cfgSectionCars.CreateEntry(nameof(BuildJobStripDustPercent), ValueBuildJobStripDustPercent);
+            _buildJobConditionGuardSeconds = _cfgSectionCars.CreateEntry(nameof(BuildJobConditionGuardSeconds), ValueBuildJobConditionGuardSeconds);
+            _buildJobConditionReapplyMax = _cfgSectionCars.CreateEntry(nameof(BuildJobConditionReapplyMax), ValueBuildJobConditionReapplyMax);
+            _buildJobStripKeepFrame = _cfgSectionCars.CreateEntry(nameof(BuildJobStripKeepFrame), ValueBuildJobStripKeepFrame);
+            _buildJobStripEngineObject = _cfgSectionCars.CreateEntry(nameof(BuildJobStripEngineObject), ValueBuildJobStripEngineObject);
+            _buildJobConfigSchema = _cfgSectionCars.CreateEntry(nameof(BuildJobConfigSchema), 0);
+            _buildJobStripWheels = _cfgSectionCars.CreateEntry(nameof(BuildJobStripWheels), ValueBuildJobStripWheels);
+            _buildJobStripHideWheels = _cfgSectionCars.CreateEntry(nameof(BuildJobStripHideWheels), ValueBuildJobStripHideWheels);
+            _buildJobStripSuspensionParts = _cfgSectionCars.CreateEntry(nameof(BuildJobStripSuspensionParts), ValueBuildJobStripSuspensionParts);
+            _buildJobGuardKeepSeconds = _cfgSectionCars.CreateEntry(nameof(BuildJobGuardKeepSeconds), ValueBuildJobGuardKeepSeconds);
+            _buildJobStripSuspensionNames = _cfgSectionCars.CreateEntry(nameof(BuildJobStripSuspensionNames), ValueBuildJobStripSuspensionNames);
+            _buildJobStripSuspensionObjects = _cfgSectionCars.CreateEntry(nameof(BuildJobStripSuspensionObjects), ValueBuildJobStripSuspensionObjects);
+            _buildJobKeepGuardOnCancel = _cfgSectionCars.CreateEntry(nameof(BuildJobKeepGuardOnCancel), ValueBuildJobKeepGuardOnCancel);
+            _buildJobBlockCancel = _cfgSectionCars.CreateEntry(nameof(BuildJobBlockCancel), ValueBuildJobBlockCancel);
+            _buildJobSuspensionToggleKey = _cfgSectionCars.CreateEntry(nameof(BuildJobSuspensionToggleKey), ValueBuildJobSuspensionToggleKey);
+            _buildJobStripUnmountPrefixes = _cfgSectionCars.CreateEntry(nameof(BuildJobStripUnmountPrefixes), ValueBuildJobStripUnmountPrefixes);
+            _buildJobEngineType = _cfgSectionCars.CreateEntry(nameof(BuildJobEngineType), ValueBuildJobEngineType);
+            _buildJobEngineJobId = _cfgSectionCars.CreateEntry(nameof(BuildJobEngineJobId), ValueBuildJobEngineJobId);
             _buildJobPanelNamePrefixes = _cfgSectionCars.CreateEntry(nameof(BuildJobPanelNamePrefixes), ValueBuildJobPanelNamePrefixes);
             _buildJobDifficultyLabel = _cfgSectionCars.CreateEntry(nameof(BuildJobDifficultyLabel), ValueBuildJobDifficultyLabel);
             _buildJobLabelBody = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelBody), ValueBuildJobLabelBody);
             _buildJobLabelParts = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelParts), ValueBuildJobLabelParts);
             _buildJobLabelInterior = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelInterior), ValueBuildJobLabelInterior);
+            _buildJobLabelEngine = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelEngine), ValueBuildJobLabelEngine);
             _buildJobLabelReward = _cfgSectionCars.CreateEntry(nameof(BuildJobLabelReward), ValueBuildJobLabelReward);
             _buildJobTakePopup = _cfgSectionCars.CreateEntry(nameof(BuildJobTakePopup), ValueBuildJobTakePopup);
             _buildJobNotReadyPrefix = _cfgSectionCars.CreateEntry(nameof(BuildJobNotReadyPrefix), ValueBuildJobNotReadyPrefix);

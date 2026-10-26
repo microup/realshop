@@ -263,7 +263,8 @@ namespace RealShop
 
                     issue.Setup(line);
                     issue.SetActive(true);
-                    issue.SetDone(i < 4 ? BuildJobService.IsRequirementMet(job.id, i, loader) : advance > 0);
+                    issue.SetDone(i < 4 ? BuildJobService.IsRequirementMet(job.id, i, loader)
+                        : (i == 5 ? BuildJobService.EngineRequirementMet(job.id, loader) : advance > 0));
                     shown++;
                 }
 
@@ -277,7 +278,8 @@ namespace RealShop
                 }
 
                 MelonLogger.Msg("[BuildJob] issues: id=" + job.id + " lines=" + shown + " car=" + (loader != null)
-                    + " advance=" + advance);
+                    + " advance=" + advance + " slots=" + issueObjects.Length + " engine="
+                    + (string.IsNullOrEmpty(BuildJobService.EngineTypeFor(job.id)) ? "none" : BuildJobService.EngineTypeFor(job.id)));
             }
             catch (System.Exception e)
             {

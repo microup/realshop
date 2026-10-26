@@ -20,6 +20,9 @@ namespace RealShop
             { "parts", "PARTS" },
             { "frame", "FRAME" },
             { "interior", "INTERIOR" },
+            { "engine", "ENGINE" },
+            { "engineInstalled", "installed" },
+            { "engineMissing", "missing" },
             { "reward", "finished car price" },
             { "advance", "ADVANCE" },
             { "advanceSuffix", "on accept; deducted from the final payout" },
@@ -50,6 +53,17 @@ namespace RealShop
         {
             if (Russian)
             {
+                if (BuildJobTextRu.IsUsable(russianValue))
+                {
+                    return russianValue;
+                }
+
+                string russian = BuildJobTextRu.Get(key);
+                if (!string.IsNullOrEmpty(russian))
+                {
+                    return russian;
+                }
+
                 return russianValue;
             }
 

@@ -133,15 +133,10 @@ namespace RealShop
 
         private static Il2CppReferenceArray<JobTask> BuildTasks()
         {
-            bool stripPanels = BuildJobPanels.PanelsSuppressed();
             System.Collections.Generic.List<JobTask> tasks = new System.Collections.Generic.List<JobTask>();
             for (int i = 0; i < TaskSpecs.Length; i++)
             {
                 string[] spec = TaskSpecs[i].Split('|');
-                if (stripPanels && string.Equals(spec[0], "Body", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
 
                 JobTask task = new JobTask();
                 task.type = spec[0];
@@ -157,7 +152,7 @@ namespace RealShop
             }
 
             MelonLogger.Msg("[BuildJob] tasks built: " + tasks.Count + " of " + TaskSpecs.Length
-                + " bodyTasks=" + (stripPanels ? "omitted (panels stripped)" : "included"));
+                + " bodyTasks=included (job tasks are never omitted)");
             return new Il2CppReferenceArray<JobTask>(tasks.ToArray());
         }
 

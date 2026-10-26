@@ -39,6 +39,7 @@ namespace RealShop
                     BuildJobService.ResetOfferSchedule();
                 }
 
+                RepairJobConfigVersions(__instance);
                 ReconcileActiveJob(__instance);
                 BuildJobService.TryOfferJob(config, false);
             }
@@ -93,6 +94,61 @@ namespace RealShop
         }
 
         private static bool _selectedListLogged;
+
+        private static int _configUnknownLogged = -1;
+
+        private static void RepairJobConfigVersions(OrderGenerator generator)
+        {
+            try
+            {
+                RepairListConfigVersions(generator.Jobs);
+                RepairListConfigVersions(generator.selectedJobs);
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[BuildJob] job config repair failed: " + e.Message);
+            }
+        }
+
+        private static void RepairListConfigVersions(Il2CppSystem.Collections.Generic.List<Job> jobs)
+        {
+            if (jobs == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                Job job = jobs[i];
+                if (job == null || !BuildJobService.IsBuildJob(job))
+                {
+                    continue;
+                }
+
+                int variants = CarData.GetConfigVariantCount(job.carFile);
+                if (variants <= 0)
+                {
+                    if (_configUnknownLogged == job.id)
+                    {
+                        continue;
+                    }
+
+                    _configUnknownLogged = job.id;
+                    MelonLogger.Warning("[BuildJob] job config unknown: id=" + job.id + " car=" + job.carFile
+                        + " - the game has no config folder to load for it");
+                    continue;
+                }
+
+                if (job.configVersion < variants)
+                {
+                    continue;
+                }
+
+                MelonLogger.Msg("[BuildJob] job config repaired: id=" + job.id + " car=" + job.carFile
+                    + " configVersion " + job.configVersion + " -> 0 (the car has " + variants + " config)");
+                job.configVersion = 0;
+            }
+        }
 
         private static bool IsListed(Il2CppSystem.Collections.Generic.List<Job> jobs, int jobId)
         {

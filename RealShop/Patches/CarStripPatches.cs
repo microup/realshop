@@ -62,6 +62,12 @@ namespace RealShop
 
                 _methodsRaw = raw;
 
+                if (config != null && config.BuildJobStripWheels)
+                {
+                    _methods.Add("CreateWheels");
+                    _methods.Add("CreateWheelsIO");
+                }
+
                 foreach (string name in _methods)
                 {
                     if (!KnownMethods.Contains(name))
@@ -103,6 +109,36 @@ namespace RealShop
             try
             {
                 return MatchesCore(loader);
+            }
+            catch (System.Exception e)
+            {
+                if (!_matchFailLogged)
+                {
+                    _matchFailLogged = true;
+                    MelonLogger.Warning("[BuildJob] strip match failed: " + e.Message);
+                }
+
+                return false;
+            }
+        }
+
+        internal static bool MatchesExact(CarLoader loader)
+        {
+            try
+            {
+                if (loader == null)
+                {
+                    return false;
+                }
+
+                int order = loader.orderConnection;
+                int activeId = BuildJobState.ActiveJobId;
+                if (activeId >= 0)
+                {
+                    return order == activeId;
+                }
+
+                return BuildJobState.MatchesArmedJob(order);
             }
             catch (System.Exception e)
             {
@@ -280,7 +316,12 @@ namespace RealShop
                     return;
                 }
 
-                if (!BuildJobPanels.Active() || !BuildJobService.IsBuildJob(job))
+                if (!BuildJobService.IsBuildJob(job))
+                {
+                    return;
+                }
+
+                if (!BuildJobPanels.Active())
                 {
                     return;
                 }
@@ -296,7 +337,7 @@ namespace RealShop
             }
             catch (System.Exception e)
             {
-                MelonLogger.Warning("[BuildJob] PrepareJob panel strip hook failed: " + e.Message);
+                MelonLogger.Warning("[BuildJob] PrepareJob strip hook failed: " + e.Message);
             }
         }
     }
@@ -323,6 +364,7 @@ namespace RealShop
 
             MelonLogger.Msg("[BuildJob] strip armed before accept: id=" + job.id + " via=" + tag);
             BuildJobState.ArmStrip(job.id, job.carFile, job.carLoaderID);
+            BuildJobCondition.OpenGuard(job.id);
         }
 
         internal static void DisarmCandidateWindow(string tag)
@@ -427,7 +469,23 @@ namespace RealShop
     {
         private static bool Prefix(CarLoader __instance)
         {
-            return !BuildJobStripTarget.IsBuildCar(__instance, "CreateBonusParts");
+            try
+            {
+                bool suppressed = BuildJobStripTarget.IsBuildCar(__instance, "CreateBonusParts");
+                if (!suppressed && !BuildJobStripTarget.MatchesExact(__instance))
+                {
+                    return true;
+                }
+
+                int jobId = BuildJobState.ActiveJobId >= 0 ? BuildJobState.ActiveJobId : BuildJobState.ArmJobId;
+                BuildJobCondition.TryApply(__instance, jobId, "CreateBonusParts", BuildJobCondition.StageArrival);
+                return !suppressed;
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[BuildJob] CreateBonusParts strip hook failed: " + e.Message);
+                return true;
+            }
         }
     }
 }

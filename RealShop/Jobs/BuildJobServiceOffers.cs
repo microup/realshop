@@ -28,6 +28,17 @@ namespace RealShop
                     TryPayPendingAdvance(config);
                 }
 
+                int conditionJobId = BuildJobState.ActiveJobId >= 0 ? BuildJobState.ActiveJobId : BuildJobState.ArmJobId;
+                if (_tickCounter % 30 == 0 && BuildJobCondition.Active()
+                    && conditionJobId >= 0 && BuildJobCondition.IsGuardOpen(conditionJobId))
+                {
+                    CarLoader jobCar = FindCarLoaderByOrder(conditionJobId);
+                    if (jobCar != null)
+                    {
+                        BuildJobCondition.TryApply(jobCar, conditionJobId, "tick", BuildJobCondition.StageWatchdog);
+                    }
+                }
+
                 ExpireStaleOffer(config);
                 TryScheduledOffer(config);
             }

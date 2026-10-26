@@ -37,9 +37,9 @@ namespace RealShop
             int interior = InteriorRequirement(job.id);
 
             float bodyCond = BodyConditionFor(loader);
-            float detailsCond = SafeCondition(loader.GetDetailsCondition());
+            float detailsCond = SafeDetailsCondition(loader);
             float frameCond = FrameCondition(loader);
-            float interiorCond = SafeCondition(loader.GetInteriorCondition());
+            float interiorCond = SafeInteriorCondition(loader);
 
             StringBuilder sb = new StringBuilder();
             if (bodyCond >= 0f && Percent(bodyCond) < body)
@@ -60,10 +60,18 @@ namespace RealShop
                     .Append(Percent(frameCond)).Append("% < ").Append(frame).Append("%; ");
             }
 
-            if (Percent(interiorCond) < interior)
+            if (!InteriorNotDelivered() && Percent(interiorCond) < interior)
             {
                 sb.Append(BuildJobText.Pick("interior", config.BuildJobLabelInterior)).Append(' ')
                     .Append(Percent(interiorCond)).Append("% < ").Append(interior).Append("%; ");
+            }
+
+            string requiredEngine = EngineTypeFor(job.id);
+            if (!string.IsNullOrEmpty(requiredEngine) && !EngineRequirementMet(job.id, loader))
+            {
+                sb.Append(BuildJobText.Pick("engine", config.BuildJobLabelEngine)).Append(": ")
+                    .Append(CarData.GetEngineDisplayName(requiredEngine)).Append(' ')
+                    .Append(BuildJobText.Pick("engineMissing", "отсутствует")).Append("; ");
             }
 
             if (config.BuildJobRequireAllPartsMounted)
@@ -118,8 +126,11 @@ namespace RealShop
                 bodyLabel + " ≥ " + body + "%" + LiveSuffix(loader, 0, body),
                 partsLabel + " ≥ " + parts + "%" + LiveSuffix(loader, 1, parts),
                 frameLabel + " ≥ " + frame + "%" + LiveSuffix(loader, 2, frame),
-                interiorLabel + " ≥ " + interior + "%" + LiveSuffix(loader, 3, interior),
+                InteriorNotDelivered()
+                    ? interiorLabel + ": " + BuildJobText.Pick("interiorAbsent", "не приезжает")
+                    : interiorLabel + " ≥ " + interior + "%" + LiveSuffix(loader, 3, interior),
                 AdvanceLine(config, advanceAmount),
+                EngineLine(jobId, loader),
             };
         }
 
@@ -175,6 +186,11 @@ namespace RealShop
 
                     break;
                 case 3:
+                    if (InteriorNotDelivered())
+                    {
+                        return true;
+                    }
+
                     required = InteriorRequirement(jobId);
                     current = LivePercent(loader, 3);
                     break;
@@ -192,6 +208,11 @@ namespace RealShop
         }
 
         private static uint _ticket = 0x5A17BEEF;
+
+        private static bool InteriorNotDelivered()
+        {
+            return BuildJobCondition.StripSuppresses("CreateInterior");
+        }
 
         private static string LiveSuffix(CarLoader loader, int index, int required)
         {
@@ -367,6 +388,30 @@ namespace RealShop
             }
 
             return unmounted;
+        }
+
+        private static float SafeDetailsCondition(CarLoader loader)
+        {
+            try
+            {
+                return SafeCondition(loader.GetDetailsCondition());
+            }
+            catch
+            {
+                return 0f;
+            }
+        }
+
+        private static float SafeInteriorCondition(CarLoader loader)
+        {
+            try
+            {
+                return SafeCondition(loader.GetInteriorCondition());
+            }
+            catch
+            {
+                return 0f;
+            }
         }
 
         private static float SafeCondition(float value)
