@@ -3,6 +3,8 @@ This mod was created with the aim of adding more realism to the game. In real li
 
 From v0.3.9 the hunt has a color **and a ceiling**: no part can be restored to a flawless 100% anymore — every part can only be brought back so far, and the better it can get, the brighter it glows. Ordinary parts top out around 30–50%, good ones reach 50–70% and glow **green**, and only rare survivors can be pushed to 70–100% and glow **purple**. A car you raise from the junkyard is never perfect — and that is the whole challenge. Bodywork is the one place the rule bends: rusted metal can be cut, welded and patched, so panels can always be brought back further than the rest of the car. **The deal is simple:** a car you pull from the junkyard will never be a flawless 100% — but hunt patiently, weld well and choose your parts, and you can still bring them **above 70%** and build a machine that turns heads. Perfect is gone; remarkable is still yours to earn.
 
+From v0.3.11 the garage runs on a real restoration economy — the market pays for condition and the last percents are the expensive ones — the order board fills itself with real work across every car tier, the dealership and auto salon sell only modern cars, and a rare optional order can hand you a **bare chassis to rebuild from scratch**. All of it, plus a batch of fixes, is summed up in **Last update v 0.3.11** below.
+
 ## IMPORTANT
 
 Starting from v0.3.4, RealShop is intended to be playable from the beginning of a save. The junkyard and repair flow are unlocked earlier by the mod, so you no longer need to wait until the full repair branch is unlocked before using it.
@@ -18,7 +20,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 5. All body and interior parts can be repaired.
 6. Junkyard and auction access are unlocked from level 1 on the map.
 7. Junkyard and auction travel are intended to be free.
-8. Junkyard car spawns are filtered by `RemoveCarsOlderThanYear`; with the default value `2005`, only cars older than 2005 can appear there.
+8. Junkyard car spawns are filtered by `RemoveCarsOlderThanYear`; with the default value `2005`, only cars older than 2005 can appear there. The auction is filtered by the same cutoff (v0.3.11): cars from the cutoff year and newer are not offered there at all.
 9. Repair is riskier: red parts can be restored, but any failed repair attempt immediately and permanently destroys the part, even when the part was already in good condition.
 10. Fully repaired parts are hidden from the repair table list.
 11. All repairable parts are available from the first repair level.
@@ -35,6 +37,9 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 13. Rarity highlighting: a part's card glows **green** (restoration ceiling 50–70%) or **purple** (ceiling 70–100%) in the junkyard, inventory and repair lists; ordinary parts stay grey, and highlighted slots reset correctly when the game reuses them. A part that has reached its ceiling shows a **`MAX xx%`** marker; below it the card reads `current-max%`.  
 14. Restoration ceilings: no part can be repaired to a flawless 100%. Each part has a hidden maximum it can be restored to, decided once per part and stable across saves; `EnableMaxQuality` toggles the whole system.
 15. Junkyard need/upgrade markers: an orange `!` marks a part your cars are missing, and a green `▲` marks a part you already own that has a better-condition copy on the junkyard — checked against every car in the garage and on the parking lot.  
+16. Auction quality cap: no car offered at the auction is rated above `AuctionMaxRating` (default **1 star**). The star rating drives the car's value, starting price, the AI's max bid and its generated condition, so the auction you can reach from level 1 sells only the cheapest, most tired machines. Toggle with `EnableAuctionRatingCap`.
+17. Dealership year filter: the car dealership shows only modern cars. Every car whose own `config.txt` year is below `RemoveCarsOlderThanYear` (default 2005) is hidden from the showroom grid — the same single switch as the junkyard and auction. The year is read from each car's id (base game and DLC alike) and falls back to the year in the car's name, so cars whose name carries no year are filtered correctly too.
+18. Build-from-scratch orders (v0.3.11, **off by default**): a rare order hands you a **bare chassis** — the car arrives as chassis and wheels only, with no engine, no systems, no suspension parts, no interior and no body panels — and demands a **minimum quality on the body, the parts, the frame and the interior**, rolled per job from `job.id`. The card is marked **EXTREMELY DIFFICULT** and sits right after the live job cards. Generation runs between levels `BuildJobMinLevel` (1) and `BuildJobMaxLevel` (80), on retro cars the shop no longer supplies; an offer you do not take is replaced every `BuildJobOfferSeconds` (120 s). The deadline is `BuildJobDeadlineDays` (7 days), a `BuildJobAdvancePercent` (15 %) **advance** is paid on acceptance and clawed back if you cancel, finishing pays the normal reward **plus 5× the sale price of the finished car** minus the advance, and the order cannot be closed while the car misses any of the four requirements, has parts off, or carries fewer than `BuildJobMinMountedParts` mounted parts.
 
 ## Rarity, Restoration Ceilings & The New Economy
 
@@ -66,8 +71,8 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 ### What the new economy changes vs. the vanilla game
 
 - **Era-based pricing.** A hidden retro part's shop price is `base × era multiplier` — the older the era, the dearer the part. (The old config rarity multiplier was retired when rarity became a per-part ceiling.)
-- **Resale is capped (anti-flip).** Selling a part pays at most `SellRatio` (default **0.35**, i.e. 35%) of its shop price — and the number you see in the "Sell" dialog is the number you actually receive. Restoring and reselling can no longer print money.
-- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by the part's grade (green 2.5×, purple 4×), so a full rebuild of a high-ceiling engine is a real investment even when the part came out of a junkyard for free.
+- **Resale is capped (anti-flip).** Selling a part pays at most `SellRatio` (default **0.35**, i.e. 35%) of its shop price — and the number you see in the "Sell" dialog is the number you actually receive. Restoring and reselling can no longer print money. Since v0.3.11 the cap scales with the part's condition: `SellRatio × (0.4 + 0.6 × condition)` — a restored part sells for more than the same part in rust.
+- **Repairs cost labor.** Each successful repair charges `LaborCostBase` scaled by the part's grade (green 2.5×, purple 4×), so a full rebuild of a high-ceiling engine is a real investment even when the part came out of a junkyard for free. Since v0.3.11 the fee also grows with the part's condition — see "The Condition Economy".
 - **Old donors yield worse parts.** Junkyard donor cars older than the cutoff have their parts' condition scaled by `DonorConditionScale` (default 0.6), so a donor is a starting point, not a gift.
 - **One bad call can end a legend.** A failed repair on a red part destroys it permanently — and now a high-ceiling part is painful to lose.
 
@@ -90,6 +95,64 @@ Rarity is no longer a label in a config file. It is simply **how good a part can
 - Rarity is **per-part and random**: it comes from each part's restoration ceiling, rolled from its id. Two used copies of the same part can roll different ceilings — that is intended (no two worn parts are equally tired). There is nothing to tag by hand anymore.
 - The economy hooks run on an IL2CPP build. The sell-cap (display + payment), labor charge, donor condition, ceilings and rarity color were **verified in live gameplay** on build 1.0.40, but a future game update can move method signatures and silently disable a hook — the mod logs every patch at startup so you can tell what is active.
 - Every economy feature is an independent toggle (`EnableSellCap`, `EnableLaborCost`, `EnableDonorCondition`, `EnableMaxQuality`) — turn any of them off to soften the challenge.
+
+## The Condition Economy (v0.3.11)
+
+v0.3.11 changes what a repair is *worth*. Before, the money you got for selling a car barely cared about how good the car was, while every repair cycle cost the same flat fee — so restoring a 70% body panel was a guaranteed loss, and the rational play was to flip the car untouched. The new model follows how real restoration works: **the market pays for condition, and the last percents are the expensive ones.**
+
+Three formulas now drive the loop:
+
+| Lever | Formula | Default |
+| --- | --- | --- |
+| Car sale price | `baseCarPrice × (CarSaleConditionFloor + CarSaleConditionSpan × condition)` | `0.5 + 0.5 × cond` |
+| Part resale | `shopPrice × SellRatio × (SellConditionFloor + SellConditionSpan × condition)` | `0.35 × (0.4 + 0.6 × cond)` |
+| Repair labor | `LaborCostBase × grade × (1 + LaborCurveK × cond / (1 − cond))` | `k = 0.25`, cond capped at 98% |
+
+- **A restored car sells for more than the same car in rust.** A car at 10% condition sells for ~60% of its base value; at 90% — for ~95%. Condition is what the buyer pays for, exactly like in real life.
+- **Labor is a hyperbola, not a flat fee.** Lifting a part from 10% to 40% costs ~1× the base fee per cycle; pushing it from 90% toward 95% costs ~3.5× per cycle. The first cycles of a tired part are cheap, the last cycles near the ceiling are a luxury.
+- **The optimum is not 100%.** Because labor grows hyperbolically while the sale price grows linearly, the best margin sits around **70%** condition. Pushing a panel from 70% to 99% is a deliberate, expensive choice — a trophy, not a chore. That is the golden mean: no grind on the cheap cycles, no free money on the expensive ones.
+- **The repair button tells the truth.** The Start button now shows the next cycle: `+3%  -1250` — the condition gain and the full price (game repair price + labor) before you commit. A decision you can see is a real decision. Since v0.3.11 the button is **green** while the cycle pays for itself, **red** once the golden mean is behind you, and keeps its **normal game color** for parts that are not money-makers at any condition — red now means "you crossed the line", never "this part is worthless".
+- **A green `$` marks the golden mean.** Under the `!`/`▲` corner marker, a part shows a green `$` while repairing it is still profitable — the next cycle adds more value than it costs, through the part's own resale price (junkyard find → repair → sell) or through a car that needs it. The `$` disappears the moment you cross the line into spending more than you gain. No `$` at the restoration ceiling (nothing left to fix).
+- **Failure still destroys the part.** Risk was left untouched on purpose: a ruined panel is lost for good, so what you find and keep has real value.
+
+Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`, `EnableLaborCurve` (with `LaborCurveK`, `LaborCurveMaxCond`), `EnableRepairCostPreview`, `EnableProfitMarker`.
+
+## Last update v 0.3.11
+
+v0.3.11 turns the mod from "a harder repair loop" into a full restoration-economy game. The short version: **work pays for condition, the order board is always full of real jobs across every car tier, the dealership sells only modern cars, and an optional rare order drops a bare chassis in your garage to rebuild from scratch.**
+
+### The condition economy
+The market now pays for condition end to end — the car's sale price, a part's resale value and the repair labor all follow it, the Start button previews the next cycle and recolors green/red/neutral, and a green `$` marks the golden mean. The formulas and the trade-offs are in **The Condition Economy (v0.3.11)** above.
+
+### The order board
+- **Always full.** All order slots are unlocked and the board tops itself up to 8 (`OrderFillAllSlots`, on by default).
+- **Any car, any tier.** Orders draw from the full car list instead of only the starter cars (`OrderRandomCars`, on by default).
+- **Difficulty is not your level.** `OrderIgnoreJobLevel` (on by default) generates full multi-category jobs regardless of player level; your actual level is untouched.
+
+### Build-from-scratch orders (optional, off by default)
+- **`EnableBuildFromScratchJobs`** adds a rare, **EXTREMELY DIFFICULT** order: the car arrives as a **bare chassis — chassis and wheels only**.
+- **Four quality requirements** — body, parts, frame and interior — rolled per job from its id, plus an **engine-type** requirement; the car must carry at least `BuildJobMinMountedParts` mounted parts and leave nothing off.
+- Levels 1–80, a 120 s offer, a 7-day deadline, a **15% advance** (clawed back on cancel), and a final payout of the normal reward **plus 5× the finished car's sale price** minus the advance; the order cannot close while a requirement is unmet.
+- The car arrives **dirty**, with the interior stripped by the game's own writer.
+
+<p align="center">
+  <img src="/Assets/new_task.png" alt="Repair orders board with an EXTREMELY DIFFICULT build-from-scratch order and its minimum-quality requirements">
+</p>
+<p align="center"><em>Repair orders: the rare build-from-scratch order is tagged EXTREMELY DIFFICULT and lists its requirements — minimum body, parts, frame and interior quality, the 15% advance, and the required engine type.</em></p>
+
+### Auction & dealership
+- **Auction star cap.** No auction car is rated above `AuctionMaxRating` (default **1 star**), so the level-1 auction sells only tired, cheap machines.
+- **No old cars in the dealership.** The dealership, showroom and auto salon sell **only modern cars** (`year ≥ RemoveCarsOlderThanYear`, default 2005) — old cars now appear only in the junkyard, barn and auction.
+
+### Fixes & polish
+- Dust shows immediately on a build-from-scratch car (the shader is refreshed, not just the data).
+- The 15% advance is no longer dropped on slow-loading hard orders; it never pays after the order ends.
+- Starting money is correct on every new game in one process, not just the first.
+- A part keeps its quality (repair ceiling/rarity) when it moves between inventory and warehouse.
+- A build-from-scratch order accepted after its offer expired still arrives as a bare chassis.
+- Sell-tab price honesty, repair-window, shop and order-board timer fixes.
+
+Note: build-from-scratch orders are **opt-in** (`EnableBuildFromScratchJobs = false` by default). Designed for game build 1.0.40; every hook logs at startup whether it is active. Some build-from-scratch paths are still under live validation.
 
 ## Last update v 0.3.10
 

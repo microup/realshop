@@ -25,7 +25,124 @@ namespace RealShop
             RarityColorPatches.Install(harmony);
             TryPatchStartingMoney(harmony);
             TryCacheProfileManager(harmony);
+            LogBuildJobs(harmony);
             LogDiagnostics();
+        }
+
+        private static readonly string[] BuildJobTargetTypes =
+        {
+            "OrderGenerator", "OrdersWindow", "JobHelper", "GameScript", "CarLoader",
+        };
+
+        private static readonly string[] BuildJobExpectedHooks =
+        {
+            "OrderGenerator.PrepareJob",
+            "OrderGenerator.CancelJob",
+            "OrderGenerator.GenerateNewJob",
+            "OrdersWindow.AcceptOrderAction",
+            "CarLoader.CreateChassis",
+            "CarLoader.CreateInterior",
+            "CarLoader.CreateExterior",
+            "CarLoader.CreateBonusParts",
+            "CarLoader.SetConditionAll",
+            "CarLoader.GetCarPart",
+            "CarLoader.SetRandomCarLivery",
+            "CarLoader.SetRandomDent",
+            "CarLoader.GetOtherPartsCondition",
+            "Job.StartTimer",
+        };
+
+        private static void LogBuildJobs(HarmonyInstance harmony)
+        {
+            Config config = RealParts.ActiveConfig;
+            if (config == null)
+            {
+                MelonLogger.Warning("[BuildJob] config not active; build-job layer inactive");
+                return;
+            }
+
+            int patched = 0;
+            System.Collections.Generic.HashSet<string> hooked =
+                new System.Collections.Generic.HashSet<string>(System.StringComparer.Ordinal);
+            try
+            {
+                foreach (System.Reflection.MethodBase method in harmony.GetPatchedMethods())
+                {
+                    if (method == null)
+                    {
+                        continue;
+                    }
+
+                    System.Type declaring = method.DeclaringType;
+                    if (declaring == null)
+                    {
+                        continue;
+                    }
+
+                    hooked.Add(declaring.Name + "." + method.Name);
+
+                    foreach (string name in BuildJobTargetTypes)
+                    {
+                        if (string.Equals(declaring.Name, name, System.StringComparison.Ordinal))
+                        {
+                            patched++;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                MelonLogger.Warning("[BuildJob] patched-method scan failed: " + e.Message);
+            }
+
+            MelonLogger.Msg("[BuildJob] hooks on target game types (OrderGenerator/OrdersWindow/JobHelper/GameScript/CarLoader): " + patched
+                + "; feature=" + (config.EnableBuildFromScratchJobs ? "ON" : "OFF (EnableBuildFromScratchJobs = false in Mods/RealShop.cfg)")
+                + " level=" + config.BuildJobMinLevel + ".." + config.BuildJobMaxLevel
+                + " chance=" + config.BuildJobChance + "% offerSeconds=" + config.BuildJobOfferSeconds
+                + " advance=" + config.BuildJobAdvancePercent + "% strip=" + config.BuildJobStripMode
+                + " methods=" + BuildJobStripTarget.MethodsSummary()
+                + " panels=" + BuildJobPanels.Chance() + "% panelPrefixes=" + BuildJobPanels.PrefixesSummary());
+
+            VerifyBuildJobHooks(hooked);
+        }
+
+        private static void VerifyBuildJobHooks(System.Collections.Generic.HashSet<string> hooked)
+        {
+            if (hooked.Count == 0)
+            {
+                MelonLogger.Warning("[BuildJob] hook check: no patched methods were readable, hooks cannot be verified");
+                return;
+            }
+
+            System.Text.StringBuilder missing = new System.Text.StringBuilder();
+            int found = 0;
+            foreach (string target in BuildJobExpectedHooks)
+            {
+                if (hooked.Contains(target))
+                {
+                    found++;
+                    continue;
+                }
+
+                if (missing.Length > 0)
+                {
+                    missing.Append('|');
+                }
+
+                missing.Append(target);
+            }
+
+            if (missing.Length > 0)
+            {
+                MelonLogger.Warning("[BuildJob] hook check: " + found + "/" + BuildJobExpectedHooks.Length
+                    + " build-job targets are patched, missing=" + missing
+                    + " (the features behind those hooks are inactive)");
+                return;
+            }
+
+            MelonLogger.Msg("[BuildJob] hook check: " + found + "/" + BuildJobExpectedHooks.Length
+                + " build-job targets are patched");
         }
 
         private static void TryPatchSellItem(HarmonyInstance harmony)
