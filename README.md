@@ -3,7 +3,7 @@ This mod was created with the aim of adding more realism to the game. In real li
 
 From v0.3.9 the hunt has a color **and a ceiling**: no part can be restored to a flawless 100% anymore — every part can only be brought back so far, and the better it can get, the brighter it glows. Ordinary parts top out around 30–50%, good ones reach 50–70% and glow **green**, and only rare survivors can be pushed to 70–100% and glow **purple**. A car you raise from the junkyard is never perfect — and that is the whole challenge. Bodywork is the one place the rule bends: rusted metal can be cut, welded and patched, so panels can always be brought back further than the rest of the car. **The deal is simple:** a car you pull from the junkyard will never be a flawless 100% — but hunt patiently, weld well and choose your parts, and you can still bring them **above 70%** and build a machine that turns heads. Perfect is gone; remarkable is still yours to earn.
 
-From v0.3.11 the garage runs on a real restoration economy — the market pays for condition and the last percents are the expensive ones — the order board fills itself with real work across every car tier, the dealership and auto salon sell only modern cars, and a rare optional order can hand you a **bare chassis to rebuild from scratch**. All of it, plus a batch of fixes, is summed up in **Last update v 0.3.11** below.
+From v0.3.11 the garage runs on a real restoration economy — the market pays for condition and the last percents are the expensive ones — the order board fills itself with real work across every car tier, the dealership and auto salon sell only modern cars, and a rare order can hand you a **bare chassis to rebuild from scratch**. All of it, plus a batch of fixes, is summed up in **Last update v 0.3.11** below.
 
 ## IMPORTANT
 
@@ -39,7 +39,7 @@ Repair is now a high-stakes restoration challenge. Even a good rare part that is
 15. Junkyard need/upgrade markers: an orange `!` marks a part your cars are missing, and a green `▲` marks a part you already own that has a better-condition copy on the junkyard — checked against every car in the garage and on the parking lot.  
 16. Auction quality cap: no car offered at the auction is rated above `AuctionMaxRating` (default **1 star**). The star rating drives the car's value, starting price, the AI's max bid and its generated condition, so the auction you can reach from level 1 sells only the cheapest, most tired machines. Toggle with `EnableAuctionRatingCap`.
 17. Dealership year filter: the car dealership shows only modern cars. Every car whose own `config.txt` year is below `RemoveCarsOlderThanYear` (default 2005) is hidden from the showroom grid — the same single switch as the junkyard and auction. The year is read from each car's id (base game and DLC alike) and falls back to the year in the car's name, so cars whose name carries no year are filtered correctly too.
-18. Build-from-scratch orders (v0.3.11, **off by default**): a rare order hands you a **bare chassis** — the car arrives as chassis and wheels only, with no engine, no systems, no suspension parts, no interior and no body panels — and demands a **minimum quality on the body, the parts, the frame and the interior**, rolled per job from `job.id`. The card is marked **EXTREMELY DIFFICULT** and sits right after the live job cards. Generation runs between levels `BuildJobMinLevel` (1) and `BuildJobMaxLevel` (80), on retro cars the shop no longer supplies; an offer you do not take is replaced every `BuildJobOfferSeconds` (120 s). The deadline is `BuildJobDeadlineDays` (7 days), a `BuildJobAdvancePercent` (15 %) **advance** is paid on acceptance and clawed back if you cancel, finishing pays the normal reward **plus 5× the sale price of the finished car** minus the advance, and the order cannot be closed while the car misses any of the four requirements, has parts off, or carries fewer than `BuildJobMinMountedParts` mounted parts.
+18. Build-from-scratch orders (v0.3.11, **on by default**): a rare order hands you a **bare chassis** — the car arrives as chassis and wheels only, with no engine, no systems, no suspension parts, no interior and no body panels — and demands a **minimum quality on the body, the parts, the frame and the interior**, rolled per job from `job.id`. The card is marked **EXTREMELY DIFFICULT** and sits right after the live job cards. Generation runs between levels `BuildJobMinLevel` (1) and `BuildJobMaxLevel` (80), on retro cars the shop no longer supplies; an offer you do not take is replaced every `BuildJobOfferSeconds` (120 s). The deadline is `BuildJobDeadlineDays` (7 days), a `BuildJobAdvancePercent` (15 %) **advance** is paid on acceptance and clawed back if you cancel, finishing pays the normal reward **plus 5× the sale price of the finished car** minus the advance, and the order cannot be closed while the car misses any of the four requirements, has parts off, or carries fewer than `BuildJobMinMountedParts` mounted parts.
 
 ## Rarity, Restoration Ceilings & The New Economy
 
@@ -119,7 +119,7 @@ Everything is toggleable: `EnableCarSaleCondition`, `EnableSellConditionFactor`,
 
 ## Last update v 0.3.11
 
-v0.3.11 turns the mod from "a harder repair loop" into a full restoration-economy game. The short version: **work pays for condition, the order board is always full of real jobs across every car tier, the dealership sells only modern cars, and an optional rare order drops a bare chassis in your garage to rebuild from scratch.**
+v0.3.11 turns the mod from "a harder repair loop" into a full restoration-economy game. The short version: **work pays for condition, the order board is always full of real jobs across every car tier, the dealership sells only modern cars, and a rare order drops a bare chassis in your garage to rebuild from scratch.**
 
 ### The condition economy
 The market now pays for condition end to end — the car's sale price, a part's resale value and the repair labor all follow it, the Start button previews the next cycle and recolors green/red/neutral, and a green `$` marks the golden mean. The formulas and the trade-offs are in **The Condition Economy (v0.3.11)** above.
@@ -129,7 +129,7 @@ The market now pays for condition end to end — the car's sale price, a part's 
 - **Any car, any tier.** Orders draw from the full car list instead of only the starter cars (`OrderRandomCars`, on by default).
 - **Difficulty is not your level.** `OrderIgnoreJobLevel` (on by default) generates full multi-category jobs regardless of player level; your actual level is untouched.
 
-### Build-from-scratch orders (optional, off by default)
+### Build-from-scratch orders (on by default)
 - **`EnableBuildFromScratchJobs`** adds a rare, **EXTREMELY DIFFICULT** order: the car arrives as a **bare chassis — chassis and wheels only**.
 - **Four quality requirements** — body, parts, frame and interior — rolled per job from its id, plus an **engine-type** requirement; the car must carry at least `BuildJobMinMountedParts` mounted parts and leave nothing off.
 - Levels 1–80, a 120 s offer, a 7-day deadline, a **15% advance** (clawed back on cancel), and a final payout of the normal reward **plus 5× the finished car's sale price** minus the advance; the order cannot close while a requirement is unmet.
@@ -152,7 +152,7 @@ The market now pays for condition end to end — the car's sale price, a part's 
 - A build-from-scratch order accepted after its offer expired still arrives as a bare chassis.
 - Sell-tab price honesty, repair-window, shop and order-board timer fixes.
 
-Note: build-from-scratch orders are **opt-in** (`EnableBuildFromScratchJobs = false` by default). Designed for game build 1.0.40; every hook logs at startup whether it is active. Some build-from-scratch paths are still under live validation.
+Note: build-from-scratch orders are **on by default** (`EnableBuildFromScratchJobs = true`); set it to `false` in `Mods/RealShop.cfg` to turn them off. Designed for game build 1.0.40; every hook logs at startup whether it is active. Some build-from-scratch paths are still under live validation.
 
 ## Last update v 0.3.10
 

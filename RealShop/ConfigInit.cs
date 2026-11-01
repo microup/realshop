@@ -60,6 +60,7 @@ namespace RealShop
             int block = 0;
             int engine = 0;
             int advance = 0;
+            int buildFromScratch = 0;
             if (_buildJobConfigSchema == null || _buildJobConfigSchema.Value < ValueBuildJobConfigSchema)
             {
                 migrated = MigrateStripMethods();
@@ -71,6 +72,7 @@ namespace RealShop
                 block = MigrateBlockCancelOff();
                 engine = MigrateEngineObject();
                 advance = MigrateAdvancePercent();
+                buildFromScratch = MigrateBuildFromScratchOn();
                 if (_buildJobConfigSchema != null)
                 {
                     _buildJobConfigSchema.Value = ValueBuildJobConfigSchema;
@@ -78,16 +80,16 @@ namespace RealShop
             }
 
             if (repaired > 0 || migrated > 0 || guard > 0 || frame > 0 || wheels > 0 || susp > 0 || prefixes > 0
-                || block > 0 || engine > 0 || advance > 0)
+                || block > 0 || engine > 0 || advance > 0 || buildFromScratch > 0)
             {
                 MelonPreferences.Save();
                 MelonLogger.Msg("[BuildJob] cfg repaired: textKeys=" + repaired + " stripMethods=" + migrated
                     + " guardSeconds=" + guard + " keepFrame=" + frame + " hideWheels=" + wheels
                     + " suspensionObjects=" + susp + " unmountPrefixes=" + prefixes + " blockCancel=" + block
-                    + " engineObject=" + engine + " advancePercent=" + advance);
+                    + " engineObject=" + engine + " advancePercent=" + advance + " buildFromScratch=" + buildFromScratch);
             }
 
-            return repaired + migrated + guard + frame + wheels + susp + prefixes + block + engine + advance;
+            return repaired + migrated + guard + frame + wheels + susp + prefixes + block + engine + advance + buildFromScratch;
         }
 
         private static int RepairTextEntry(MelonPreferences_Entry<string> entry, string key)
