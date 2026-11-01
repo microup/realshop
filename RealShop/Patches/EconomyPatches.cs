@@ -44,8 +44,30 @@ namespace RealShop
                 return;
             }
 
-            PendingSellCap = property.Price * config.SellRatio;
-            MelonLogger.Msg("[SellCap] PROCESS: shopPrice=" + property.Price + " ratio=" + config.SellRatio + " cap=" + PendingSellCap);
+            float factor = SellConditionFactor(item, config);
+            PendingSellCap = property.Price * config.SellRatio * factor;
+            MelonLogger.Msg("[SellCap] PROCESS: shopPrice=" + property.Price + " ratio=" + config.SellRatio + " factor=" + factor + " cap=" + PendingSellCap);
+        }
+
+        internal static float SellConditionFactor(Item item, Config config)
+        {
+            if (config == null || !config.EnableSellConditionFactor || item == null)
+            {
+                return 1f;
+            }
+
+            float cond = item.GetConditionToShow();
+            if (cond < 0f)
+            {
+                cond = 0f;
+            }
+
+            if (cond > 1f)
+            {
+                cond = 1f;
+            }
+
+            return config.SellConditionFloor + config.SellConditionSpan * cond;
         }
     }
 
@@ -135,7 +157,7 @@ namespace RealShop
                 return;
             }
 
-            float cap = shopPrice * config.SellRatio;
+            float cap = shopPrice * config.SellRatio * ConditionFactor(__instance, config);
             if (__result > cap)
             {
                 MelonLogger.Msg("[SellCap] display cap: sellPrice " + __result + " -> " + cap + " (shopPrice=" + shopPrice + ")");
@@ -157,12 +179,85 @@ namespace RealShop
                 return;
             }
 
-            int cap = Mathf.RoundToInt(shopPrice * config.SellRatio);
+            int cap = Mathf.RoundToInt(shopPrice * config.SellRatio * ConditionFactor(__instance, config));
             if (__result > cap)
             {
                 MelonLogger.Msg("[SellCap] display cap(int): sellPrice " + __result + " -> " + cap + " (shopPrice=" + shopPrice + ")");
                 __result = cap;
             }
+        }
+
+        internal static float ConditionFactor(object instance, Config config)
+        {
+            if (config == null || !config.EnableSellConditionFactor)
+            {
+                return 1f;
+            }
+
+            float cond = ConditionOf(instance);
+            if (cond < 0f)
+            {
+                return 1f;
+            }
+
+            if (cond > 1f)
+            {
+                cond = 1f;
+            }
+
+            return config.SellConditionFloor + config.SellConditionSpan * cond;
+        }
+
+        private static float ConditionOf(object instance)
+        {
+            try
+            {
+                if (instance is Item)
+                {
+                    return ((Item)instance).GetConditionToShow();
+                }
+
+                if (instance is BaseItem)
+                {
+                    return ((BaseItem)instance).GetConditionToShow();
+                }
+
+                System.Type t = instance.GetType();
+                foreach (var prop in t.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+                {
+                    if (!prop.CanRead || prop.GetIndexParameters().Length > 0)
+                    {
+                        continue;
+                    }
+
+                    if (prop.PropertyType != typeof(Item) && prop.PropertyType != typeof(BaseItem))
+                    {
+                        continue;
+                    }
+
+                    object val = prop.GetValue(instance, null);
+                    if (val == null)
+                    {
+                        continue;
+                    }
+
+                    if (val is Item)
+                    {
+                        return ((Item)val).GetConditionToShow();
+                    }
+
+                    if (val is BaseItem)
+                    {
+                        return ((BaseItem)val).GetConditionToShow();
+                    }
+                }
+            }
+            catch
+            {
+                return -1f;
+            }
+
+            return -1f;
         }
     }
 
@@ -199,7 +294,7 @@ namespace RealShop
                     return;
                 }
 
-                int cap = Mathf.RoundToInt(pp.Price * config.SellRatio);
+                int cap = Mathf.RoundToInt(pp.Price * config.SellRatio * SellPriceCapPatch.ConditionFactor(__0, config));
                 if (__result > cap)
                 {
                     MelonLogger.Msg("[SellCap] PRICE-CALC clamp " + __result + " -> " + cap + " (id=" + id + " shopPrice=" + pp.Price + ")");
@@ -273,95 +368,6 @@ namespace RealShop
             }
 
             MelonLogger.Msg("[SellCap] sell probe patched calc=" + calc + " btn=" + btn);
-        }
-    }
-
-    [HarmonyPatch(typeof(GlobalData), "AddPlayerMoney")]
-    internal static class FreeMapTravelPaymentPatch
-    {
-        private static void Prefix(ref int money)
-        {
-            if (SellItemCapPatch.PendingSellCap >= 0f)
-            {
-                int before = money;
-                bool clamped = false;
-                if (money > 0 && money > SellItemCapPatch.PendingSellCap)
-                {
-                    money = (int)SellItemCapPatch.PendingSellCap;
-                    clamped = true;
-                }
-
-                MelonLogger.Msg("[SellCap] DONE: AddPlayerMoney before=" + before + " cap=" + SellItemCapPatch.PendingSellCap + " after=" + money + " clamped=" + clamped);
-                SellItemCapPatch.PendingSellCap = -1f;
-                return;
-            }
-
-            if (FreeTravelService.PendingFreeTravelCost <= 0 || money >= 0)
-            {
-                return;
-            }
-
-            if (money == -FreeTravelService.PendingFreeTravelCost)
-            {
-                money = 0;
-                FreeTravelService.PendingFreeTravelCost = 0;
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(GlobalData), "SetPlayerMoney")]
-    internal static class FreeMapTravelSetMoneyPatch
-    {
-        private static void Prefix(ref int money)
-        {
-            if (FreeTravelService.PendingFreeTravelCost <= 0)
-            {
-                return;
-            }
-
-            int currentMoney = GlobalData.PlayerMoney;
-            int diff = currentMoney - money;
-            if (diff == FreeTravelService.PendingFreeTravelCost)
-            {
-                money = currentMoney;
-                FreeTravelService.PendingFreeTravelCost = 0;
-            }
-        }
-    }
-
-    internal static class StartingMoneyPatch
-    {
-        internal static bool Pending;
-        internal static bool SceneLoaded;
-
-        private static bool Prefix(ref int __result)
-        {
-            Config config = RealParts.ActiveConfig;
-            if (config == null || config.StartingMoney <= 0)
-            {
-                return true;
-            }
-
-            __result = config.StartingMoney;
-            MelonLogger.Msg("[Money] GetStartingMoney -> " + __result);
-            return false;
-        }
-    }
-
-    internal static class UpdateStartingMoneyPatch
-    {
-        private static void Postfix()
-        {
-            Config config = RealParts.ActiveConfig;
-            if (config == null || config.StartingMoney <= 0)
-            {
-                return;
-            }
-
-            GlobalData.PlayerMoney = config.StartingMoney;
-            StartingMoneyPatch.Pending = true;
-            StartingMoneyPatch.SceneLoaded = false;
-            MelonLogger.Msg("[Money] UpdateStartingMoney called -> PlayerMoney=" + config.StartingMoney + " (holding until stable)");
         }
     }
 }

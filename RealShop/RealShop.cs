@@ -44,6 +44,7 @@ namespace RealShop
 
         private Config _config;
         private bool _modIsEnable = true;
+        internal static bool ModIsEnabled = true;
         private bool _isRunOnce = false;
         private int _moneyStableFrames = 0;
         private int _moneyPendingFrames = 0;
@@ -56,6 +57,7 @@ namespace RealShop
 
             _config = new Config();
             _config.Reload();
+            _config.RepairBuildJobConfig();
             ActiveConfig = _config;
 
             PatchBootstrap.Install(this.Harmony);
@@ -67,6 +69,9 @@ namespace RealShop
             {
                 return;
             }
+
+            BuildJobSuspensionToggle.Update();
+            WelcomeScreen.Tick();
 
             if (StartingMoneyPatch.Pending)
             {
@@ -102,6 +107,7 @@ namespace RealShop
             else
             {
                 _moneyPendingFrames = 0;
+                _moneyStableFrames = 0;
             }
 
             if (Input.GetKeyDown(_config.IsKeyBindEnableSwitchMode))
@@ -114,6 +120,7 @@ namespace RealShop
                 {
                     _modIsEnable = true;
                 }
+                ModIsEnabled = _modIsEnable;
                 UIManager.Get().ShowPopup("[RealShop]", $"the mod has been status: {_modIsEnable}.", PopupType.Normal);
 
                 MelonLogger.Msg($"the mod has been {_modIsEnable}");
@@ -134,16 +141,28 @@ namespace RealShop
 
             if (!_modIsEnable)
             {
+                BuildJobState.Tick();
+                BuildJobAcceptPatch.AbandonCandidate("mod disabled");
                 return;
             }
 
+            BuildJobState.Tick();
+            BuildJobAcceptPatch.TickCommit();
+            BuildJobService.TickOffers();
+            OrderFillService.Tick();
             _scene.Update(_config);
+        }
+
+        public override void OnGUI()
+        {
+            WelcomeScreen.OnGui();
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             GameSettings.CanShowPopups = true;
             FreeTravelService.PendingFreeTravelCost = 0;
+            WelcomeScreen.OnSceneLoaded(buildIndex);
 
             if (StartingMoneyPatch.Pending)
             {

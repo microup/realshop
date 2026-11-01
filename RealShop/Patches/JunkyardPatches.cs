@@ -138,6 +138,7 @@ namespace RealShop
         private static void Prefix(CarLoader __instance, [HarmonyArgument(0)] ref float condition)
         {
             JunkyardDonorConditionCore.Apply(__instance, ref condition);
+            BuildJobCondition.ForceCondition(__instance, ref condition, "SetConditionOnDetails");
         }
     }
 
@@ -147,6 +148,7 @@ namespace RealShop
         private static void Prefix(CarLoader __instance, [HarmonyArgument(0)] ref float condition)
         {
             JunkyardDonorConditionCore.Apply(__instance, ref condition);
+            BuildJobCondition.ForceCondition(__instance, ref condition, "SetConditionAll");
         }
     }
 
