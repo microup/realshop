@@ -53,7 +53,7 @@ namespace RealShop
         private const bool ValueEnableAuctionRatingCap = true;
         private const bool ValuePreserveItemQualityOnMove = true;
         public const int ValueAuctionMaxRating = 1;
-        private const bool ValueEnableBuildFromScratchJobs = false;
+        private const bool ValueEnableBuildFromScratchJobs = true;
         public const int ValueBuildJobMinLevel = 1;
         public const int ValueBuildJobMaxLevel = 80;
         public const int ValueBuildJobChance = 35;
@@ -106,7 +106,7 @@ namespace RealShop
         private const int LegacyBuildJobConditionGuardSeconds = 15;
         public const bool ValueBuildJobStripKeepFrame = false;
         private const bool LegacyBuildJobStripKeepFrame = true;
-        public const int ValueBuildJobConfigSchema = 16;
+        public const int ValueBuildJobConfigSchema = 17;
         public const string ValueBuildJobSuspensionToggleKey = "F8";
         public const bool ValueBuildJobBlockCancel = false;
         private const bool LegacyBuildJobBlockCancelTrue = true;

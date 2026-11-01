@@ -280,6 +280,8 @@
 
     <Compile Include="ConfigMigrateAdvance.cs" />
 
+    <Compile Include="ConfigMigrateBuildFromScratch.cs" />
+
     <Compile Include="Runtime\PatchBootstrap.cs" />
 
     <Compile Include="Runtime\GameTypes.cs" />
